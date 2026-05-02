@@ -1,5 +1,6 @@
 // Build-time fetch from artificialanalysis.ai API
 // Returns only open-weight/open-source models, sorted by intelligence index
+// Intelligence Index is on a 0–60 scale (GPT-5.5 tops at 60 as of May 2026)
 
 export interface AAModel {
   name: string;
@@ -7,7 +8,7 @@ export interface AAModel {
   intelligenceIndex: number | null;
   codingScore: number | null;
   mathScore: number | null;
-  outputSpeed: number | null; // tokens/sec
+  outputSpeed: number | null; // tokens/sec (API speed from AA; local Apple Silicon speeds differ)
   contextWindow: number | null;
   isOpenSource: boolean;
 }
@@ -51,11 +52,10 @@ interface RawAAModel {
 
 const OPEN_SOURCE_KEYWORDS = [
   'llama', 'mistral', 'qwen', 'gemma', 'deepseek', 'phi', 'falcon',
-  'vicuna', 'orca', 'wizard', 'openchat', 'zephyr', 'solar',
-  'starling', 'yi-', 'mixtral', 'kimi', 'command-r',
+  'kimi', 'command-r', 'mixtral',
   // Chinese open-weight ecosystem
   'minimax', 'glm', 'internlm', 'intern-lm', 'baichuan', 'exaone', 'olmo',
-  'hunyuan', 'step-', 'marco', 'skywork', 'moonshot',
+  'hunyuan', 'mimo', 'skywork', 'moonshot',
 ];
 
 function isOpenWeight(m: RawAAModel): boolean {
@@ -68,23 +68,18 @@ function isOpenWeight(m: RawAAModel): boolean {
 
 export async function fetchOpenSourceModels(): Promise<AAModel[]> {
   const apiKey = import.meta.env.AA_API_KEY;
-
-  // No API key: return empty so fallback static data is used
   if (!apiKey) return [];
 
   try {
     const res = await fetch('https://artificialanalysis.ai/api/v1/models', {
       headers: { 'x-api-key': apiKey },
     });
-
     if (!res.ok) {
       console.warn(`artificialanalysis.ai responded ${res.status} — using static data`);
       return [];
     }
-
     const json = await res.json() as { data?: RawAAModel[] } | RawAAModel[];
     const raw: RawAAModel[] = Array.isArray(json) ? json : (json.data ?? []);
-
     return raw
       .filter(isOpenWeight)
       .map(m => ({
@@ -98,8 +93,7 @@ export async function fetchOpenSourceModels(): Promise<AAModel[]> {
         isOpenSource:      true,
       }))
       .sort((a, b) => (b.intelligenceIndex ?? 0) - (a.intelligenceIndex ?? 0))
-      .slice(0, 20);
-
+      .slice(0, 24);
   } catch (err) {
     console.warn('artificialanalysis.ai fetch failed — using static data:', err);
     return [];
@@ -107,7 +101,6 @@ export async function fetchOpenSourceModels(): Promise<AAModel[]> {
 }
 
 // Use-case recommendation logic — driven by live scores
-// Each pickFn selects the best model from the ranked list for that job
 export const USE_CASE_RECS: UseCaseRec[] = [
   {
     useCase: 'swe',
@@ -115,82 +108,76 @@ export const USE_CASE_RECS: UseCaseRec[] = [
     description: 'Code generation, bug fixes, refactoring, test writing — single-shot tasks on a specific file or function',
     icon: '⌨',
     pickFn: (models) =>
-      [...models].sort((a, b) => (b.codingScore ?? 0) - (a.codingScore ?? 0))[0],
+      [...models].sort((a, b) => (b.codingScore ?? b.intelligenceIndex ?? 0) - (a.codingScore ?? a.intelligenceIndex ?? 0))[0],
     why: (m) =>
-      `Highest coding score (${m.codingScore ?? '—'}) in the open-weight leaderboard. Optimized for correctness on discrete coding tasks: generate, complete, explain, fix.`,
+      `Highest coding benchmark in the open-weight leaderboard. Optimized for correctness on discrete tasks: generate, complete, explain, fix.`,
   },
   {
     useCase: 'agentic',
     label: 'Agentic / multi-step',
     description: 'Long-horizon planning, tool use, function calling, multi-turn task completion across many steps',
     icon: '◈',
-    pickFn: (models) => {
-      // Agentic requires: high intelligence (follow complex instructions), large context (long tool-call history), good coding (execute tools)
-      // Weight: intelligence 50%, coding 30%, context 20%
-      return [...models]
+    pickFn: (models) =>
+      [...models]
         .filter(m => (m.contextWindow ?? 0) >= 65536)
         .sort((a, b) => {
-          const scoreA = (a.intelligenceIndex ?? 0) * 0.5 + (a.codingScore ?? 0) * 0.3 + ((a.contextWindow ?? 0) > 100000 ? 10 : 0);
-          const scoreB = (b.intelligenceIndex ?? 0) * 0.5 + (b.codingScore ?? 0) * 0.3 + ((b.contextWindow ?? 0) > 100000 ? 10 : 0);
+          const scoreA = (a.intelligenceIndex ?? 0) * 0.5 + (a.codingScore ?? a.intelligenceIndex ?? 0) * 0.3 + ((a.contextWindow ?? 0) > 200000 ? 5 : 0);
+          const scoreB = (b.intelligenceIndex ?? 0) * 0.5 + (b.codingScore ?? b.intelligenceIndex ?? 0) * 0.3 + ((b.contextWindow ?? 0) > 200000 ? 5 : 0);
           return scoreB - scoreA;
-        })[0] ?? models[0];
-    },
+        })[0] ?? models[0],
     why: (m) =>
-      `Best composite for long-horizon work: intelligence ${m.intelligenceIndex ?? '—'}, coding ${m.codingScore ?? '—'}, ${m.contextWindow ? `${(m.contextWindow / 1000).toFixed(0)}K` : 'large'} context window. Agentic loops need a model that can track state, call tools reliably, and recover from errors across many steps — not just write code.`,
+      `Best composite for long-horizon work: intelligence ${m.intelligenceIndex ?? '—'}, ${m.contextWindow ? `${(m.contextWindow / 1000).toFixed(0)}K` : 'large'} context. Agentic loops need a model that tracks state, calls tools reliably, and recovers across many steps — not just writes code.`,
   },
   {
     useCase: 'reasoning',
     label: 'Reasoning / Chain-of-thought',
-    description: 'Problems that need explicit step-by-step logic — audits, diagnostics, structured analysis',
+    description: 'Explicit step-by-step logic — audits, diagnostics, structured analysis',
     icon: '◎',
     pickFn: (models) => {
-      // Prefer DeepSeek-R1 variants (explicit CoT), fall back to highest math score
-      const r1 = models.find(m => m.name.toLowerCase().includes('deepseek-r1') || m.name.toLowerCase().includes('r1'));
-      return r1 ?? [...models].sort((a, b) => (b.mathScore ?? 0) - (a.mathScore ?? 0))[0];
+      const reasoning = models.find(m =>
+        m.name.toLowerCase().includes('reasoning') ||
+        m.name.toLowerCase().includes('r1') ||
+        m.name.toLowerCase().includes('v4 pro')
+      );
+      return reasoning ?? [...models].sort((a, b) => (b.mathScore ?? b.intelligenceIndex ?? 0) - (a.mathScore ?? a.intelligenceIndex ?? 0))[0];
     },
     why: (m) =>
-      `${m.name.toLowerCase().includes('r1') ? 'DeepSeek-R1 exposes its reasoning chain as native output — every conclusion is auditable.' : `Math score ${m.mathScore ?? '—'} — highest structured reasoning in current rankings.`}`,
+      `Top reasoning model in current open-weight rankings (intelligence ${m.intelligenceIndex ?? '—'}). Reasoning-mode models expose their chain-of-thought — every conclusion is auditable, which matters for regulated workflows.`,
   },
   {
     useCase: 'clinical_documentation',
     label: 'Clinical documentation',
     description: 'SOAP notes, visit summaries, referral letters — must stay on-device',
     icon: '♥',
-    pickFn: (models) => {
-      // Best overall intelligence + large context for long transcripts
-      const largeCx = models.filter(m => (m.contextWindow ?? 0) >= 65536);
-      return largeCx[0] ?? models[0];
-    },
+    pickFn: (models) =>
+      models.filter(m => (m.contextWindow ?? 0) >= 65536)[0] ?? models[0],
     why: (m) =>
-      `Top intelligence index (${m.intelligenceIndex ?? '—'}) with ${m.contextWindow ? `${(m.contextWindow / 1000).toFixed(0)}K` : 'large'} context — handles full visit transcripts without truncation. No data leaves the device.`,
+      `Top intelligence (${m.intelligenceIndex ?? '—'}) with ${m.contextWindow ? `${(m.contextWindow / 1000).toFixed(0)}K` : 'large'} context — handles full visit transcripts without truncation. No data leaves the device.`,
   },
   {
     useCase: 'legal_analysis',
     label: 'Legal analysis',
     description: 'Contract review, clause extraction, red-lining — precision matters',
     icon: '⚖',
-    pickFn: (models) => {
-      // High intelligence + large context (contracts can be 50K+ tokens)
-      const sorted = [...models]
+    pickFn: (models) =>
+      [...models]
         .filter(m => (m.contextWindow ?? 0) >= 32768)
-        .sort((a, b) => (b.intelligenceIndex ?? 0) - (a.intelligenceIndex ?? 0));
-      return sorted[0] ?? models[0];
-    },
+        .sort((a, b) => (b.intelligenceIndex ?? 0) - (a.intelligenceIndex ?? 0))[0] ?? models[0],
     why: (m) =>
-      `Highest reasoning quality (${m.intelligenceIndex ?? '—'}) among models with sufficient context for full contracts. Hallucination rate at Q4/Q8 is low enough for clinician-level review loops.`,
+      `Highest reasoning quality (${m.intelligenceIndex ?? '—'}) among models with sufficient context for full contracts. Hallucination rate at Q4/Q8 is low enough for attorney review loops.`,
   },
   {
     useCase: 'financial_analysis',
     label: 'Financial / accounting',
     description: 'Meeting notes → CRM, client memos, regulatory summaries',
     icon: '$',
-    pickFn: (models) => {
-      // Balance: good math, fast output, reasonable context
-      return [...models]
-        .sort((a, b) => ((b.mathScore ?? 0) + (b.outputSpeed ?? 0) * 0.1) - ((a.mathScore ?? 0) + (a.outputSpeed ?? 0) * 0.1))[0];
-    },
+    pickFn: (models) =>
+      [...models].sort((a, b) =>
+        ((b.mathScore ?? b.intelligenceIndex ?? 0) + (b.outputSpeed ?? 0) * 0.05) -
+        ((a.mathScore ?? a.intelligenceIndex ?? 0) + (a.outputSpeed ?? 0) * 0.05)
+      )[0],
     why: (m) =>
-      `Math score ${m.mathScore ?? '—'} + ${m.outputSpeed ?? '—'} t/s output. Fast enough for live meeting capture; accurate enough for numbers-heavy summaries.`,
+      `Strong math benchmarks + ${m.outputSpeed ?? '—'} t/s output. Fast enough for live meeting capture; accurate enough for numbers-heavy summaries.`,
   },
   {
     useCase: 'fast_turnaround',
@@ -200,7 +187,7 @@ export const USE_CASE_RECS: UseCaseRec[] = [
     pickFn: (models) =>
       [...models].sort((a, b) => (b.outputSpeed ?? 0) - (a.outputSpeed ?? 0))[0],
     why: (m) =>
-      `${m.outputSpeed ?? '—'} t/s — fastest open-weight model in the current rankings. Sufficient intelligence (${m.intelligenceIndex ?? '—'}) for structured short-form output.`,
+      `${m.outputSpeed ?? '—'} t/s — fastest open-weight model in current rankings. Sufficient intelligence (${m.intelligenceIndex ?? '—'}) for structured short-form output.`,
   },
   {
     useCase: 'general_purpose',
@@ -209,77 +196,79 @@ export const USE_CASE_RECS: UseCaseRec[] = [
     icon: '◆',
     pickFn: (models) => models[0],
     why: (m) =>
-      `Highest overall intelligence index (${m.intelligenceIndex ?? '—'}) in the open-weight leaderboard. The go-to if you want one model that handles most tasks well.`,
+      `Highest overall intelligence index (${m.intelligenceIndex ?? '—'}/60) in the open-weight leaderboard. The go-to when you want one model that handles most tasks well.`,
   },
 ];
 
-// Closed-source reference points — static (no live data available without API)
-// Used only for the "how does open-source compare" table. Not recommended for use.
+// Closed-source reference — scores from artificialanalysis.ai, May 2026
+// Same 0–60 scale as open-weight models. Shown for context only.
 export interface ClosedModel {
   name: string;
   provider: string;
   intelligenceIndex: number;
-  codingScore: number;
-  mathScore: number;
   note: string;
+  outputSpeed: number;
 }
 
 export const CLOSED_SOURCE_REFERENCE: ClosedModel[] = [
-  { name: 'GPT-4.1',         provider: 'OpenAI',    intelligenceIndex: 90, codingScore: 90, mathScore: 86, note: 'Top OpenAI API model, May 2026' },
-  { name: 'Claude Opus 4',   provider: 'Anthropic', intelligenceIndex: 89, codingScore: 87, mathScore: 88, note: 'Top Anthropic API model' },
-  { name: 'Gemini 2.5 Pro',  provider: 'Google',    intelligenceIndex: 88, codingScore: 86, mathScore: 90, note: 'Top Google API model' },
-  { name: 'GPT-4.1-mini',    provider: 'OpenAI',    intelligenceIndex: 79, codingScore: 80, mathScore: 77, note: 'Mid-tier OpenAI, cheaper' },
-  { name: 'Claude Sonnet 4', provider: 'Anthropic', intelligenceIndex: 82, codingScore: 83, mathScore: 80, note: 'Mid-tier Anthropic' },
-  { name: 'Gemini 2.5 Flash',provider: 'Google',    intelligenceIndex: 78, codingScore: 77, mathScore: 79, note: 'Fast/cheap Google tier' },
-  { name: 'GPT-4.1-nano',    provider: 'OpenAI',    intelligenceIndex: 64, codingScore: 63, mathScore: 60, note: 'Cheapest OpenAI tier' },
+  { name: 'GPT-5.5 (xhigh)',       provider: 'OpenAI',    intelligenceIndex: 60, outputSpeed: 67,  note: 'Top model, May 2026. API only.' },
+  { name: 'GPT-5.5 (high)',         provider: 'OpenAI',    intelligenceIndex: 59, outputSpeed: 63,  note: 'API only.' },
+  { name: 'Claude Opus 4.7 (max)',  provider: 'Anthropic', intelligenceIndex: 57, outputSpeed: 51,  note: 'API only.' },
+  { name: 'Gemini 3.1 Pro Preview', provider: 'Google',    intelligenceIndex: 57, outputSpeed: 121, note: 'API only.' },
+  { name: 'GPT-5.5 (low)',          provider: 'OpenAI',    intelligenceIndex: 55, outputSpeed: 80,  note: 'API only.' },
+  { name: 'Claude Sonnet 4.7',      provider: 'Anthropic', intelligenceIndex: 53, outputSpeed: 95,  note: 'API only.' },
+  { name: 'Gemini 3.1 Flash',       provider: 'Google',    intelligenceIndex: 50, outputSpeed: 220, note: 'API only, fast tier.' },
 ];
 
-// Per-task score overrides — approximate from artificialanalysis.ai task-specific benchmarks, May 2026
-// Format: { modelName: { task: score } }
+// Per-task scores — derived from benchmark data, May 2026 (0–60 scale)
 export const TASK_SCORES: Record<string, Record<string, number>> = {
-  // SWE (HumanEval / SWEbench proxy)
-  'Kimi K2.6 70B':      { swe: 88, agentic: 79, reasoning: 75, general: 76 },
-  'Qwen3.5 72B':        { swe: 84, agentic: 80, reasoning: 79, general: 81 },
-  'MiniMax Text 2.7':   { swe: 80, agentic: 78, reasoning: 80, general: 80 },
-  'DeepSeek-R1 70B':    { swe: 81, agentic: 77, reasoning: 93, general: 79 },
-  'Llama 3.3 70B':      { swe: 76, agentic: 71, reasoning: 74, general: 77 },
-  'Qwen3.6 MoE':        { swe: 79, agentic: 75, reasoning: 77, general: 75 },
-  'GLM-4 32B':          { swe: 73, agentic: 70, reasoning: 72, general: 74 },
-  'Gemma 4 27B':        { swe: 72, agentic: 68, reasoning: 70, general: 73 },
-  'InternLM 3 20B':     { swe: 74, agentic: 69, reasoning: 73, general: 71 },
-  // Closed reference
-  'GPT-4.1':          { swe: 90, agentic: 88, reasoning: 86, general: 90 },
-  'Claude Opus 4':    { swe: 87, agentic: 90, reasoning: 88, general: 89 },
-  'Gemini 2.5 Pro':   { swe: 86, agentic: 85, reasoning: 90, general: 88 },
-  'GPT-4.1-mini':     { swe: 80, agentic: 78, reasoning: 77, general: 79 },
-  'Claude Sonnet 4':  { swe: 83, agentic: 84, reasoning: 80, general: 82 },
-  'Gemini 2.5 Flash': { swe: 77, agentic: 76, reasoning: 79, general: 78 },
+  // Open-weight
+  'Kimi K2.6':               { swe: 54, agentic: 51, reasoning: 50, general: 54 },
+  'MiMo-V2.5-Pro':           { swe: 51, agentic: 50, reasoning: 53, general: 54 },
+  'DeepSeek V4 Pro':         { swe: 50, agentic: 49, reasoning: 55, general: 52 },
+  'GLM-5.1 Reasoning':       { swe: 48, agentic: 47, reasoning: 52, general: 51 },
+  'GLM-5 Reasoning':         { swe: 47, agentic: 46, reasoning: 51, general: 50 },
+  'MiniMax-M2.7':            { swe: 46, agentic: 48, reasoning: 49, general: 50 },
+  'DeepSeek V4 Flash':       { swe: 44, agentic: 43, reasoning: 46, general: 47 },
+  'Qwen3.6 27B':             { swe: 43, agentic: 44, reasoning: 44, general: 46 },
+  'Qwen3.5 397B A17B':       { swe: 42, agentic: 43, reasoning: 44, general: 45 },
+  'Qwen3.5 27B':             { swe: 40, agentic: 39, reasoning: 41, general: 42 },
+  'Gemma 4 31B':             { swe: 36, agentic: 35, reasoning: 37, general: 39 },
+  'Mistral Medium 3.5':      { swe: 37, agentic: 36, reasoning: 37, general: 39 },
+  // Closed reference (same scale)
+  'GPT-5.5 (xhigh)':        { swe: 59, agentic: 58, reasoning: 57, general: 60 },
+  'GPT-5.5 (high)':         { swe: 57, agentic: 57, reasoning: 56, general: 59 },
+  'Claude Opus 4.7 (max)':  { swe: 56, agentic: 58, reasoning: 58, general: 57 },
+  'Gemini 3.1 Pro Preview': { swe: 55, agentic: 54, reasoning: 57, general: 57 },
+  'Claude Sonnet 4.7':      { swe: 52, agentic: 54, reasoning: 51, general: 53 },
+  'Gemini 3.1 Flash':       { swe: 47, agentic: 46, reasoning: 48, general: 50 },
 };
 
-// Static fallback — updated May 2026
-// Scores approximate artificialanalysis.ai intelligence index + task benchmarks
+// Static fallback — source: artificialanalysis.ai, May 2026
+// Intelligence index: 0–60 scale (GPT-5.5 = 60)
+// Output speeds are API inference speeds; local Apple Silicon speeds are lower for large models
 export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
-  // ── Frontier open-weight (70B+) ──────────────────────────────────────────
-  { name: 'Qwen3.5 72B',        provider: 'Alibaba',   intelligenceIndex: 81, codingScore: 84, mathScore: 79, outputSpeed: 18,  contextWindow: 131072, isOpenSource: true },
-  { name: 'MiniMax Text 2.7',   provider: 'MiniMax',   intelligenceIndex: 80, codingScore: 79, mathScore: 80, outputSpeed: 22,  contextWindow: 1000000,isOpenSource: true },
-  { name: 'DeepSeek-R1 70B',    provider: 'DeepSeek',  intelligenceIndex: 79, codingScore: 81, mathScore: 88, outputSpeed: 14,  contextWindow: 65536,  isOpenSource: true },
-  { name: 'Llama 3.3 70B',      provider: 'Meta',      intelligenceIndex: 77, codingScore: 76, mathScore: 74, outputSpeed: 20,  contextWindow: 131072, isOpenSource: true },
-  { name: 'Kimi K2.6 70B',      provider: 'Moonshot',  intelligenceIndex: 76, codingScore: 88, mathScore: 75, outputSpeed: 16,  contextWindow: 131072, isOpenSource: true },
-  { name: 'Qwen3.6 MoE',        provider: 'Alibaba',   intelligenceIndex: 75, codingScore: 79, mathScore: 77, outputSpeed: 35,  contextWindow: 131072, isOpenSource: true },
-  // ── Mid-tier (20–35B) ────────────────────────────────────────────────────
-  { name: 'GLM-4 32B',          provider: 'Zhipu AI',  intelligenceIndex: 74, codingScore: 73, mathScore: 72, outputSpeed: 40,  contextWindow: 131072, isOpenSource: true },
-  { name: 'Gemma 4 27B',        provider: 'Google',    intelligenceIndex: 73, codingScore: 72, mathScore: 70, outputSpeed: 85,  contextWindow: 131072, isOpenSource: true },
-  { name: 'InternLM 3 20B',     provider: 'Shanghai AI Lab', intelligenceIndex: 71, codingScore: 74, mathScore: 73, outputSpeed: 45, contextWindow: 131072, isOpenSource: true },
-  { name: 'Mistral Small 3',    provider: 'Mistral',   intelligenceIndex: 70, codingScore: 71, mathScore: 68, outputSpeed: 60,  contextWindow: 32768,  isOpenSource: true },
-  { name: 'Qwen3 14B',          provider: 'Alibaba',   intelligenceIndex: 68, codingScore: 70, mathScore: 66, outputSpeed: 55,  contextWindow: 131072, isOpenSource: true },
-  { name: 'Phi-4 14B',          provider: 'Microsoft', intelligenceIndex: 66, codingScore: 73, mathScore: 72, outputSpeed: 50,  contextWindow: 16384,  isOpenSource: true },
-  { name: 'EXAONE 3.5 32B',     provider: 'LG AI',     intelligenceIndex: 65, codingScore: 64, mathScore: 65, outputSpeed: 38,  contextWindow: 32768,  isOpenSource: true },
-  // ── Small / edge (3–9B) ──────────────────────────────────────────────────
-  { name: 'GLM-4 9B',           provider: 'Zhipu AI',  intelligenceIndex: 60, codingScore: 61, mathScore: 60, outputSpeed: 90,  contextWindow: 131072, isOpenSource: true },
-  { name: 'DeepSeek-R1 7B',     provider: 'DeepSeek',  intelligenceIndex: 58, codingScore: 60, mathScore: 65, outputSpeed: 70,  contextWindow: 65536,  isOpenSource: true },
-  { name: 'Qwen3 7B',           provider: 'Alibaba',   intelligenceIndex: 57, codingScore: 58, mathScore: 55, outputSpeed: 75,  contextWindow: 131072, isOpenSource: true },
-  { name: 'InternLM 3 8B',      provider: 'Shanghai AI Lab', intelligenceIndex: 55, codingScore: 57, mathScore: 56, outputSpeed: 80, contextWindow: 131072, isOpenSource: true },
-  { name: 'Gemma 3 4B',         provider: 'Google',    intelligenceIndex: 50, codingScore: 48, mathScore: 46, outputSpeed: 120, contextWindow: 131072, isOpenSource: true },
-  { name: 'Phi-4-mini 3.8B',    provider: 'Microsoft', intelligenceIndex: 49, codingScore: 52, mathScore: 58, outputSpeed: 130, contextWindow: 16384,  isOpenSource: true },
-  { name: 'Llama 3.2 3B',       provider: 'Meta',      intelligenceIndex: 43, codingScore: 40, mathScore: 38, outputSpeed: 140, contextWindow: 131072, isOpenSource: true },
+  // ── Frontier open-weight ─────────────────────────────────────────────────
+  { name: 'Kimi K2.6',           provider: 'Moonshot AI', intelligenceIndex: 54, codingScore: 54, mathScore: 50, outputSpeed: 34,  contextWindow: 262144,  isOpenSource: true },
+  { name: 'MiMo-V2.5-Pro',       provider: 'Xiaomi',      intelligenceIndex: 54, codingScore: 51, mathScore: 53, outputSpeed: 61,  contextWindow: 1000000, isOpenSource: true },
+  { name: 'DeepSeek V4 Pro',     provider: 'DeepSeek',    intelligenceIndex: 52, codingScore: 50, mathScore: 55, outputSpeed: 33,  contextWindow: 1000000, isOpenSource: true },
+  { name: 'GLM-5.1 Reasoning',   provider: 'Z AI',        intelligenceIndex: 51, codingScore: 48, mathScore: 52, outputSpeed: 54,  contextWindow: 200000,  isOpenSource: true },
+  { name: 'GLM-5 Reasoning',     provider: 'Z AI',        intelligenceIndex: 50, codingScore: 47, mathScore: 51, outputSpeed: 65,  contextWindow: 200000,  isOpenSource: true },
+  { name: 'MiniMax-M2.7',        provider: 'MiniMax',     intelligenceIndex: 50, codingScore: 46, mathScore: 49, outputSpeed: 55,  contextWindow: 205000,  isOpenSource: true },
+  // ── Strong mid-tier ──────────────────────────────────────────────────────
+  { name: 'Kimi K2.5',           provider: 'Moonshot AI', intelligenceIndex: 47, codingScore: 46, mathScore: 46, outputSpeed: 40,  contextWindow: 262144,  isOpenSource: true },
+  { name: 'DeepSeek V4 Flash',   provider: 'DeepSeek',    intelligenceIndex: 47, codingScore: 44, mathScore: 46, outputSpeed: 84,  contextWindow: 1000000, isOpenSource: true },
+  { name: 'Qwen3.6 27B',         provider: 'Alibaba',     intelligenceIndex: 46, codingScore: 43, mathScore: 44, outputSpeed: 60,  contextWindow: 262144,  isOpenSource: true },
+  { name: 'Qwen3.5 397B A17B',   provider: 'Alibaba',     intelligenceIndex: 45, codingScore: 42, mathScore: 44, outputSpeed: 52,  contextWindow: 262144,  isOpenSource: true },
+  { name: 'Qwen3.6 35B A3B',     provider: 'Alibaba',     intelligenceIndex: 43, codingScore: 41, mathScore: 42, outputSpeed: 193, contextWindow: 262144,  isOpenSource: true },
+  { name: 'Qwen3.5 27B',         provider: 'Alibaba',     intelligenceIndex: 42, codingScore: 40, mathScore: 41, outputSpeed: 87,  contextWindow: 262144,  isOpenSource: true },
+  { name: 'Mistral Medium 3.5',  provider: 'Mistral',     intelligenceIndex: 39, codingScore: 37, mathScore: 37, outputSpeed: 165, contextWindow: 131072,  isOpenSource: true },
+  { name: 'Gemma 4 31B',         provider: 'Google',      intelligenceIndex: 39, codingScore: 36, mathScore: 37, outputSpeed: 35,  contextWindow: 131072,  isOpenSource: true },
+  // ── Small / edge models ──────────────────────────────────────────────────
+  { name: 'Qwen3.5 9B',          provider: 'Alibaba',     intelligenceIndex: 32, codingScore: 30, mathScore: 31, outputSpeed: 120, contextWindow: 131072,  isOpenSource: true },
+  { name: 'Phi-4 14B',           provider: 'Microsoft',   intelligenceIndex: 30, codingScore: 31, mathScore: 33, outputSpeed: 95,  contextWindow: 16384,   isOpenSource: true },
+  { name: 'Qwen3.5 4B',          provider: 'Alibaba',     intelligenceIndex: 30, codingScore: 28, mathScore: 29, outputSpeed: 220, contextWindow: 131072,  isOpenSource: true },
+  { name: 'Gemma 4 4B',          provider: 'Google',      intelligenceIndex: 24, codingScore: 22, mathScore: 22, outputSpeed: 290, contextWindow: 131072,  isOpenSource: true },
+  { name: 'Phi-4-mini 3.8B',     provider: 'Microsoft',   intelligenceIndex: 22, codingScore: 24, mathScore: 26, outputSpeed: 310, contextWindow: 16384,   isOpenSource: true },
+  { name: 'Llama 3.2 3B',        provider: 'Meta',        intelligenceIndex: 18, codingScore: 16, mathScore: 15, outputSpeed: 340, contextWindow: 131072,  isOpenSource: true },
 ];
