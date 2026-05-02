@@ -37,11 +37,9 @@ const sorted = industries.sort((a, b) => a.data.name.localeCompare(b.data.name))
   </div>
 
   <div class="max-w-wide mx-auto px-5 md:px-10 py-16 md:py-20">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px" style="background:#424245;border:1px solid #424245;">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {sorted.map(ind => (
-        <div style="background:#000;">
-          <IndustryCard industry={ind} experimentCount={expCount[ind.slug] ?? 0} />
-        </div>
+        <IndustryCard industry={ind} experimentCount={expCount[ind.slug] ?? 0} />
       ))}
     </div>
 

@@ -216,9 +216,9 @@ const expCountByIndustry = allExperiments.reduce<Record<string, number>>((acc, e
         </div>
         <a href="/industries" class="link-arrow text-sm shrink-0">All industries →</a>
       </div>
-      <div class="reveal grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px" style="background:#424245;border:1px solid #424245;">
+      <div class="reveal grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {allIndustries.map(ind => (
-          <div style="background:#000;"><IndustryCard industry={ind} experimentCount={expCountByIndustry[ind.slug] ?? 0} /></div>
+          <IndustryCard industry={ind} experimentCount={expCountByIndustry[ind.slug] ?? 0} />
         ))}
       </div>
     </div>

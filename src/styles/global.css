@@ -193,7 +193,7 @@
     inset: 0;
     background: radial-gradient(
       600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-      rgba(155,93,229,0.13),
+      rgba(155,93,229,0.15),
       transparent 40%
     );
     opacity: 0;
@@ -202,8 +202,16 @@
     border-radius: inherit;
     z-index: 0;
   }
-  .glow-card:hover::before { opacity: 1; }
+  .glow-card:hover::before {
+    opacity: 1;
+    animation: glow-breathe 2.2s ease-in-out infinite;
+  }
   .glow-card > * { position: relative; z-index: 1; }
+
+  @keyframes glow-breathe {
+    0%, 100% { opacity: 0.75; }
+    50%       { opacity: 1; }
+  }
 
   /* ── Spinning conic border (cluster card) ── */
   .conic-border {
