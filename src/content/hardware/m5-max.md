@@ -5,7 +5,7 @@ ramGb: 128
 chip: "Apple M5 Max"
 tier: "workstation"
 suitableModels:
-  - "Kimi K2.6 Q4_K_M — #1 open-weight benchmark (54/60 on AA Intelligence Index)"
+  - "Kimi K2.6 Q4_K_M — #1 open-weight benchmark (54/100 on AA Intelligence Index)"
   - "Kimi K2.6 Q8 — full 8-bit precision, highest output quality (~18 t/s)"
   - "Llama 3.3 70B Q8 — full-precision Meta flagship"
   - "DeepSeek-R1 70B Q8 — full-precision reasoning with explicit CoT"
@@ -35,9 +35,9 @@ More importantly: **Q8 quantization of 70B models becomes practical.** Q8 is ful
 
 ## The models worth running at this tier
 
-**Kimi K2.6** (Moonshot AI) is the current #1 open-weight model by the Artificial Analysis Intelligence Index — scoring 54/60, within 6 points of GPT-5.5 (60/60). It is specifically strong on coding and long-context structured reasoning. Running at ~18 t/s on M5 Max at Q8.
+**Kimi K2.6** (Moonshot AI) is the current #1 open-weight model by the Artificial Analysis Intelligence Index — scoring 54/100 — within 6 points of GPT-5.5 (60/100, current world ceiling). It is specifically strong on coding and long-context structured reasoning. Running at ~18 t/s on M5 Max at Q8.
 
-**MiMo-V2.5-Pro** (Xiaomi) ties Kimi K2.6 at 54/60 and has a 1M-token context window — the largest available in open-weight models as of May 2026. Strong on math and reasoning tasks.
+**MiMo-V2.5-Pro** (Xiaomi) ties Kimi K2.6 at 54/100 and has a 1M-token context window — the largest available in open-weight models as of May 2026. Strong on math and reasoning tasks.
 
 **DeepSeek-R1 70B** is the reasoning model of choice when your task requires explainable chain-of-thought. For clinical documentation that needs to show its reasoning, or legal analysis where the logic chain matters, R1 shows its work in a way other models don't.
 

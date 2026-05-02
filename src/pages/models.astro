@@ -222,7 +222,10 @@ const buildDate = new Date().toLocaleDateString('en-US', {
               <th class="text-left px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">#</th>
               <th class="text-left px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Model</th>
               <th class="text-left px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Provider</th>
-              <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Intelligence</th>
+              <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">
+                Intelligence
+                <span class="block normal-case tracking-normal text-ash/50 text-[0.6rem] font-normal">0–100 · best is 60</span>
+              </th>
               <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Coding</th>
               <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Math</th>
               <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Speed (t/s)</th>
@@ -252,7 +255,7 @@ const buildDate = new Date().toLocaleDateString('en-US', {
       </div>
 
       <p class="mt-6 text-xs text-ash leading-relaxed reveal">
-        Intelligence Index is artificialanalysis.ai's composite quality score.
+        Intelligence Index is artificialanalysis.ai's composite quality score (0–100 scale). Scores look low because the benchmarks are hard: Humanity's Last Exam, GPQA Diamond, SciCode, and 7 other graduate-level evals. The current world ceiling is GPT-5.5 at 60 — no model has cracked 60 yet. A score of 54 means the model correctly handled 54% of that extremely difficult mix.
         All models have publicly released weights — no API key required to run them.
       </p>
     </section>

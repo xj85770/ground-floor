@@ -1,6 +1,8 @@
 // Build-time fetch from artificialanalysis.ai API
 // Returns only open-weight/open-source models, sorted by intelligence index
-// Intelligence Index is on a 0–60 scale (GPT-5.5 tops at 60 as of May 2026)
+// Intelligence Index is 0–100 scale. Current world ceiling is GPT-5.5 at 60 (May 2026).
+// Scores are low because benchmarks are hard: Humanity's Last Exam, GPQA Diamond, SciCode, etc.
+// A score of 54 means the model answered 54% of an extremely difficult multi-domain eval mix.
 
 export interface AAModel {
   name: string;
@@ -196,12 +198,12 @@ export const USE_CASE_RECS: UseCaseRec[] = [
     icon: '◆',
     pickFn: (models) => models[0],
     why: (m) =>
-      `Highest overall intelligence index (${m.intelligenceIndex ?? '—'}/60) in the open-weight leaderboard. The go-to when you want one model that handles most tasks well.`,
+      `Highest overall intelligence index (${m.intelligenceIndex ?? '—'}/100) in the open-weight leaderboard. The go-to when you want one model that handles most tasks well.`,
   },
 ];
 
 // Closed-source reference — scores from artificialanalysis.ai, May 2026
-// Same 0–60 scale as open-weight models. Shown for context only.
+// Same 0–100 scale. Shown for context only.
 export interface ClosedModel {
   name: string;
   provider: string;
@@ -220,7 +222,7 @@ export const CLOSED_SOURCE_REFERENCE: ClosedModel[] = [
   { name: 'Gemini 3.1 Flash',       provider: 'Google',    intelligenceIndex: 50, outputSpeed: 220, note: 'API only, fast tier.' },
 ];
 
-// Per-task scores — derived from benchmark data, May 2026 (0–60 scale)
+// Per-task scores — derived from benchmark data, May 2026 (0–100 scale, current ceiling ~60)
 export const TASK_SCORES: Record<string, Record<string, number>> = {
   // Open-weight
   'Kimi K2.6':               { swe: 54, agentic: 51, reasoning: 50, general: 54 },
@@ -245,7 +247,7 @@ export const TASK_SCORES: Record<string, Record<string, number>> = {
 };
 
 // Static fallback — source: artificialanalysis.ai, May 2026
-// Intelligence index: 0–60 scale (GPT-5.5 = 60)
+// Intelligence index: 0–100 scale. No model has scored above 60 yet (May 2026).
 // Output speeds are API inference speeds; local Apple Silicon speeds are lower for large models
 export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
   // ── Frontier open-weight ─────────────────────────────────────────────────
