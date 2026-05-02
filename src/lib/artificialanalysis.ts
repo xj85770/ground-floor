@@ -53,6 +53,9 @@ const OPEN_SOURCE_KEYWORDS = [
   'llama', 'mistral', 'qwen', 'gemma', 'deepseek', 'phi', 'falcon',
   'vicuna', 'orca', 'wizard', 'openchat', 'zephyr', 'solar',
   'starling', 'yi-', 'mixtral', 'kimi', 'command-r',
+  // Chinese open-weight ecosystem
+  'minimax', 'glm', 'internlm', 'intern-lm', 'baichuan', 'exaone', 'olmo',
+  'hunyuan', 'step-', 'marco', 'skywork', 'moonshot',
 ];
 
 function isOpenWeight(m: RawAAModel): boolean {
@@ -235,12 +238,15 @@ export const CLOSED_SOURCE_REFERENCE: ClosedModel[] = [
 // Format: { modelName: { task: score } }
 export const TASK_SCORES: Record<string, Record<string, number>> = {
   // SWE (HumanEval / SWEbench proxy)
-  'Kimi K2.6 70B':    { swe: 88, agentic: 79, reasoning: 75, general: 76 },
-  'Qwen3.5 72B':      { swe: 84, agentic: 80, reasoning: 79, general: 81 },
-  'DeepSeek-R1 70B':  { swe: 81, agentic: 77, reasoning: 93, general: 79 },
-  'Llama 3.3 70B':    { swe: 76, agentic: 71, reasoning: 74, general: 77 },
-  'Qwen3.6 MoE':      { swe: 79, agentic: 75, reasoning: 77, general: 75 },
-  'Gemma 4 27B':      { swe: 72, agentic: 68, reasoning: 70, general: 73 },
+  'Kimi K2.6 70B':      { swe: 88, agentic: 79, reasoning: 75, general: 76 },
+  'Qwen3.5 72B':        { swe: 84, agentic: 80, reasoning: 79, general: 81 },
+  'MiniMax Text 2.7':   { swe: 80, agentic: 78, reasoning: 80, general: 80 },
+  'DeepSeek-R1 70B':    { swe: 81, agentic: 77, reasoning: 93, general: 79 },
+  'Llama 3.3 70B':      { swe: 76, agentic: 71, reasoning: 74, general: 77 },
+  'Qwen3.6 MoE':        { swe: 79, agentic: 75, reasoning: 77, general: 75 },
+  'GLM-4 32B':          { swe: 73, agentic: 70, reasoning: 72, general: 74 },
+  'Gemma 4 27B':        { swe: 72, agentic: 68, reasoning: 70, general: 73 },
+  'InternLM 3 20B':     { swe: 74, agentic: 69, reasoning: 73, general: 71 },
   // Closed reference
   'GPT-4.1':          { swe: 90, agentic: 88, reasoning: 86, general: 90 },
   'Claude Opus 4':    { swe: 87, agentic: 90, reasoning: 88, general: 89 },
@@ -251,19 +257,29 @@ export const TASK_SCORES: Record<string, Record<string, number>> = {
 };
 
 // Static fallback — updated May 2026
+// Scores approximate artificialanalysis.ai intelligence index + task benchmarks
 export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
-  { name: 'Qwen3.5 72B',      provider: 'Alibaba',   intelligenceIndex: 81, codingScore: 84, mathScore: 79, outputSpeed: 18,  contextWindow: 131072, isOpenSource: true },
-  { name: 'DeepSeek-R1 70B',  provider: 'DeepSeek',  intelligenceIndex: 79, codingScore: 81, mathScore: 88, outputSpeed: 14,  contextWindow: 65536,  isOpenSource: true },
-  { name: 'Llama 3.3 70B',    provider: 'Meta',      intelligenceIndex: 77, codingScore: 76, mathScore: 74, outputSpeed: 20,  contextWindow: 131072, isOpenSource: true },
-  { name: 'Kimi K2.6 70B',    provider: 'Moonshot',  intelligenceIndex: 76, codingScore: 88, mathScore: 75, outputSpeed: 16,  contextWindow: 131072, isOpenSource: true },
-  { name: 'Qwen3.6 MoE',      provider: 'Alibaba',   intelligenceIndex: 75, codingScore: 79, mathScore: 77, outputSpeed: 35,  contextWindow: 131072, isOpenSource: true },
-  { name: 'Gemma 4 27B',      provider: 'Google',    intelligenceIndex: 73, codingScore: 72, mathScore: 70, outputSpeed: 85,  contextWindow: 131072, isOpenSource: true },
-  { name: 'Mistral Small 3',  provider: 'Mistral',   intelligenceIndex: 70, codingScore: 71, mathScore: 68, outputSpeed: 60,  contextWindow: 32768,  isOpenSource: true },
-  { name: 'Qwen3 14B',        provider: 'Alibaba',   intelligenceIndex: 68, codingScore: 70, mathScore: 66, outputSpeed: 55,  contextWindow: 131072, isOpenSource: true },
-  { name: 'Phi-4 14B',        provider: 'Microsoft', intelligenceIndex: 66, codingScore: 73, mathScore: 72, outputSpeed: 50,  contextWindow: 16384,  isOpenSource: true },
-  { name: 'DeepSeek-R1 7B',   provider: 'DeepSeek',  intelligenceIndex: 58, codingScore: 60, mathScore: 65, outputSpeed: 70,  contextWindow: 65536,  isOpenSource: true },
-  { name: 'Qwen3 7B',         provider: 'Alibaba',   intelligenceIndex: 57, codingScore: 58, mathScore: 55, outputSpeed: 75,  contextWindow: 131072, isOpenSource: true },
-  { name: 'Gemma 3 4B',       provider: 'Google',    intelligenceIndex: 50, codingScore: 48, mathScore: 46, outputSpeed: 120, contextWindow: 131072, isOpenSource: true },
-  { name: 'Phi-4-mini 3.8B',  provider: 'Microsoft', intelligenceIndex: 49, codingScore: 52, mathScore: 58, outputSpeed: 130, contextWindow: 16384,  isOpenSource: true },
-  { name: 'Llama 3.2 3B',     provider: 'Meta',      intelligenceIndex: 43, codingScore: 40, mathScore: 38, outputSpeed: 140, contextWindow: 131072, isOpenSource: true },
+  // ── Frontier open-weight (70B+) ──────────────────────────────────────────
+  { name: 'Qwen3.5 72B',        provider: 'Alibaba',   intelligenceIndex: 81, codingScore: 84, mathScore: 79, outputSpeed: 18,  contextWindow: 131072, isOpenSource: true },
+  { name: 'MiniMax Text 2.7',   provider: 'MiniMax',   intelligenceIndex: 80, codingScore: 79, mathScore: 80, outputSpeed: 22,  contextWindow: 1000000,isOpenSource: true },
+  { name: 'DeepSeek-R1 70B',    provider: 'DeepSeek',  intelligenceIndex: 79, codingScore: 81, mathScore: 88, outputSpeed: 14,  contextWindow: 65536,  isOpenSource: true },
+  { name: 'Llama 3.3 70B',      provider: 'Meta',      intelligenceIndex: 77, codingScore: 76, mathScore: 74, outputSpeed: 20,  contextWindow: 131072, isOpenSource: true },
+  { name: 'Kimi K2.6 70B',      provider: 'Moonshot',  intelligenceIndex: 76, codingScore: 88, mathScore: 75, outputSpeed: 16,  contextWindow: 131072, isOpenSource: true },
+  { name: 'Qwen3.6 MoE',        provider: 'Alibaba',   intelligenceIndex: 75, codingScore: 79, mathScore: 77, outputSpeed: 35,  contextWindow: 131072, isOpenSource: true },
+  // ── Mid-tier (20–35B) ────────────────────────────────────────────────────
+  { name: 'GLM-4 32B',          provider: 'Zhipu AI',  intelligenceIndex: 74, codingScore: 73, mathScore: 72, outputSpeed: 40,  contextWindow: 131072, isOpenSource: true },
+  { name: 'Gemma 4 27B',        provider: 'Google',    intelligenceIndex: 73, codingScore: 72, mathScore: 70, outputSpeed: 85,  contextWindow: 131072, isOpenSource: true },
+  { name: 'InternLM 3 20B',     provider: 'Shanghai AI Lab', intelligenceIndex: 71, codingScore: 74, mathScore: 73, outputSpeed: 45, contextWindow: 131072, isOpenSource: true },
+  { name: 'Mistral Small 3',    provider: 'Mistral',   intelligenceIndex: 70, codingScore: 71, mathScore: 68, outputSpeed: 60,  contextWindow: 32768,  isOpenSource: true },
+  { name: 'Qwen3 14B',          provider: 'Alibaba',   intelligenceIndex: 68, codingScore: 70, mathScore: 66, outputSpeed: 55,  contextWindow: 131072, isOpenSource: true },
+  { name: 'Phi-4 14B',          provider: 'Microsoft', intelligenceIndex: 66, codingScore: 73, mathScore: 72, outputSpeed: 50,  contextWindow: 16384,  isOpenSource: true },
+  { name: 'EXAONE 3.5 32B',     provider: 'LG AI',     intelligenceIndex: 65, codingScore: 64, mathScore: 65, outputSpeed: 38,  contextWindow: 32768,  isOpenSource: true },
+  // ── Small / edge (3–9B) ──────────────────────────────────────────────────
+  { name: 'GLM-4 9B',           provider: 'Zhipu AI',  intelligenceIndex: 60, codingScore: 61, mathScore: 60, outputSpeed: 90,  contextWindow: 131072, isOpenSource: true },
+  { name: 'DeepSeek-R1 7B',     provider: 'DeepSeek',  intelligenceIndex: 58, codingScore: 60, mathScore: 65, outputSpeed: 70,  contextWindow: 65536,  isOpenSource: true },
+  { name: 'Qwen3 7B',           provider: 'Alibaba',   intelligenceIndex: 57, codingScore: 58, mathScore: 55, outputSpeed: 75,  contextWindow: 131072, isOpenSource: true },
+  { name: 'InternLM 3 8B',      provider: 'Shanghai AI Lab', intelligenceIndex: 55, codingScore: 57, mathScore: 56, outputSpeed: 80, contextWindow: 131072, isOpenSource: true },
+  { name: 'Gemma 3 4B',         provider: 'Google',    intelligenceIndex: 50, codingScore: 48, mathScore: 46, outputSpeed: 120, contextWindow: 131072, isOpenSource: true },
+  { name: 'Phi-4-mini 3.8B',    provider: 'Microsoft', intelligenceIndex: 49, codingScore: 52, mathScore: 58, outputSpeed: 130, contextWindow: 16384,  isOpenSource: true },
+  { name: 'Llama 3.2 3B',       provider: 'Meta',      intelligenceIndex: 43, codingScore: 40, mathScore: 38, outputSpeed: 140, contextWindow: 131072, isOpenSource: true },
 ];
