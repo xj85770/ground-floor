@@ -85,9 +85,25 @@ const buildDate = new Date().toLocaleDateString('en-US', {
     <!-- Head-to-head by task -->
     <section class="mb-20">
       <h2 class="font-display text-2xl font-semibold text-chalk mb-2 reveal">Head-to-head by task</h2>
-      <p class="text-silver text-sm mb-10 reveal">
+      <p class="text-silver text-sm mb-3 reveal">
         Open-weight models (purple) ranked alongside closed APIs (grey) for each task type.
         Closed scores are included only as reference — they require API keys and send your data off-device.
+      </p>
+      <p class="text-xs text-ash mb-10 reveal inline-flex items-center gap-2">
+        Scores are on a 0–100 scale (Artificial Analysis Intelligence Index).
+        <span class="info-tip" style="display:inline-flex;">
+          <span class="info-tip-icon">i</span>
+          <span class="info-tip-body">
+            <strong style="color:#e5e5ea; display:block; margin-bottom:6px;">Why are scores only 40–60?</strong>
+            The 0–100 scale is based on benchmarks so hard that no AI has scored above 60 yet. The current world record is GPT-5.5 at 60.<br /><br />
+            These benchmarks are designed to find failure modes, not measure everyday capability:<br /><br />
+            <span style="color:#e5e5ea;">· Humanity's Last Exam</span> — expert-contributed questions specifically designed to stump AI<br />
+            <span style="color:#e5e5ea;">· GPQA Diamond</span> — PhD-level science problems<br />
+            <span style="color:#e5e5ea;">· SciCode</span> — write research-grade scientific code<br />
+            <span style="color:#e5e5ea;">· Terminal-Bench Hard</span> — shell commands that actually run<br /><br />
+            For everyday tasks — writing, summarizing, drafting docs — models perform far better than these scores suggest. The benchmarks exist to reveal what's still broken, not what already works.
+          </span>
+        </span>
       </p>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -223,8 +239,21 @@ const buildDate = new Date().toLocaleDateString('en-US', {
               <th class="text-left px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Model</th>
               <th class="text-left px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Provider</th>
               <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">
-                Intelligence
-                <span class="block normal-case tracking-normal text-ash/50 text-[0.6rem] font-normal">0–100 · best is 60</span>
+                <span class="inline-flex items-center justify-end gap-1.5">
+                  Intelligence
+                  <span class="info-tip">
+                    <span class="info-tip-icon">i</span>
+                    <span class="info-tip-body">
+                      <strong style="color:#e5e5ea; display:block; margin-bottom:6px;">Why do scores look so low?</strong>
+                      This is a <strong style="color:#9b5de5;">0–100 scale</strong> — but no AI model in the world has scored above 60 yet. The benchmarks are intentionally brutal:<br /><br />
+                      <span style="color:#e5e5ea;">· Humanity's Last Exam</span> — questions designed specifically to stump AI, contributed by experts worldwide<br />
+                      <span style="color:#e5e5ea;">· GPQA Diamond</span> — PhD-level biology, chemistry, physics<br />
+                      <span style="color:#e5e5ea;">· SciCode</span> — write code that solves real scientific research problems<br />
+                      <span style="color:#e5e5ea;">· Terminal-Bench Hard</span> — shell tasks that actually execute<br /><br />
+                      A score of <strong style="color:#9b5de5;">54</strong> means the model correctly handled 54% of that mix. A poem request would score 99. These benchmarks exist to find where models still fail — not celebrate what they can already do.
+                    </span>
+                  </span>
+                </span>
               </th>
               <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Coding</th>
               <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Math</th>

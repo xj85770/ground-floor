@@ -213,6 +213,73 @@
     50%       { opacity: 1; }
   }
 
+  /* ── Info tooltip (hover popover) ── */
+  .info-tip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+  .info-tip-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    font-size: 9px;
+    font-family: var(--font-mono, monospace);
+    font-weight: 600;
+    cursor: default;
+    color: #6e6e73;
+    border: 1px solid #424245;
+    background: #1c1c1e;
+    transition: color 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+  }
+  .info-tip:hover .info-tip-icon {
+    color: #9b5de5;
+    border-color: rgba(155,93,229,0.5);
+  }
+  .info-tip-body {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 280px;
+    padding: 14px 16px;
+    background: #1c1c1e;
+    border: 1px solid #424245;
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(155,93,229,0.1);
+    font-size: 11px;
+    line-height: 1.6;
+    color: #a1a1a6;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 100;
+    text-align: left;
+    font-family: inherit;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: normal;
+  }
+  /* Arrow */
+  .info-tip-body::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #424245;
+  }
+  .info-tip:hover .info-tip-body {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
   /* ── Spinning conic border (cluster card) ── */
   .conic-border {
     position: relative;
