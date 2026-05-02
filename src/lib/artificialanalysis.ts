@@ -13,6 +13,8 @@ export interface AAModel {
   outputSpeed: number | null; // tokens/sec (API speed from AA; local Apple Silicon speeds differ)
   contextWindow: number | null;
   isOpenSource: boolean;
+  requiresCluster?: boolean; // needs TB5 RDMA cluster (256 GB effective, 244 GB usable)
+  clusterNote?: string;      // what quantization / why it needs the cluster
 }
 
 export type UseCase =
@@ -237,6 +239,9 @@ export const TASK_SCORES: Record<string, Record<string, number>> = {
   'Qwen3.5 27B':             { swe: 40, agentic: 39, reasoning: 41, general: 42 },
   'Gemma 4 31B':             { swe: 36, agentic: 35, reasoning: 37, general: 39 },
   'Mistral Medium 3.5':      { swe: 37, agentic: 36, reasoning: 37, general: 39 },
+  // RDMA cluster models
+  'DeepSeek-R1 671B':          { swe: 52, agentic: 53, reasoning: 58, general: 55 },
+  'Qwen3.5 235B A22B Q8':      { swe: 49, agentic: 50, reasoning: 51, general: 50 },
   // Closed reference (same scale)
   'GPT-5.5 (xhigh)':        { swe: 59, agentic: 58, reasoning: 57, general: 60 },
   'GPT-5.5 (high)':         { swe: 57, agentic: 57, reasoning: 56, general: 59 },
@@ -245,6 +250,152 @@ export const TASK_SCORES: Record<string, Record<string, number>> = {
   'Claude Sonnet 4.7':      { swe: 52, agentic: 54, reasoning: 51, general: 53 },
   'Gemini 3.1 Flash':       { swe: 47, agentic: 46, reasoning: 48, general: 50 },
 };
+
+// ── Human intelligence tier system ─────────────────────────────────────────
+// Mapped to the 0–100 Intelligence Index scale.
+// Tiers are ordered highest → lowest; getTier() returns the first match.
+
+export interface Tier {
+  label: string;
+  shortLabel: string;
+  min: number;
+  max: number;
+  accent: string;
+  bg: string;
+  border: string;
+  description: string;
+  skills: string[];
+}
+
+export const TIERS: Tier[] = [
+  {
+    label: 'PhD · Frontier research',
+    shortLabel: 'Frontier PhD',
+    min: 68, max: 100,
+    accent: '#e879f9', bg: 'rgba(232,121,249,0.12)', border: 'rgba(232,121,249,0.3)',
+    description: 'Generates novel hypotheses; solves open research problems; produces work that could advance a field.',
+    skills: [
+      'Proposes and tests original research hypotheses not in the training corpus',
+      'Identifies unsolved problems at the edge of a scientific field',
+      'Writes grant proposals reviewers cannot distinguish from expert submissions',
+      'Writes poetry with genuine stylistic innovation — not imitation of any existing poet',
+    ],
+  },
+  {
+    label: 'PhD with distinction',
+    shortLabel: 'PhD+',
+    min: 60, max: 67,
+    accent: '#c084fc', bg: 'rgba(192,132,252,0.12)', border: 'rgba(192,132,252,0.3)',
+    description: 'Systematic expert-level analysis across multiple disciplines. Current world ceiling — GPT-5.5 scores 60.',
+    skills: [
+      'Identifies factual errors and methodological flaws in published papers',
+      'Synthesizes across unrelated disciplines to surface non-obvious connections',
+      'Produces research-quality writing that could pass peer review',
+      'Writes poetry with genuine literary merit a reviewer could attribute to a published poet',
+    ],
+  },
+  {
+    label: 'PhD',
+    shortLabel: 'PhD',
+    min: 53, max: 59,
+    accent: '#a78bfa', bg: 'rgba(167,139,250,0.12)', border: 'rgba(167,139,250,0.3)',
+    description: 'Tackles novel research questions; comparable to a junior faculty member in a specialized domain.',
+    skills: [
+      'Identifies gaps in existing literature and proposes studies to fill them',
+      'Produces publishable draft sections of a scientific paper',
+      'Reviews code and identifies subtle algorithmic inefficiencies across a large codebase',
+      'Writes a poem using meter, imagery, and controlling conceit in a unified way',
+    ],
+  },
+  {
+    label: 'Graduate specialist + real world',
+    shortLabel: 'Grad Specialist',
+    min: 45, max: 52,
+    accent: '#60a5fa', bg: 'rgba(96,165,250,0.10)', border: 'rgba(96,165,250,0.25)',
+    description: 'Domain expertise applied to messy, real-world inputs — the ambiguity professionals encounter daily.',
+    skills: [
+      'Identifies subtle contradictions spread across a 50-page contract',
+      'Writes a technically accurate oncology referral letter directly from raw visit notes',
+      'Flags methodological problems in a clinical trial design narrative',
+      'Writes an original sonnet with correct meter and a genuine emotional argument',
+    ],
+  },
+  {
+    label: 'Graduate',
+    shortLabel: 'Graduate',
+    min: 36, max: 44,
+    accent: '#34d399', bg: 'rgba(52,211,153,0.10)', border: 'rgba(52,211,153,0.25)',
+    description: 'Synthesizes research across papers; writes production code; handles structured professional tasks.',
+    skills: [
+      'Reads five research papers and synthesizes their conclusions into a coherent argument',
+      'Builds a working REST API from a spec without scaffolding',
+      'Identifies clause-level issues in a standard commercial contract',
+      'Drafts a clinical SOAP note from a visit transcript',
+      'Analyzes poetic technique using critical theory vocabulary',
+    ],
+  },
+  {
+    label: 'Smart undergrad',
+    shortLabel: 'Smart Undergrad',
+    min: 28, max: 35,
+    accent: '#fbbf24', bg: 'rgba(251,191,36,0.10)', border: 'rgba(251,191,36,0.25)',
+    description: 'Competent at structured academic tasks; writes functional code; reasons across a single domain.',
+    skills: [
+      'Writes a literature review with accurate citations and a coherent argument',
+      'Debugs moderately complex code across multiple files',
+      'Drafts a business proposal with coherent financial rationale',
+      'Writes a structured legal argument at a 1L level',
+      'Writes a sonnet with correct rhyme scheme, iambic meter, and a volta',
+    ],
+  },
+  {
+    label: 'Smart high school',
+    shortLabel: 'Smart HS',
+    min: 21, max: 27,
+    accent: '#fb923c', bg: 'rgba(251,146,60,0.10)', border: 'rgba(251,146,60,0.25)',
+    description: 'Handles multi-step reasoning; writes functional short programs; analyzes texts with modest depth.',
+    skills: [
+      'Writes a short story with a plot arc and character motivation',
+      'Writes a Python script to parse a CSV and compute descriptive statistics',
+      'Analyzes a poem\'s structure, imagery, and central theme',
+      'Solves introductory chemistry and physics word problems',
+    ],
+  },
+  {
+    label: 'High school',
+    shortLabel: 'High School',
+    min: 13, max: 20,
+    accent: '#f87171', bg: 'rgba(248,113,113,0.10)', border: 'rgba(248,113,113,0.25)',
+    description: 'Competent at summarization and basic writing; simple code; single-step reasoning.',
+    skills: [
+      'Summarizes a newspaper article with accurate main points',
+      'Writes a 5-paragraph essay with a clear thesis and supporting paragraphs',
+      'Writes a loop and handles basic I/O in Python',
+      'Writes a rhyming poem on a given topic (ABAB scheme)',
+    ],
+  },
+  {
+    label: 'Elementary school',
+    shortLabel: 'Elementary',
+    min: 0, max: 12,
+    accent: '#94a3b8', bg: 'rgba(148,163,184,0.08)', border: 'rgba(148,163,184,0.2)',
+    description: 'Handles simple factual questions and basic instructions; limited on multi-step or abstract tasks.',
+    skills: [
+      'Answers simple factual questions ("What is the capital of France?")',
+      'Follows basic instructions — translate a phrase, fill in a blank',
+      'Writes a few sentences about a familiar topic',
+      'Writes a simple rhyming couplet',
+    ],
+  },
+];
+
+export function getTier(score: number | null): Tier {
+  if (score === null) return TIERS[TIERS.length - 1];
+  for (const tier of TIERS) {
+    if (score >= tier.min) return tier;
+  }
+  return TIERS[TIERS.length - 1];
+}
 
 // Static fallback — source: artificialanalysis.ai, May 2026
 // Intelligence index: 0–100 scale. No model has scored above 60 yet (May 2026).
@@ -266,6 +417,31 @@ export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
   { name: 'Qwen3.5 27B',         provider: 'Alibaba',     intelligenceIndex: 42, codingScore: 40, mathScore: 41, outputSpeed: 87,  contextWindow: 262144,  isOpenSource: true },
   { name: 'Mistral Medium 3.5',  provider: 'Mistral',     intelligenceIndex: 39, codingScore: 37, mathScore: 37, outputSpeed: 165, contextWindow: 131072,  isOpenSource: true },
   { name: 'Gemma 4 31B',         provider: 'Google',      intelligenceIndex: 39, codingScore: 36, mathScore: 37, outputSpeed: 35,  contextWindow: 131072,  isOpenSource: true },
+  // ── TB5 RDMA cluster only (256 GB / 244 GB usable across two M5 Max nodes) ─
+  {
+    name: 'DeepSeek-R1 671B',
+    provider: 'DeepSeek',
+    intelligenceIndex: 55,
+    codingScore: 52,
+    mathScore: 58,
+    outputSpeed: 8,  // ~8 t/s distributed over RDMA; latency from bandwidth split
+    contextWindow: 131072,
+    isOpenSource: true,
+    requiresCluster: true,
+    clusterNote: 'Q2_K ~190 GB — fits in 244 GB usable across both nodes. The full 671B reasoning model, not a distilled version.',
+  },
+  {
+    name: 'Qwen3.5 235B A22B Q8',
+    provider: 'Alibaba',
+    intelligenceIndex: 50,
+    codingScore: 48,
+    mathScore: 50,
+    outputSpeed: 12, // ~12 t/s distributed; 22B active params per pass keeps it practical
+    contextWindow: 262144,
+    isOpenSource: true,
+    requiresCluster: true,
+    clusterNote: 'Q8 full precision ~235 GB — exactly fills the 244 GB cluster window. Highest quality Qwen3.5 MoE run.',
+  },
   // ── Small / edge models ──────────────────────────────────────────────────
   { name: 'Qwen3.5 9B',          provider: 'Alibaba',     intelligenceIndex: 32, codingScore: 30, mathScore: 31, outputSpeed: 120, contextWindow: 131072,  isOpenSource: true },
   { name: 'Phi-4 14B',           provider: 'Microsoft',   intelligenceIndex: 30, codingScore: 31, mathScore: 33, outputSpeed: 95,  contextWindow: 16384,   isOpenSource: true },

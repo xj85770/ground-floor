@@ -6,6 +6,8 @@ import {
   USE_CASE_RECS,
   CLOSED_SOURCE_REFERENCE,
   TASK_SCORES,
+  TIERS,
+  getTier,
 } from '../lib/artificialanalysis';
 
 const liveModels = await fetchOpenSourceModels();
@@ -229,7 +231,27 @@ const buildDate = new Date().toLocaleDateString('en-US', {
     <!-- Full open-weight leaderboard -->
     <section>
       <h2 class="font-display text-2xl font-semibold text-chalk mb-2 reveal">Full open-weight leaderboard</h2>
-      <p class="text-silver text-sm mb-8 reveal">Ranked by overall intelligence index. All models run locally, no API required.</p>
+      <p class="text-silver text-sm mb-2 reveal flex items-center gap-2 flex-wrap">
+        Models marked <span class="font-mono text-[0.6rem] px-1.5 py-0.5 rounded"
+          style="color:#4cc9f0;background:rgba(76,201,240,0.1);border:1px solid rgba(76,201,240,0.25);">RDMA cluster</span>
+        require the TB5 two-node configuration (244 GB usable). All others run on a single machine.
+      </p>
+      <p class="text-silver text-sm mb-8 reveal flex items-center gap-2 flex-wrap">
+        Ranked by overall intelligence index (0–100 scale).
+        <span class="info-tip">
+          <span class="info-tip-icon">i</span>
+          <span class="info-tip-body">
+            <strong style="color:#e5e5ea; display:block; margin-bottom:6px;">Why do scores look so low?</strong>
+            This is a <strong style="color:#9b5de5;">0–100 scale</strong> — but no AI has scored above 60 yet. The benchmarks are intentionally brutal:<br /><br />
+            <span style="color:#e5e5ea;">· Humanity's Last Exam</span> — questions designed to stump AI<br />
+            <span style="color:#e5e5ea;">· GPQA Diamond</span> — PhD-level biology, chemistry, physics<br />
+            <span style="color:#e5e5ea;">· SciCode</span> — research-grade scientific code<br />
+            <span style="color:#e5e5ea;">· Terminal-Bench Hard</span> — shell tasks that actually execute<br /><br />
+            A score of <strong style="color:#9b5de5;">54</strong> means 54% of that extremely hard mix. A poem request would score 99. Expand the tier legend below to see what each score range means in practice.
+          </span>
+        </span>
+        All models run locally, no API required.
+      </p>
 
       <div class="overflow-x-auto reveal" style="border:1px solid #424245; border-radius:12px;">
         <table class="w-full text-sm">
@@ -238,47 +260,58 @@ const buildDate = new Date().toLocaleDateString('en-US', {
               <th class="text-left px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">#</th>
               <th class="text-left px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Model</th>
               <th class="text-left px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Provider</th>
-              <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">
-                <span class="inline-flex items-center justify-end gap-1.5">
-                  Intelligence
-                  <span class="info-tip">
-                    <span class="info-tip-icon">i</span>
-                    <span class="info-tip-body">
-                      <strong style="color:#e5e5ea; display:block; margin-bottom:6px;">Why do scores look so low?</strong>
-                      This is a <strong style="color:#9b5de5;">0–100 scale</strong> — but no AI model in the world has scored above 60 yet. The benchmarks are intentionally brutal:<br /><br />
-                      <span style="color:#e5e5ea;">· Humanity's Last Exam</span> — questions designed specifically to stump AI, contributed by experts worldwide<br />
-                      <span style="color:#e5e5ea;">· GPQA Diamond</span> — PhD-level biology, chemistry, physics<br />
-                      <span style="color:#e5e5ea;">· SciCode</span> — write code that solves real scientific research problems<br />
-                      <span style="color:#e5e5ea;">· Terminal-Bench Hard</span> — shell tasks that actually execute<br /><br />
-                      A score of <strong style="color:#9b5de5;">54</strong> means the model correctly handled 54% of that mix. A poem request would score 99. These benchmarks exist to find where models still fail — not celebrate what they can already do.
-                    </span>
-                  </span>
-                </span>
-              </th>
+              <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Intelligence</th>
               <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Coding</th>
               <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Math</th>
               <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Speed (t/s)</th>
               <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Context</th>
+              <th class="text-left px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Level</th>
             </tr>
           </thead>
           <tbody>
-            {openModels.map((m, i) => (
-              <tr style="border-bottom:1px solid #2a2a2d; transition:background 0.15s;"
-                  class="hover:bg-white/[0.02]">
-                <td class="px-5 py-4 font-mono text-ash text-xs">{i + 1}</td>
-                <td class="px-5 py-4 text-chalk font-medium">{m.name}</td>
-                <td class="px-5 py-4 text-silver">{m.provider}</td>
-                <td class="px-5 py-4 text-right font-mono font-medium" style="color:#9b5de5;">
-                  {m.intelligenceIndex ?? '—'}
-                </td>
-                <td class="px-5 py-4 text-right font-mono text-silver">{m.codingScore ?? '—'}</td>
-                <td class="px-5 py-4 text-right font-mono text-silver">{m.mathScore ?? '—'}</td>
-                <td class="px-5 py-4 text-right font-mono text-silver">{m.outputSpeed ?? '—'}</td>
-                <td class="px-5 py-4 text-right font-mono text-ash text-xs">
-                  {m.contextWindow ? `${(m.contextWindow / 1000).toFixed(0)}K` : '—'}
-                </td>
-              </tr>
-            ))}
+            {openModels.map((m, i) => {
+              const tier = getTier(m.intelligenceIndex);
+              return (
+                <tr style="border-bottom:1px solid #2a2a2d; transition:background 0.15s;"
+                    class="hover:bg-white/[0.02]">
+                  <td class="px-5 py-4 font-mono text-ash text-xs">{i + 1}</td>
+                  <td class="px-5 py-4 font-medium">
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="text-chalk">{m.name}</span>
+                      {m.requiresCluster && (
+                        <span class="info-tip">
+                          <span class="font-mono text-[0.55rem] px-1.5 py-0.5 rounded cursor-default"
+                                style="color:#4cc9f0;background:rgba(76,201,240,0.1);border:1px solid rgba(76,201,240,0.25);">
+                            RDMA cluster
+                          </span>
+                          <span class="info-tip-body" style="left:0;transform:none;">
+                            <strong style="color:#4cc9f0;display:block;margin-bottom:6px;">TB5 RDMA cluster required</strong>
+                            {m.clusterNote}<br /><br />
+                            <span style="color:#e5e5ea;">Setup:</span> Two MacBook Pro M5 Max 128 GB nodes connected via Thunderbolt 5 RDMA. Set Metal heap manually to leave 12 GB overhead (244 GB usable). ~800 GB/s inter-node bandwidth at ~3 µs latency.
+                          </span>
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                  <td class="px-5 py-4 text-silver">{m.provider}</td>
+                  <td class="px-5 py-4 text-right font-mono font-medium" style="color:#9b5de5;">
+                    {m.intelligenceIndex ?? '—'}
+                  </td>
+                  <td class="px-5 py-4 text-right font-mono text-silver">{m.codingScore ?? '—'}</td>
+                  <td class="px-5 py-4 text-right font-mono text-silver">{m.mathScore ?? '—'}</td>
+                  <td class="px-5 py-4 text-right font-mono text-silver">{m.outputSpeed ?? '—'}</td>
+                  <td class="px-5 py-4 text-right font-mono text-ash text-xs">
+                    {m.contextWindow ? `${(m.contextWindow / 1000).toFixed(0)}K` : '—'}
+                  </td>
+                  <td class="px-5 py-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[0.6rem] font-mono whitespace-nowrap"
+                          style={`color:${tier.accent}; background:${tier.bg}; border:1px solid ${tier.border};`}>
+                      {tier.shortLabel}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
@@ -288,6 +321,59 @@ const buildDate = new Date().toLocaleDateString('en-US', {
         All models have publicly released weights — no API key required to run them.
       </p>
     </section>
+
+    <!-- Intelligence tier legend (collapsible) -->
+    <details class="glow-card mt-12 reveal group" style="border-radius:12px; overflow:visible;">
+      <summary class="flex items-center justify-between p-6 cursor-pointer list-none select-none">
+        <div>
+          <p class="font-mono text-[0.65rem] tracking-widest uppercase text-ash mb-1">Intelligence scale</p>
+          <h2 class="font-display text-xl font-semibold text-chalk">What the scores actually mean</h2>
+          <p class="text-silver text-xs mt-1">Each level mapped to real-world tasks — with concrete examples</p>
+        </div>
+        <span class="font-mono text-xs text-ash border border-wire rounded px-2 py-1 ml-6 shrink-0
+                     group-open:text-chalk transition-colors">
+          <span class="group-open:hidden">Expand ↓</span>
+          <span class="hidden group-open:inline">Collapse ↑</span>
+        </span>
+      </summary>
+
+      <div class="px-6 pb-8">
+        <p class="text-silver text-sm mb-6 leading-relaxed">
+          These aren't IQ comparisons — they're a shorthand for the kinds of tasks a model handles reliably.
+          Real-world complexity, not exam performance.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {TIERS.map((tier) => (
+            <div class="rounded-xl p-4" style={`background:${tier.bg}; border:1px solid ${tier.border};`}>
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-mono text-[0.6rem] font-semibold tracking-wider"
+                      style={`color:${tier.accent};`}>
+                  {tier.label}
+                </span>
+                <span class="font-mono text-[0.6rem] text-ash">
+                  {tier.max >= 99 ? `${tier.min}+` : `${tier.min}–${tier.max}`}
+                </span>
+              </div>
+              <p class="text-xs text-silver leading-relaxed mb-3">{tier.description}</p>
+              <ul class="space-y-1.5">
+                {tier.skills.map((skill) => (
+                  <li class="text-[0.7rem] text-ash leading-snug flex gap-1.5">
+                    <span style={`color:${tier.accent}; flex-shrink:0;`}>·</span>
+                    <span>{skill}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <p class="mt-6 text-xs text-ash leading-relaxed">
+          Closed-source reference: GPT-5.5 scores 60 (PhD with distinction) — the current world ceiling as of May 2026.
+          No model, open or closed, has reached the Frontier PhD tier (68+) yet.
+        </p>
+      </div>
+    </details>
 
     <!-- Hardware CTA -->
     <div class="glow-card mt-16 reveal p-8">

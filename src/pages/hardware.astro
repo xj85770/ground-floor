@@ -197,13 +197,165 @@ const sorted = allHardware.sort((a,b) => tierOrder[a.data.tier] - tierOrder[b.da
     </section>
 
     <!-- Cost reality -->
-    <section class="max-w-prose border-t border-wire pt-12">
+    <section class="max-w-prose border-t border-wire pt-12 mb-16">
       <h2 class="font-display text-2xl font-semibold tracking-tight text-chalk mb-6">The real cost question</h2>
       <div class="space-y-4 text-[1.0625rem] leading-editorial text-silver">
         <p>The financial argument for local isn't API cost savings. At $0.01 per document interaction with cloud models, token savings don't recoup hardware for years.</p>
         <p>The real cost is compliance overhead: the vendor due diligence, the BAA negotiations, the conversation with your malpractice carrier about your AI vendor's breach notification process. A local machine eliminates most of that — not by being cheaper per token, but by removing the third-party processor from the compliance equation entirely.</p>
         <p>The hardware also has a 4–6 year useful life and does everything else a laptop or desktop does. It's infrastructure, not a pure AI line item.</p>
       </div>
+    </section>
+
+    <!-- Scaling roadmap -->
+    <section class="border-t border-wire pt-12">
+      <p class="font-mono text-[0.65rem] tracking-[0.18em] uppercase mb-3" style="color:#4cc9f0;">Lab roadmap</p>
+      <h2 class="font-display text-2xl font-semibold tracking-tight text-chalk mb-2">Scaling to 2 TB unified memory</h2>
+      <p class="text-silver text-sm max-w-xl leading-relaxed mb-10">
+        The current two-node TB5 cluster is a step on a longer path. The goal is 2 TB of unified memory —
+        two 1 TB cluster nodes — unlocking full-precision inference on the largest open-weight models that exist
+        and will exist. No cloud. No API. No ceiling imposed by a vendor.
+      </p>
+
+      <!-- Timeline steps -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+
+        <!-- Step 1: Now -->
+        <div class="glow-card p-6">
+          <div class="flex items-center justify-between mb-1">
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full flex items-center justify-center text-[0.6rem] font-mono font-bold flex-shrink-0"
+                    style="background:rgba(155,93,229,0.2);border:1px solid rgba(155,93,229,0.4);color:#9b5de5;">1</span>
+              <span class="font-mono text-[0.6rem] tracking-widest uppercase" style="color:#9b5de5;">Current · Active</span>
+            </div>
+            <span class="font-mono text-[0.6rem] tracking-widest uppercase" style="color:#9b5de5;">Known cost</span>
+          </div>
+          <div class="flex items-baseline justify-between mb-4">
+            <div>
+              <p class="font-display font-semibold text-chalk text-lg mb-0.5">256 GB cluster</p>
+              <p class="font-mono text-[0.65rem] text-ash">2× M5 Max 128 GB · TB5 RDMA</p>
+            </div>
+            <p class="font-display font-semibold text-xl" style="color:#9b5de5;">~$11,300</p>
+          </div>
+          <div class="space-y-1.5 mb-4">
+            {[
+              ['2× MBP M5 Max 128 GB', '$10,398'],
+              ['2× AppleCare+', '$798'],
+              ['TB5 cables', '~$100'],
+            ].map(([label, price]) => (
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-ash">{label}</span>
+                <span class="font-mono text-silver">{price}</span>
+              </div>
+            ))}
+          </div>
+          <div class="border-t pt-3 space-y-1.5" style="border-color:#2a2a2d;">
+            {[
+              '244 GB usable (12 GB Metal overhead)',
+              'DeepSeek-R1 671B at Q2_K',
+              'Qwen3.5 235B A22B at Q8',
+            ].map(item => (
+              <div class="flex items-start gap-2 text-xs text-silver">
+                <span style="color:#9b5de5;flex-shrink:0;">·</span>
+                <span>{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Step 2: Next -->
+        <div class="p-6 rounded-2xl" style="border:1px solid #2a2a2d;background:rgba(255,255,255,0.02);">
+          <div class="flex items-center justify-between mb-1">
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full flex items-center justify-center text-[0.6rem] font-mono font-bold flex-shrink-0"
+                    style="background:rgba(76,201,240,0.1);border:1px solid rgba(76,201,240,0.2);color:#4cc9f0;">2</span>
+              <span class="font-mono text-[0.6rem] tracking-widest uppercase text-ash">Next · awaiting M5 Ultra release</span>
+            </div>
+            <span class="font-mono text-[0.6rem] tracking-widest uppercase text-ash">Est. on release</span>
+          </div>
+          <div class="flex items-baseline justify-between mb-4">
+            <div>
+              <p class="font-display font-semibold text-chalk text-lg mb-0.5">Two 1 TB nodes</p>
+              <p class="font-mono text-[0.65rem] text-ash">8× M5 Ultra Mac Studio 256 GB</p>
+            </div>
+            <p class="font-display font-semibold text-xl text-ash">~$56–72K</p>
+          </div>
+          <div class="space-y-1.5 mb-4">
+            {[
+              ['8× M5 Ultra 256 GB Mac Studio', '~$6.5–8K ea.*'],
+              ['8× AppleCare+', '~$2.4K'],
+              ['TB5 cables + hubs', '~$1–2K'],
+            ].map(([label, price]) => (
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-ash">{label}</span>
+                <span class="font-mono text-ash">{price}</span>
+              </div>
+            ))}
+          </div>
+          <div class="border-t pt-3 space-y-1.5" style="border-color:#2a2a2d;">
+            {[
+              '4 machines × 256 GB = 1 TB per node',
+              '2 nodes · TB5 RDMA · ~1.97 TB usable',
+              'Full-precision 400B+ dense models',
+            ].map(item => (
+              <div class="flex items-start gap-2 text-xs text-ash">
+                <span style="color:#4cc9f0;flex-shrink:0;">·</span>
+                <span>{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Step 3: Goal -->
+        <div class="p-6 rounded-2xl" style="border:1px solid #2a2a2d;background:rgba(255,255,255,0.01);">
+          <div class="flex items-center justify-between mb-1">
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full flex items-center justify-center text-[0.6rem] font-mono font-bold flex-shrink-0"
+                    style="background:rgba(232,121,249,0.08);border:1px solid rgba(232,121,249,0.2);color:#e879f9;">3</span>
+              <span class="font-mono text-[0.6rem] tracking-widest uppercase text-ash">Goal · full 2 TB cluster</span>
+            </div>
+            <span class="font-mono text-[0.6rem] tracking-widest uppercase text-ash">Est. on release</span>
+          </div>
+          <div class="flex items-baseline justify-between mb-4">
+            <div>
+              <p class="font-display font-semibold text-chalk text-lg mb-0.5">2 TB unified memory</p>
+              <p class="font-mono text-[0.65rem] text-ash">Both 1 TB nodes active · full cluster</p>
+            </div>
+            <p class="font-display font-semibold text-xl text-ash">~$112–144K</p>
+          </div>
+          <div class="space-y-1.5 mb-4">
+            {[
+              ['2× Step 2 node build-out', '~$56–72K ea.'],
+              ['vs. H100 80 GB × 16 (equiv. VRAM)', '>$400K'],
+            ].map(([label, price]) => (
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-ash">{label}</span>
+                <span class="font-mono text-ash">{price}</span>
+              </div>
+            ))}
+          </div>
+          <div class="border-t pt-3 space-y-1.5" style="border-color:#2a2a2d;">
+            {[
+              'FP16 inference on 671B+ parameter models',
+              'Frontier PhD-tier · fully air-gapped',
+              'No cloud · no API · no vendor lock-in',
+            ].map(item => (
+              <div class="flex items-start gap-2 text-xs text-ash">
+                <span style="color:#e879f9;flex-shrink:0;">·</span>
+                <span>{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
+
+      <p class="text-xs text-ash leading-relaxed max-w-2xl">
+        * M5 Ultra Mac Studio has not been released as of May 2026 — expected mid-to-late 2026.
+        Price estimates are inferred from current M4 Ultra Mac Studio pricing (~$6–8K for 256 GB configs) and Apple's historical Max→Ultra step-up pattern.
+        Actual prices will differ. Apple pulled the 512 GB Mac Studio option in March 2026 due to DRAM supply constraints, so 256 GB per machine is the realistic ceiling for this generation.
+        The H100 comparison is for equivalent unified memory capacity at datacenter GPU list pricing — not a performance comparison.
+        Experiments at each tier will be documented here as they run.
+      </p>
     </section>
 
   </div>
