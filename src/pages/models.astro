@@ -1,0 +1,276 @@
+---
+import Base from '../layouts/Base.astro';
+import {
+  fetchOpenSourceModels,
+  STATIC_OPEN_SOURCE_MODELS,
+  USE_CASE_RECS,
+  CLOSED_SOURCE_REFERENCE,
+  TASK_SCORES,
+} from '../lib/artificialanalysis';
+
+const liveModels = await fetchOpenSourceModels();
+const openModels = liveModels.length > 0 ? liveModels : STATIC_OPEN_SOURCE_MODELS;
+const isLive = liveModels.length > 0;
+
+// Use-case picks
+const picks = USE_CASE_RECS.map(rec => ({
+  ...rec,
+  model: rec.pickFn(openModels),
+})).filter(p => p.model !== undefined);
+
+// Head-to-head task table rows: interleave open + closed sorted by each task score
+const TASKS = [
+  { key: 'swe',       label: 'SWE',      description: 'Code generation, bug fixes, refactoring' },
+  { key: 'agentic',   label: 'Agentic',  description: 'Multi-step planning, tool use, function calling' },
+  { key: 'reasoning', label: 'Reasoning',description: 'Chain-of-thought, math, auditable logic' },
+  { key: 'general',   label: 'General',  description: 'Overall quality across mixed tasks' },
+];
+
+// Build unified ranked list per task
+const TOP_OPEN_MODELS = openModels.slice(0, 6); // top 6 from leaderboard
+
+function taskRows(taskKey: string) {
+  type Row = { name: string; provider: string; score: number; isOpen: boolean; note?: string };
+  const rows: Row[] = [];
+
+  for (const m of TOP_OPEN_MODELS) {
+    const s = TASK_SCORES[m.name]?.[taskKey];
+    if (s !== undefined) rows.push({ name: m.name, provider: m.provider, score: s, isOpen: true });
+  }
+  for (const m of CLOSED_SOURCE_REFERENCE) {
+    const s = TASK_SCORES[m.name]?.[taskKey];
+    if (s !== undefined) rows.push({ name: m.name, provider: m.provider, score: s, isOpen: false, note: m.note });
+  }
+
+  return rows.sort((a, b) => b.score - a.score);
+}
+
+const buildDate = new Date().toLocaleDateString('en-US', {
+  year: 'numeric', month: 'long', day: 'numeric',
+});
+---
+
+<Base
+  title="Open-Source vs Closed — Model Rankings by Task"
+  description="Head-to-head: open-weight vs closed models on SWE, agentic, reasoning, clinical, legal. Which open model competes with GPT-4.1? Rebuilt every 12 hours from artificialanalysis.ai."
+>
+
+  <div class="page-aurora">
+    <div class="page-aurora-glow" style="background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(155,93,229,0.25) 0%, transparent 70%);"></div>
+    <div class="max-w-wide mx-auto px-5 md:px-10 pt-24 pb-20 relative">
+      <p class="font-mono text-[0.7rem] tracking-[0.2em] uppercase mb-4" style="color:#9b5de5;">Models</p>
+      <h1 class="font-display font-semibold tracking-tight text-chalk reveal"
+          style="font-size:clamp(2.4rem,5vw,3.75rem);line-height:1.06;">
+        Open vs closed.<br />Which task. Which model.
+      </h1>
+      <p class="text-silver mt-5 max-w-xl leading-relaxed reveal">
+        Open-weight models ranked next to their closed-source counterparts — by task.
+        SWE is not agentic. Agentic is not reasoning. The picks update automatically
+        from artificialanalysis.ai every 12 hours.
+      </p>
+    </div>
+  </div>
+
+  <div class="max-w-wide mx-auto px-5 md:px-10 py-16">
+
+    <!-- Source badge -->
+    <div class="flex items-center gap-3 mb-14 reveal">
+      <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-mono"
+            style="background:rgba(155,93,229,0.12); border:1px solid rgba(155,93,229,0.3); color:#9b5de5;">
+        {isLive ? '● Live data' : '● Static snapshot · May 2026'}
+      </span>
+      <span class="text-xs text-ash">Source: artificialanalysis.ai · Built {buildDate}</span>
+    </div>
+
+    <!-- Head-to-head by task -->
+    <section class="mb-20">
+      <h2 class="font-display text-2xl font-semibold text-chalk mb-2 reveal">Head-to-head by task</h2>
+      <p class="text-silver text-sm mb-10 reveal">
+        Open-weight models (purple) ranked alongside closed APIs (grey) for each task type.
+        Closed scores are included only as reference — they require API keys and send your data off-device.
+      </p>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {TASKS.map(task => {
+          const rows = taskRows(task.key);
+          const maxScore = rows[0]?.score ?? 100;
+          return (
+            <div class="reveal" style="border:1px solid #424245; border-radius:12px; overflow:hidden;">
+              <div class="px-5 py-4" style="border-bottom:1px solid #424245; background:rgba(255,255,255,0.02);">
+                <p class="font-display font-semibold text-chalk">{task.label}</p>
+                <p class="text-xs text-ash mt-0.5">{task.description}</p>
+              </div>
+              <div class="p-5 flex flex-col gap-3">
+                {rows.map((row, i) => (
+                  <div>
+                    <div class="flex items-center justify-between mb-1">
+                      <div class="flex items-center gap-2">
+                        <span class="font-mono text-[0.6rem] text-ash w-4 text-right">{i + 1}</span>
+                        <div>
+                          <span class={`text-sm font-medium ${row.isOpen ? 'text-chalk' : 'text-ash'}`}>
+                            {row.name}
+                          </span>
+                          {row.isOpen && (
+                            <span class="ml-2 text-[0.6rem] font-mono px-1.5 py-0.5 rounded"
+                                  style="background:rgba(155,93,229,0.15); color:#9b5de5; border:1px solid rgba(155,93,229,0.25);">
+                              open
+                            </span>
+                          )}
+                          {!row.isOpen && (
+                            <span class="ml-2 text-[0.6rem] font-mono px-1.5 py-0.5 rounded"
+                                  style="background:rgba(255,255,255,0.05); color:#6e6e73; border:1px solid #2a2a2d;">
+                              API only
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <span class="font-mono text-sm font-medium"
+                            style={row.isOpen ? 'color:#9b5de5;' : 'color:#6e6e73;'}>
+                        {row.score}
+                      </span>
+                    </div>
+                    <!-- Score bar -->
+                    <div class="ml-6 h-1 rounded-full" style="background:#2a2a2d;">
+                      <div
+                        class="h-1 rounded-full"
+                        style={`width:${(row.score / maxScore) * 100}%; background:${row.isOpen ? '#9b5de5' : '#424245'};`}
+                      ></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <p class="mt-6 text-xs text-ash leading-relaxed reveal">
+        Scores approximate task-specific benchmarks from artificialanalysis.ai (SWEbench, GPQA, MMLU-Pro, and coding evals).
+        Closed-source models shown for scale only — they require API keys and route your data through third-party servers.
+        Open-weight models run 100% on your hardware.
+      </p>
+    </section>
+
+    <!-- Use-case picks -->
+    <section class="mb-20">
+      <h2 class="font-display text-2xl font-semibold text-chalk mb-2 reveal">Best open-weight pick per use case</h2>
+      <p class="text-silver text-sm mb-10 reveal">
+        Selected algorithmically from the live leaderboard scores — not a static list.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {picks.map((pick, i) => (
+          <div
+            class="glow-card reveal"
+            style={`animation-delay:${i * 60}ms; border:1px solid #424245; border-radius:12px; padding:1.5rem; position:relative; overflow:hidden;`}
+          >
+            <div class="flex items-start gap-3 mb-4">
+              <span class="font-mono text-lg leading-none" style="color:#9b5de5;">{pick.icon}</span>
+              <div>
+                <p class="font-mono text-xs tracking-widest uppercase text-ash">{pick.label}</p>
+                <p class="text-xs text-ash/70 mt-1 leading-relaxed">{pick.description}</p>
+              </div>
+            </div>
+
+            <p class="font-display text-lg font-semibold text-chalk">{pick.model!.name}</p>
+            <p class="text-xs text-ash mt-0.5 mb-4">{pick.model!.provider}</p>
+
+            <div class="flex flex-wrap gap-2 mb-4">
+              {pick.model!.intelligenceIndex !== null && (
+                <span class="px-2 py-0.5 rounded text-xs font-mono"
+                      style="background:rgba(155,93,229,0.12); color:#9b5de5; border:1px solid rgba(155,93,229,0.25);">
+                  Intelligence {pick.model!.intelligenceIndex}
+                </span>
+              )}
+              {pick.model!.codingScore !== null && (
+                <span class="px-2 py-0.5 rounded text-xs font-mono"
+                      style="background:rgba(255,255,255,0.05); color:#a1a1a6; border:1px solid #424245;">
+                  Code {pick.model!.codingScore}
+                </span>
+              )}
+              {pick.model!.mathScore !== null && (
+                <span class="px-2 py-0.5 rounded text-xs font-mono"
+                      style="background:rgba(255,255,255,0.05); color:#a1a1a6; border:1px solid #424245;">
+                  Math {pick.model!.mathScore}
+                </span>
+              )}
+              {pick.model!.outputSpeed !== null && (
+                <span class="px-2 py-0.5 rounded text-xs font-mono"
+                      style="background:rgba(255,255,255,0.05); color:#a1a1a6; border:1px solid #424245;">
+                  {pick.model!.outputSpeed} t/s
+                </span>
+              )}
+            </div>
+
+            <p class="text-xs text-silver leading-relaxed border-t pt-4" style="border-color:#2a2a2d;">
+              {pick.why(pick.model!)}
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Full open-weight leaderboard -->
+    <section>
+      <h2 class="font-display text-2xl font-semibold text-chalk mb-2 reveal">Full open-weight leaderboard</h2>
+      <p class="text-silver text-sm mb-8 reveal">Ranked by overall intelligence index. All models run locally, no API required.</p>
+
+      <div class="overflow-x-auto reveal" style="border:1px solid #424245; border-radius:12px;">
+        <table class="w-full text-sm">
+          <thead>
+            <tr style="border-bottom:1px solid #424245; background:rgba(255,255,255,0.02);">
+              <th class="text-left px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">#</th>
+              <th class="text-left px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Model</th>
+              <th class="text-left px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Provider</th>
+              <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Intelligence</th>
+              <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Coding</th>
+              <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Math</th>
+              <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Speed (t/s)</th>
+              <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Context</th>
+            </tr>
+          </thead>
+          <tbody>
+            {openModels.map((m, i) => (
+              <tr style="border-bottom:1px solid #2a2a2d; transition:background 0.15s;"
+                  class="hover:bg-white/[0.02]">
+                <td class="px-5 py-4 font-mono text-ash text-xs">{i + 1}</td>
+                <td class="px-5 py-4 text-chalk font-medium">{m.name}</td>
+                <td class="px-5 py-4 text-silver">{m.provider}</td>
+                <td class="px-5 py-4 text-right font-mono font-medium" style="color:#9b5de5;">
+                  {m.intelligenceIndex ?? '—'}
+                </td>
+                <td class="px-5 py-4 text-right font-mono text-silver">{m.codingScore ?? '—'}</td>
+                <td class="px-5 py-4 text-right font-mono text-silver">{m.mathScore ?? '—'}</td>
+                <td class="px-5 py-4 text-right font-mono text-silver">{m.outputSpeed ?? '—'}</td>
+                <td class="px-5 py-4 text-right font-mono text-ash text-xs">
+                  {m.contextWindow ? `${(m.contextWindow / 1000).toFixed(0)}K` : '—'}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p class="mt-6 text-xs text-ash leading-relaxed reveal">
+        Intelligence Index is artificialanalysis.ai's composite quality score.
+        All models have publicly released weights — no API key required to run them.
+      </p>
+    </section>
+
+    <!-- Hardware CTA -->
+    <div class="mt-16 reveal" style="border:1px solid #424245; border-radius:12px; padding:2rem;">
+      <p class="font-mono text-[0.65rem] tracking-widest uppercase text-ash mb-3">Next step</p>
+      <h2 class="font-display text-xl font-semibold text-chalk mb-3">Which hardware runs the top models?</h2>
+      <p class="text-silver text-sm leading-relaxed mb-5">
+        The top open-weight models need 36–128 GB of unified memory.
+        The hardware guide covers every Apple Silicon config with prices.
+      </p>
+      <a href="/hardware"
+         class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-chalk transition-all"
+         style="background:rgba(155,93,229,0.15); border:1px solid rgba(155,93,229,0.4);">
+        See hardware configs →
+      </a>
+    </div>
+
+  </div>
+</Base>

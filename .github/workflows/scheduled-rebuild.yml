@@ -1,0 +1,15 @@
+name: Scheduled rebuild
+
+on:
+  schedule:
+    # Every 12 hours: 6am and 6pm UTC
+    - cron: '0 6,18 * * *'
+  workflow_dispatch: # allow manual trigger from GitHub UI
+
+jobs:
+  trigger-netlify-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Netlify build hook
+        run: |
+          curl -s -X POST "${{ secrets.NETLIFY_BUILD_HOOK }}"
