@@ -1,0 +1,100 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Playbook" description="How Ground Floor experiments are structured, evaluated, and published.">
+
+  <div class="page-aurora">
+    <div class="page-aurora-glow" style="background:radial-gradient(ellipse 70% 60% at 50% -10%,rgba(67,97,238,0.28) 0%,transparent 70%);"></div>
+    <div class="max-w-wide mx-auto px-5 md:px-10 pt-24 pb-20 relative">
+      <p class="font-mono text-[0.7rem] tracking-[0.2em] uppercase mb-4" style="color:#4361ee;">Public edition · Methodology</p>
+      <h1 class="font-display font-semibold tracking-tight text-chalk mb-4"
+          style="font-size:clamp(2.4rem,5vw,3.75rem);line-height:1.06;">The Playbook</h1>
+      <p class="text-silver text-lg max-w-xl leading-relaxed">
+        How experiments are designed, run, documented, and published.
+        The methodology behind the verdicts — public by default.
+      </p>
+    </div>
+  </div>
+
+  <div class="max-w-prose mx-auto px-5 md:px-0 py-16 md:py-24">
+    <div class="prose-editorial">
+
+      <h2>Why this project exists</h2>
+      <p>
+        Regulated practitioners — physicians, attorneys, financial advisors — have a genuine
+        AI problem. The models worth using require an internet connection. Sending client data
+        to a cloud API creates third-party processors, vendor agreements, and compliance overhead
+        that solo practitioners and small firms can't easily absorb.
+      </p>
+      <p>
+        Local LLMs solve this architecturally. A model running on hardware you own makes no
+        network calls. The data that goes in stays in. Ground Floor documents whether the local
+        models are actually good enough — and for which tasks, on which hardware.
+      </p>
+
+      <h2>The local LLM thesis</h2>
+      <p>
+        By 2025, consumer hardware crossed the threshold. Apple Silicon's unified memory
+        architecture collapsed the VRAM ceiling that had made local inference impractical.
+        A quantized 8B model runs faster on a $599 Mac mini than most cloud API round-trips —
+        with no data leaving the building. It's 2026. The question is answered.
+      </p>
+      <p>
+        What remains is the documentation work: which models, which tasks, which hardware tiers,
+        which failure modes.
+      </p>
+
+      <h2>Experiment design</h2>
+
+      <h3>Choosing a task</h3>
+      <p>A task qualifies if it meets three criteria:</p>
+      <ol>
+        <li><strong>High volume in the target industry.</strong> The task must represent a meaningful share of practitioners' non-billable time.</li>
+        <li><strong>Evaluable output.</strong> There must be a clear standard to judge AI output against — a format, a checklist, a rubric a practitioner can apply.</li>
+        <li><strong>Human-in-the-loop review.</strong> A qualified human reviews and owns the final output. Ground Floor does not test autonomous AI decision-making.</li>
+      </ol>
+
+      <h3>Verdict criteria</h3>
+      <dl>
+        <dt><strong>Viable</strong></dt>
+        <dd>The model's output is good enough that the practitioner's job is editing, not authoring. Time savings are real and the error rate is low enough that a normal review process catches problems before they matter.</dd>
+
+        <dt><strong>Partial</strong></dt>
+        <dd>The model helps for a subset of the task or volume. Works well for simple cases, struggles with complex ones. Worth using with awareness of where it breaks down.</dd>
+
+        <dt><strong>Not yet</strong></dt>
+        <dd>Current models at this hardware tier don't meet the bar for practical use. The output requires so much correction that it doesn't meaningfully reduce the practitioner's work. Failure modes are documented clearly — this is the most useful verdict for understanding what's missing.</dd>
+      </dl>
+
+      <h3>Hardware documentation</h3>
+      <p>
+        Every experiment specifies the exact hardware: machine, RAM, chip generation, runtime version.
+        Results are not portable across hardware tiers without re-testing. When an experiment is
+        documented as "viable at entry level," the configuration was deliberately constrained to match
+        a base Mac mini — even though the lab cluster has significantly more headroom.
+      </p>
+
+      <h2>Publication format</h2>
+      <p>Each experiment ships in three formats:</p>
+      <ul>
+        <li><strong>Writeup (this site):</strong> Full methodology, results, failure modes, replication instructions. Permanent reference.</li>
+        <li><strong>Video (YouTube):</strong> Screen recording of setup and inference in action. Shows what the model actually produces, not a curated highlight.</li>
+        <li><strong>Post (LinkedIn):</strong> 3–5 paragraph summary with verdict. Links to writeup for depth.</li>
+      </ul>
+
+      <h2>What this playbook doesn't cover</h2>
+      <p>
+        Compliance guidance, legal interpretation, and clinical recommendations are out of scope.
+        The <a href="/scope">Scope &amp; Disclaimers</a> page explains this in detail.
+      </p>
+
+    </div>
+
+    <div class="mt-14 pt-8 border-t border-wire">
+      <p class="text-xs text-ash font-mono">
+        This is the public edition of the Ground Floor playbook. It describes methodology and framework, not internal processes.
+      </p>
+    </div>
+  </div>
+</Base>

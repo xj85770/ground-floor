@@ -1,0 +1,41 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  industry: CollectionEntry<'industries'>;
+  experimentCount?: number;
+}
+
+const { industry, experimentCount = 0 } = Astro.props;
+const { data, slug } = industry;
+---
+
+<a
+  href={`/industries/${slug}`}
+  class="group block hover:bg-slate transition-colors duration-150 p-6"
+  style="background:#000;"
+>
+  <div class="flex items-start justify-between gap-2 mb-3">
+    <h3 class="font-display font-semibold text-lg leading-tight text-chalk group-hover:text-rust transition-colors">
+      {data.shortName}
+    </h3>
+    {experimentCount > 0 && (
+      <span class="font-mono text-[0.65rem] text-ash tracking-wider shrink-0 mt-1">
+        {experimentCount} {experimentCount === 1 ? 'exp.' : 'exps.'}
+      </span>
+    )}
+  </div>
+
+  <p class="text-sm text-silver leading-relaxed mb-4 line-clamp-2">
+    {data.name}
+  </p>
+
+  <div class="flex flex-wrap gap-1">
+    {data.regulation.slice(0, 2).map((reg: string) => (
+      <span class="tag text-[0.6rem]">{reg}</span>
+    ))}
+    {data.regulation.length > 2 && (
+      <span class="tag text-[0.6rem]">+{data.regulation.length - 2}</span>
+    )}
+  </div>
+</a>

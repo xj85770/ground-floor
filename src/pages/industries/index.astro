@@ -1,0 +1,55 @@
+---
+import Base from '../../layouts/Base.astro';
+import IndustryCard from '../../components/IndustryCard.astro';
+import { getCollection } from 'astro:content';
+
+const industries  = await getCollection('industries');
+const experiments = await getCollection('experiments');
+
+const expCount = experiments.reduce<Record<string, number>>((acc, e) => {
+  acc[e.data.industry] = (acc[e.data.industry] ?? 0) + 1;
+  return acc;
+}, {});
+
+const sorted = industries.sort((a, b) => a.data.name.localeCompare(b.data.name));
+---
+
+<Base
+  title="Industries"
+  description="Local LLM experiments for regulated practices — medical, legal, financial. Your data never leaves your building."
+>
+  <!-- Page hero -->
+  <div class="page-aurora">
+    <div class="page-aurora-glow" style="background:radial-gradient(ellipse 70% 60% at 50% -10%,rgba(67,97,238,0.3) 0%,transparent 70%);"></div>
+    <div class="max-w-wide mx-auto px-5 md:px-10 pt-24 pb-20 relative">
+      <p class="font-mono text-[0.7rem] tracking-[0.2em] uppercase mb-4" style="color:#4361ee;">
+        Regulated verticals
+      </p>
+      <h1 class="font-display font-semibold tracking-tight text-chalk mb-4"
+          style="font-size:clamp(2.4rem,5vw,3.75rem);line-height:1.06;">
+        Which practice can't send<br />data to the cloud?
+      </h1>
+      <p class="text-silver text-lg max-w-xl leading-relaxed">
+        Every experiment here is designed for practitioners who handle sensitive data
+        under a regulatory regime — and need AI that stays local.
+      </p>
+    </div>
+  </div>
+
+  <div class="max-w-wide mx-auto px-5 md:px-10 py-16 md:py-20">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px" style="background:#424245;border:1px solid #424245;">
+      {sorted.map(ind => (
+        <div style="background:#000;">
+          <IndustryCard industry={ind} experimentCount={expCount[ind.slug] ?? 0} />
+        </div>
+      ))}
+    </div>
+
+    <p class="mt-10 text-sm text-ash leading-relaxed max-w-prose">
+      Don't see your vertical? The framework applies broadly to any practice handling
+      sensitive client data under a regulatory regime.{' '}
+      <a href="/about" class="underline underline-offset-2 hover:text-chalk transition-colors">Reach out</a>{' '}
+      to suggest one.
+    </p>
+  </div>
+</Base>

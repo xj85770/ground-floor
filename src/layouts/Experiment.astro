@@ -1,0 +1,92 @@
+---
+import Base from './Base.astro';
+import VerdictBadge from '../components/VerdictBadge.astro';
+import TagPill from '../components/TagPill.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props { experiment: CollectionEntry<'experiments'>; }
+const { experiment } = Astro.props;
+const { data } = experiment;
+const date = data.date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+---
+
+<Base title={data.title} description={data.description} ogType="article">
+
+  <!-- Page aurora header -->
+  <div class="page-aurora">
+    <div class="page-aurora-glow"></div>
+    <div class="max-w-prose mx-auto px-5 md:px-0 pt-20 pb-14 relative">
+      <nav class="mb-8 text-xs text-ash font-mono" aria-label="Breadcrumb">
+        <a href="/experiments" class="hover:text-silver transition-colors">Experiments</a>
+        <span class="mx-2">→</span>
+        <span>Week {data.week}</span>
+      </nav>
+      <div class="flex flex-wrap items-center gap-2 mb-5">
+        <VerdictBadge verdict={data.verdict} />
+        <TagPill label={data.industry} />
+        <TagPill label={data.hardware} mono />
+        <TagPill label={data.task} />
+      </div>
+      <h1 class="font-display text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-chalk mb-4">
+        {data.title}
+      </h1>
+      <p class="text-ash text-sm font-mono">Week {data.week} · {date}</p>
+    </div>
+  </div>
+
+  <div class="max-w-prose mx-auto px-5 md:px-0 py-16 md:py-20">
+
+    {data.youtube && (
+      <div class="mb-10 aspect-video bg-slate border border-wire rounded-xl overflow-hidden">
+        <iframe class="w-full h-full"
+          src={data.youtube.replace('watch?v=', 'embed/')}
+          title="Experiment video" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen />
+      </div>
+    )}
+
+    <blockquote class="border-l-2 pl-6 my-8" style="border-color:#ff6b47;">
+      <p class="font-display text-lg italic text-silver leading-relaxed">{data.hypothesis}</p>
+    </blockquote>
+
+    <div class="prose-editorial"><slot /></div>
+
+    <!-- Tools used -->
+    <aside class="glow-card p-6 mt-14">
+      <h2 class="font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-5">Tools used</h2>
+      <dl class="grid grid-cols-2 gap-x-6 gap-y-3">
+        {[['Model',data.model],['Hardware',data.hardware],['Task',data.task],['Industry',data.industry]].map(([k,v]) => (
+          <>
+            <dt class="text-ash font-mono text-xs">{k}</dt>
+            <dd class="font-mono text-xs text-chalk">{v}</dd>
+          </>
+        ))}
+      </dl>
+    </aside>
+
+    {data.linkedin && (
+      <div class="mt-8 pt-6 border-t border-wire">
+        <a href={data.linkedin} class="link-arrow" target="_blank" rel="noopener noreferrer">
+          <span>Discuss on LinkedIn</span><span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    )}
+
+    <div class="mt-8 pt-6 border-t border-wire">
+      <a href="/experiments" class="link-arrow">
+        <span aria-hidden="true">←</span><span>All experiments</span>
+      </a>
+    </div>
+  </div>
+</Base>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.glow-card').forEach(card => {
+    card.addEventListener('mousemove', (e: MouseEvent) => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mouse-x', `${((e.clientX-r.left)/r.width)*100}%`);
+      card.style.setProperty('--mouse-y', `${((e.clientY-r.top)/r.height)*100}%`);
+    });
+  });
+</script>

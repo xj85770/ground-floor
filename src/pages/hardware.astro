@@ -1,0 +1,280 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const allHardware = await getCollection('hardware');
+const tierOrder: Record<string, number> = { entry:0, mid:1, high:2, workstation:3 };
+const sorted = allHardware.sort((a,b) => tierOrder[a.data.tier] - tierOrder[b.data.tier]);
+---
+
+<Base
+  title="Hardware"
+  description="Every Apple Silicon Mac configuration for local LLM inference — specs, prices, and which open-source models run on each."
+>
+  <div class="page-aurora">
+    <div class="page-aurora-glow" style="background:radial-gradient(ellipse 70% 60% at 50% -10%,rgba(76,201,240,0.2) 0%,transparent 70%);"></div>
+    <div class="max-w-wide mx-auto px-5 md:px-10 pt-24 pb-20 relative">
+      <p class="font-mono text-[0.7rem] tracking-[0.2em] uppercase mb-4" style="color:#4cc9f0;">The hardware</p>
+      <h1 class="font-display font-semibold tracking-tight text-chalk mb-4"
+          style="font-size:clamp(2.4rem,5vw,3.75rem);line-height:1.06;">
+        Pick your tier.<br />Run it locally.
+      </h1>
+      <p class="text-silver text-lg max-w-xl leading-relaxed">
+        Every config below ships with zero cloud dependency. Select a RAM and storage option
+        to see exact pricing and which open-source models it runs.
+      </p>
+    </div>
+  </div>
+
+  <div class="max-w-wide mx-auto px-5 md:px-10 py-16 md:py-24">
+
+    <!-- Lab banner -->
+    <div class="conic-border mb-16">
+      <div class="p-7 md:p-9">
+        <p class="font-mono text-[0.65rem] tracking-[0.18em] uppercase mb-3" style="color:#9b5de5;">Ground Floor Lab · what these experiments run on</p>
+        <h2 class="font-display font-semibold text-xl text-chalk mb-1">MacBook Pro M5 Max · 128 GB · 2 TB · × 2 nodes</h2>
+        <p class="text-silver text-sm max-w-lg leading-relaxed mb-3">Connected over TB5 RDMA at ~3 µs. When an experiment is documented as "viable at entry level," the config was deliberately throttled to match that tier.</p>
+        <p class="font-mono text-[0.65rem] text-ash mb-6">Machine: $5,199 each · AppleCare+: $399 each · TB5 cables included — all open-source, fully air-gapped</p>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+          {[['256 GB','Combined memory'],['4 TB','Combined storage'],['~800 GB/s','Peak bandwidth'],['~3 µs','TB5 RDMA latency']].map(([v,l]) => (
+            <div>
+              <p class="font-display font-semibold text-2xl gradient-text-animated mb-0.5">{v}</p>
+              <p class="font-mono text-[0.6rem] uppercase tracking-widest text-ash">{l}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Config cards ── -->
+    <!-- Each card has a <select> dropdown; JS updates price + model list -->
+
+    <!-- MAC MINI M4 -->
+    <div class="config-card glow-card p-7 md:p-8 mb-6" data-card="mac-mini-m4">
+      <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
+        <div>
+          <p class="font-mono text-[0.65rem] tracking-widest uppercase text-ash mb-1">Entry · Mac mini</p>
+          <h2 class="font-display font-semibold text-2xl text-chalk">Mac mini <span style="color:#9b5de5;">M4</span></h2>
+        </div>
+        <div class="text-right">
+          <p class="font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-1">From</p>
+          <p class="config-price font-display font-semibold text-2xl text-chalk">$799</p>
+        </div>
+      </div>
+
+      <label class="block font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-2">Configuration</label>
+      <select class="config-select w-full md:w-auto bg-fog border border-wire text-chalk text-sm rounded-lg px-4 py-2.5 mb-6 cursor-pointer focus:outline-none focus:border-glow-purple"
+        data-configs='[
+          {"label":"16 GB · 512 GB SSD","price":799,"models":["Qwen3 7B Q4_K_M — best all-round under 8B","Phi-4-mini 3.8B Q8 — fastest, structured tasks","Gemma 3 4B Q8 — Google, excellent instruction-following","DeepSeek-R1 7B Q4_K_M — chain-of-thought reasoning","Mistral 7B v0.3 Q4_K_M — reliable general-purpose","Llama 3.2 3B Q8 — lightweight, simple drafts"],"note":"Runs one 7B model at a time. Hot-swap in ~10 s via Ollama."},
+          {"label":"16 GB · 1 TB SSD","price":999,"models":["Qwen3 7B Q4_K_M — best all-round under 8B","Phi-4-mini 3.8B Q8 — fastest, structured tasks","Gemma 3 4B Q8 — Google, excellent instruction-following","DeepSeek-R1 7B Q4_K_M — chain-of-thought reasoning","Mistral 7B v0.3 Q4_K_M — reliable general-purpose","Llama 3.2 3B Q8 — lightweight, simple drafts"],"note":"Same RAM as base — extra storage for more models on disk."},
+          {"label":"24 GB · 512 GB SSD","price":1099,"models":["Qwen3 14B Q4_K_M — big step up in reasoning quality","DeepSeek-R1 14B Q4_K_M — shows chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, best for structured docs","Gemma 3 12B Q4_K_M — Google, fast and capable","Qwen3 7B Q8 — full-precision 7B, noticeably sharper","Llama 3.1 8B Q8 — higher quality 8B output"],"note":"First tier where 13–14B models run at practical speed."},
+          {"label":"24 GB · 1 TB SSD","price":1299,"models":["Qwen3 14B Q4_K_M — big step up in reasoning quality","DeepSeek-R1 14B Q4_K_M — shows chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, best for structured docs","Gemma 3 12B Q4_K_M — Google, fast and capable","Qwen3 7B Q8 — full-precision 7B, noticeably sharper","Llama 3.1 8B Q8 — higher quality 8B output"],"note":"More disk space for storing multiple larger models."}
+        ]'>
+        <option>16 GB · 512 GB SSD — $799</option>
+        <option>16 GB · 1 TB SSD — $999</option>
+        <option>24 GB · 512 GB SSD — $1,099</option>
+        <option>24 GB · 1 TB SSD — $1,299</option>
+      </select>
+
+      <div class="config-models grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
+        <!-- filled by JS -->
+      </div>
+      <p class="config-note font-mono text-[0.65rem] text-ash leading-relaxed"></p>
+    </div>
+
+    <!-- MAC MINI M4 PRO -->
+    <div class="config-card glow-card p-7 md:p-8 mb-6" data-card="mac-mini-m4-pro">
+      <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
+        <div>
+          <p class="font-mono text-[0.65rem] tracking-widest uppercase text-ash mb-1">Mid-range · Mac mini</p>
+          <h2 class="font-display font-semibold text-2xl text-chalk">Mac mini <span style="color:#4361ee;">M4 Pro</span></h2>
+        </div>
+        <div class="text-right">
+          <p class="font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-1">From</p>
+          <p class="config-price font-display font-semibold text-2xl text-chalk">$1,399</p>
+        </div>
+      </div>
+
+      <label class="block font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-2">Configuration</label>
+      <select class="config-select w-full md:w-auto bg-fog border border-wire text-chalk text-sm rounded-lg px-4 py-2.5 mb-6 cursor-pointer focus:outline-none focus:border-glow-purple"
+        data-configs='[
+          {"label":"24 GB · 512 GB SSD","price":1399,"models":["Qwen3 14B Q4_K_M — best at this tier","DeepSeek-R1 14B Q4_K_M — auditable chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, structured docs","Gemma 3 12B Q4_K_M — fast and capable","Qwen3 7B Q8 — full-precision 7B","Mistral 7B v0.3 Q8 — reliable full-precision"],"note":"Hot-load one 13–14B model. Swap to a second in ~15 s."},
+          {"label":"24 GB · 1 TB SSD","price":1599,"models":["Qwen3 14B Q4_K_M — best at this tier","DeepSeek-R1 14B Q4_K_M — auditable chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, structured docs","Gemma 3 12B Q4_K_M — fast and capable","Qwen3 7B Q8 — full-precision 7B","Mistral 7B v0.3 Q8 — reliable full-precision"],"note":"More storage — keep 8–10 models on disk, swap freely."},
+          {"label":"48 GB · 512 GB SSD","price":1799,"models":["Mistral Small 3 22B Q4_K_M — near-70B quality","Qwen3 32B Q4_K_M — top open-weight mid-size","DeepSeek-R1 14B Q8 — full-precision reasoning","Gemma 4 27B Q4_K_M — Google MoE, very fast","Phi-4 14B Q8 — full-precision, best quality at size","Two 13–14B models simultaneously (hot-loaded)"],"note":"First tier to run 22–32B models. Runs two 13B models simultaneously."},
+          {"label":"48 GB · 1 TB SSD","price":1999,"models":["Mistral Small 3 22B Q4_K_M — near-70B quality","Qwen3 32B Q4_K_M — top open-weight mid-size","DeepSeek-R1 14B Q8 — full-precision reasoning","Gemma 4 27B Q4_K_M — Google MoE, very fast","Phi-4 14B Q8 — full-precision, best quality at size","Two 13–14B models simultaneously (hot-loaded)"],"note":"Recommended config for small-team serving (2–4 users)."}
+        ]'>
+        <option>24 GB · 512 GB SSD — $1,399</option>
+        <option>24 GB · 1 TB SSD — $1,599</option>
+        <option>48 GB · 512 GB SSD — $1,799</option>
+        <option>48 GB · 1 TB SSD — $1,999</option>
+      </select>
+
+      <div class="config-models grid grid-cols-1 md:grid-cols-2 gap-2 mb-4"></div>
+      <p class="config-note font-mono text-[0.65rem] text-ash leading-relaxed"></p>
+    </div>
+
+    <!-- MACBOOK PRO M4 MAX -->
+    <div class="config-card glow-card p-7 md:p-8 mb-6" data-card="mbp-m4-max">
+      <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
+        <div>
+          <p class="font-mono text-[0.65rem] tracking-widest uppercase text-ash mb-1">High-end · MacBook Pro</p>
+          <h2 class="font-display font-semibold text-2xl text-chalk">MacBook Pro <span style="color:#4cc9f0;">M4 Max</span></h2>
+        </div>
+        <div class="text-right">
+          <p class="font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-1">From</p>
+          <p class="config-price font-display font-semibold text-2xl text-chalk">$2,499</p>
+        </div>
+      </div>
+
+      <label class="block font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-2">Configuration</label>
+      <select class="config-select w-full md:w-auto bg-fog border border-wire text-chalk text-sm rounded-lg px-4 py-2.5 mb-6 cursor-pointer focus:outline-none focus:border-glow-purple"
+        data-configs='[
+          {"label":"36 GB · 1 TB SSD","price":2499,"models":["Qwen3 32B Q4_K_M — top open-weight mid-size","Gemma 4 27B Q4_K_M — Google MoE, near 70B quality","DeepSeek-R1 32B Q4_K_M — deep reasoning","Mistral Small 3 22B Q8 — full-precision 22B","Qwen3 14B Q8 — full-precision 14B"],"note":"Runs 32B class models at Q4. Strong step up from Mac mini Pro tier."},
+          {"label":"36 GB · 2 TB SSD","price":2699,"models":["Qwen3 32B Q4_K_M — top open-weight mid-size","Gemma 4 27B Q4_K_M — Google MoE, near 70B quality","DeepSeek-R1 32B Q4_K_M — deep reasoning","Mistral Small 3 22B Q8 — full-precision 22B","Qwen3 14B Q8 — full-precision 14B"],"note":"Recommended for primary work machine — extra storage pays off."},
+          {"label":"64 GB · 1 TB SSD","price":3299,"models":["Llama 3.3 70B Q4_K_M — Meta flagship, ~12 t/s","DeepSeek-R1 70B Q4_K_M — best open-source reasoning","Qwen3.5 72B Q4_K_M — benchmark leader open-weight","Gemma 4 27B Q8 — full-precision, very fast","Qwen3 32B Q8 — full-precision 32B, excellent quality"],"note":"First tier for 70B models at practical speed. Recommended for complex legal/clinical work."},
+          {"label":"64 GB · 2 TB SSD","price":3499,"models":["Llama 3.3 70B Q4_K_M — Meta flagship, ~12 t/s","DeepSeek-R1 70B Q4_K_M — best open-source reasoning","Qwen3.5 72B Q4_K_M — benchmark leader open-weight","Gemma 4 27B Q8 — full-precision, very fast","Qwen3 32B Q8 — full-precision 32B, excellent quality"],"note":"Best M4 Max config for serious workloads. 70B inference with room for OS and tools."}
+        ]'>
+        <option>36 GB · 1 TB SSD — $2,499</option>
+        <option>36 GB · 2 TB SSD — $2,699</option>
+        <option>64 GB · 1 TB SSD — $3,299</option>
+        <option>64 GB · 2 TB SSD — $3,499</option>
+      </select>
+
+      <div class="config-models grid grid-cols-1 md:grid-cols-2 gap-2 mb-4"></div>
+      <p class="config-note font-mono text-[0.65rem] text-ash leading-relaxed"></p>
+    </div>
+
+    <!-- MACBOOK PRO M5 MAX — Lab config -->
+    <div class="config-card conic-border p-7 md:p-8 mb-16" data-card="mbp-m5-max">
+      <div class="flex flex-wrap items-start justify-between gap-4 mb-2">
+        <div>
+          <p class="font-mono text-[0.65rem] tracking-widest uppercase mb-1" style="color:#9b5de5;">Workstation · MacBook Pro · Ground Floor Lab</p>
+          <h2 class="font-display font-semibold text-2xl text-chalk">MacBook Pro <span class="gradient-text-animated">M5 Max</span></h2>
+        </div>
+        <div class="text-right">
+          <p class="font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-1">From</p>
+          <p class="config-price font-display font-semibold text-2xl text-chalk">$3,899</p>
+        </div>
+      </div>
+      <p class="text-ash text-xs font-mono mb-6">16-inch · 18-core CPU · All prices are Apple US list price before tax.</p>
+
+      <label class="block font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-2">Configuration</label>
+      <select class="config-select w-full md:w-auto bg-fog border border-wire text-chalk text-sm rounded-lg px-4 py-2.5 mb-6 cursor-pointer focus:outline-none focus:border-glow-purple"
+        data-configs='[
+          {"label":"36 GB · 2 TB · 32-core GPU","price":3899,"models":["Qwen3 32B Q4_K_M — top open-weight mid-size","Gemma 4 27B Q4_K_M — Google MoE, blazing fast","DeepSeek-R1 32B Q4_K_M — reasoning with chain-of-thought","Mistral Small 3 22B Q8 — near-70B quality","Qwen3 14B Q8 — full-precision 14B"],"note":"Base M5 Max. Strong 32B inference. Fast for team serving."},
+          {"label":"48 GB · 2 TB · 40-core GPU","price":4399,"models":["Qwen3 32B Q4_K_M","Gemma 4 27B Q8 — full-precision MoE","DeepSeek-R1 32B Q8 — full-precision reasoning","Llama 3.3 70B Q4_K_M — 70B at practical speed (~14 t/s)","Two 22B models simultaneously (hot-loaded)"],"note":"40-core GPU baseline. First M5 Max tier for 70B at practical speed."},
+          {"label":"64 GB · 2 TB · 40-core GPU","price":4599,"models":["Llama 3.3 70B Q4_K_M — ~16 t/s","DeepSeek-R1 70B Q4_K_M — best open reasoning","Qwen3.5 72B Q4_K_M — benchmark leader","Gemma 4 27B Q8 — full-precision, ~85 t/s","Qwen3 32B Q8 — full-precision 32B"],"note":"Headroom for 70B + OS + tools simultaneously. Good team server."},
+          {"label":"128 GB · 2 TB · 40-core GPU","price":5199,"models":["Qwen3.5 72B Q4_K_M — benchmark leader open-weight","Llama 3.3 70B Q8 — full-precision 70B (best quality)","DeepSeek-R1 70B Q8 — full-precision reasoning","Qwen3.6 MoE Q4_K_M — 122B params, runs in ~60 GB","Kimi K2.6 70B Q4_K_M — top coding + reasoning","Two 70B models simultaneously (hot-loaded)"],"note":"Lab config (standard display). Three 70B models hot-loaded simultaneously."},
+          {"label":"128 GB · 2 TB · nano-texture","price":5349,"models":["Qwen3.5 72B Q4_K_M","Llama 3.3 70B Q8 — full-precision 70B","DeepSeek-R1 70B Q8 — full-precision reasoning","Qwen3.6 MoE Q4_K_M","Kimi K2.6 70B Q4_K_M","Two 70B models simultaneously (hot-loaded)"],"note":"Lab config + nano-texture display. Same inference performance."},
+          {"label":"128 GB · 4 TB · 40-core GPU","price":5799,"models":["Qwen3.5 72B Q4_K_M","Llama 3.3 70B Q8 — full-precision 70B","DeepSeek-R1 70B Q8","Qwen3.6 MoE Q4_K_M — 122B params","Kimi K2.6 70B Q4_K_M","Gemma 4 27B Q8 + Qwen3 32B Q8 (simultaneously)"],"note":"Extra storage for larger model libraries. Same inference speed as 2TB."},
+          {"label":"128 GB · 4 TB · nano-texture","price":5949,"models":["Qwen3.5 72B Q4_K_M","Llama 3.3 70B Q8","DeepSeek-R1 70B Q8","Qwen3.6 MoE Q4_K_M","Kimi K2.6 70B Q4_K_M","Gemma 4 27B Q8 + Qwen3 32B Q8 (simultaneously)"],"note":"Most popular high-end config. Nano display + full model library storage."},
+          {"label":"128 GB · 8 TB · standard display","price":7199,"models":["Entire open-weight model library fits on disk","Qwen3.5 72B Q4_K_M + Llama 3.3 70B Q8 (simultaneously)","DeepSeek-R1 70B Q8","Qwen3.6 MoE 122B Q4_K_M","Kimi K2.6 70B Q4_K_M","FP16 models possible via TB5 cluster"],"note":"Maximum storage. Keep every major open-weight model on disk — no re-downloading."},
+          {"label":"128 GB · 8 TB · nano-texture","price":7349,"models":["Entire open-weight model library fits on disk","Qwen3.5 72B Q4_K_M + Llama 3.3 70B Q8 (simultaneously)","DeepSeek-R1 70B Q8","Qwen3.6 MoE 122B Q4_K_M","Kimi K2.6 70B Q4_K_M","FP16 models possible via TB5 cluster"],"note":"Maxed out. $7,349 list price before tax. Nano display + full model library."}
+        ]'>
+        <option>36 GB · 2 TB · 32-core GPU — $3,899</option>
+        <option>48 GB · 2 TB · 40-core GPU — $4,399</option>
+        <option>64 GB · 2 TB · 40-core GPU — $4,599</option>
+        <option>128 GB · 2 TB · standard display — $5,199 ★ Lab config</option>
+        <option>128 GB · 2 TB · nano-texture — $5,349</option>
+        <option>128 GB · 4 TB · standard display — $5,799</option>
+        <option>128 GB · 4 TB · nano-texture — $5,949</option>
+        <option>128 GB · 8 TB · standard display — $7,199</option>
+        <option>128 GB · 8 TB · nano-texture — $7,349</option>
+      </select>
+
+      <div class="config-models grid grid-cols-1 md:grid-cols-2 gap-2 mb-4"></div>
+      <p class="config-note font-mono text-[0.65rem] text-ash leading-relaxed"></p>
+    </div>
+
+    <!-- Why Apple Silicon -->
+    <section class="max-w-prose mb-16 border-t border-wire pt-12">
+      <h2 class="font-display text-2xl font-semibold tracking-tight text-chalk mb-6">Why Apple Silicon</h2>
+      <div class="space-y-4 text-[1.0625rem] leading-editorial text-silver">
+        <p>Traditional GPU inference requires fitting the entire model in VRAM. A 16 GB consumer GPU cannot run a Q4-quantized 13B model — it doesn't fit. Your options were an expensive workstation GPU or a cloud API.</p>
+        <p>Apple Silicon's unified memory means GPU and CPU share one pool. A 16 GB Mac mini loads a Q4 8B model (~5 GB) with room for the OS and other apps. No VRAM ceiling.</p>
+        <p>Every model listed here is open-weight: publicly released weights, no API keys, no telemetry, no vendor agreement. The weights you download today run the same way in five years — fully air-gapped if needed.</p>
+      </div>
+    </section>
+
+    <!-- Cost reality -->
+    <section class="max-w-prose border-t border-wire pt-12">
+      <h2 class="font-display text-2xl font-semibold tracking-tight text-chalk mb-6">The real cost question</h2>
+      <div class="space-y-4 text-[1.0625rem] leading-editorial text-silver">
+        <p>The financial argument for local isn't API cost savings. At $0.01 per document interaction with cloud models, token savings don't recoup hardware for years.</p>
+        <p>The real cost is compliance overhead: the vendor due diligence, the BAA negotiations, the conversation with your malpractice carrier about your AI vendor's breach notification process. A local machine eliminates most of that — not by being cheaper per token, but by removing the third-party processor from the compliance equation entirely.</p>
+        <p>The hardware also has a 4–6 year useful life and does everything else a laptop or desktop does. It's infrastructure, not a pure AI line item.</p>
+      </div>
+    </section>
+
+  </div>
+</Base>
+
+<style>
+  .config-model-item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: #f5f5f7;
+    padding: 6px 0;
+    border-bottom: 1px solid #424245;
+  }
+  .config-model-item:last-child { border-bottom: none; }
+  .config-model-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #9b5de5;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+</style>
+
+<script>
+  function formatPrice(n: number) {
+    return '$' + n.toLocaleString('en-US');
+  }
+
+  function renderModels(card: HTMLElement, models: string[], note: string, price: number) {
+    const priceEl  = card.querySelector<HTMLElement>('.config-price');
+    const modelsEl = card.querySelector<HTMLElement>('.config-models');
+    const noteEl   = card.querySelector<HTMLElement>('.config-note');
+    if (priceEl)  priceEl.textContent  = formatPrice(price);
+    if (noteEl)   noteEl.textContent   = note;
+    if (modelsEl) {
+      modelsEl.innerHTML = models.map(m =>
+        `<div class="config-model-item">
+          <span class="config-model-dot"></span>
+          <span>${m}</span>
+        </div>`
+      ).join('');
+    }
+  }
+
+  document.querySelectorAll<HTMLElement>('.config-card').forEach(card => {
+    const select = card.querySelector<HTMLSelectElement>('.config-select');
+    if (!select) return;
+
+    const configs: Array<{label:string;price:number;models:string[];note:string}>
+      = JSON.parse(select.dataset.configs || '[]');
+
+    // Initialise with first config
+    if (configs.length > 0) {
+      renderModels(card, configs[0].models, configs[0].note, configs[0].price);
+    }
+
+    select.addEventListener('change', () => {
+      const cfg = configs[select.selectedIndex];
+      if (cfg) renderModels(card, cfg.models, cfg.note, cfg.price);
+    });
+  });
+
+  // Mouse-tracking glow
+  document.querySelectorAll<HTMLElement>('.glow-card').forEach(card => {
+    card.addEventListener('mousemove', (e: MouseEvent) => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mouse-x', `${((e.clientX-r.left)/r.width)*100}%`);
+      card.style.setProperty('--mouse-y', `${((e.clientY-r.top)/r.height)*100}%`);
+    });
+  });
+</script>

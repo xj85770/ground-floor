@@ -1,0 +1,111 @@
+---
+import Nav from '../components/Nav.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogType?: string;
+}
+
+const {
+  title,
+  description = "Open-source LLMs for practices that can't ship data to the cloud. Weekly experiments. Honest verdicts.",
+  ogType = 'website',
+} = Astro.props;
+
+const siteName  = 'Ground Floor';
+const pageTitle = title === siteName ? siteName : `${title} — ${siteName}`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://groundfloor.pages.dev');
+---
+
+<!DOCTYPE html>
+<html lang="en" style="background:#000;">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+
+  <meta property="og:title"       content={pageTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type"        content={ogType} />
+  <meta property="og:url"         content={canonical} />
+  <meta name="twitter:card"       content="summary" />
+  <meta name="twitter:title"      content={pageTitle} />
+  <meta name="twitter:description" content={description} />
+  <meta name="theme-color"        content="#000000" />
+
+  <title>{pageTitle}</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
+</head>
+
+<body class="bg-obsidian text-chalk antialiased">
+  <Nav />
+
+  <main>
+    <slot />
+  </main>
+
+  <!-- Footer -->
+  <footer style="border-top: 1px solid #424245;" class="mt-32">
+    <div class="max-w-wide mx-auto px-5 md:px-10 py-14">
+      <div class="flex flex-col md:flex-row md:items-start justify-between gap-10">
+
+        <div>
+          <p class="font-display font-semibold text-base text-chalk">Ground Floor</p>
+          <p class="text-sm text-ash mt-2 max-w-xs leading-relaxed">
+            Local LLMs for regulated practices.<br />
+            Weekly experiments. Honest verdicts. No upsell.
+          </p>
+        </div>
+
+        <nav class="flex flex-wrap gap-x-8 gap-y-3" aria-label="Footer">
+          {[
+            ['Experiments', '/experiments'],
+            ['Industries',  '/industries'],
+            ['Hardware',    '/hardware'],
+            ['Playbook',    '/playbook'],
+            ['About',       '/about'],
+          ].map(([label, href]) => (
+            <a href={href} class="text-sm text-ash hover:text-chalk transition-colors">{label}</a>
+          ))}
+          <a href="https://youtube.com/@groundfloor" class="text-sm text-ash hover:text-chalk transition-colors" rel="noopener noreferrer" target="_blank">YouTube</a>
+          <a href="https://linkedin.com/in/groundfloor" class="text-sm text-ash hover:text-chalk transition-colors" rel="noopener noreferrer" target="_blank">LinkedIn</a>
+          <a href="/scope" class="text-sm text-ash hover:text-chalk transition-colors">Scope &amp; Disclaimers</a>
+        </nav>
+      </div>
+
+      <p class="mt-12 text-xs text-ash/60">
+        Ground Floor is an independent educational project. Nothing here is legal, compliance, or medical advice.
+        See the <a href="/scope" class="underline underline-offset-2 hover:text-ash transition-colors">Scope &amp; Disclaimers</a> page.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Scroll reveal (runs on every page) -->
+  <script>
+    const _observer = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.08 }
+    );
+    document.querySelectorAll('.reveal').forEach(el => _observer.observe(el));
+
+    /* Global mouse-tracking glow for .glow-card */
+    document.querySelectorAll<HTMLElement>('.glow-card').forEach(card => {
+      card.addEventListener('mousemove', (e: MouseEvent) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty('--mouse-x', `${((e.clientX - rect.left) / rect.width)  * 100}%`);
+        card.style.setProperty('--mouse-y', `${((e.clientY - rect.top)  / rect.height) * 100}%`);
+      });
+    });
+  </script>
+</body>
+</html>

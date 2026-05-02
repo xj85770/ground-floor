@@ -1,0 +1,350 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: #000000;
+    color: #f5f5f7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-optical-sizing: auto;
+  }
+
+  code, kbd, pre, samp {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+  }
+
+  ::selection {
+    background-color: rgba(155, 93, 229, 0.4);
+    color: #f5f5f7;
+  }
+
+  p { text-wrap: pretty; }
+
+  hr { border-color: #424245; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar        { width: 6px; }
+  ::-webkit-scrollbar-track  { background: #0a0a0a; }
+  ::-webkit-scrollbar-thumb  { background: #424245; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #6e6e73; }
+}
+
+@layer components {
+
+  /* ── Prose for markdown pages ── */
+  .prose-editorial {
+    @apply text-[1.0625rem] leading-editorial text-dim;
+  }
+  .prose-editorial > * + * { @apply mt-5; }
+  .prose-editorial p        { @apply leading-editorial; }
+  .prose-editorial h1 {
+    @apply font-display text-3xl font-semibold tracking-tight mt-12 mb-4 text-chalk;
+  }
+  .prose-editorial h2 {
+    @apply font-display text-2xl font-semibold tracking-tight mt-10 mb-3 text-chalk;
+  }
+  .prose-editorial h3 {
+    @apply font-display text-xl font-medium mt-8 mb-2 text-chalk;
+  }
+  .prose-editorial h4 {
+    @apply font-sans text-base font-semibold uppercase tracking-widest text-ash mt-6 mb-2;
+  }
+  .prose-editorial a {
+    @apply underline decoration-rust/40 underline-offset-2 hover:decoration-rust transition-colors text-chalk;
+  }
+  .prose-editorial ul  { @apply list-disc pl-5 space-y-1; }
+  .prose-editorial ol  { @apply list-decimal pl-5 space-y-1; }
+  .prose-editorial blockquote {
+    @apply border-l-2 border-rust pl-6 text-dim italic my-8;
+  }
+  .prose-editorial pre {
+    @apply bg-slate rounded-lg p-5 overflow-x-auto text-sm my-6 border border-wire;
+  }
+  .prose-editorial code {
+    @apply bg-slate px-1.5 py-0.5 rounded text-[0.875em] font-mono text-chalk;
+  }
+  .prose-editorial pre code { @apply bg-transparent p-0 rounded-none text-sm; }
+  .prose-editorial strong   { @apply font-semibold text-chalk; }
+  .prose-editorial hr       { @apply my-10 border-wire; }
+  .prose-editorial table    { @apply w-full text-sm border-collapse my-6; }
+  .prose-editorial th {
+    @apply text-left font-semibold text-xs uppercase tracking-widest text-ash border-b border-wire pb-2;
+  }
+  .prose-editorial td { @apply py-2.5 border-b border-wire align-top; }
+
+  /* ── Tag pill ── */
+  .tag {
+    @apply inline-flex items-center px-2 py-0.5 text-[0.7rem] font-mono tracking-wide
+           rounded border border-wire bg-slate text-ash;
+  }
+
+  /* ── Verdict badge ── */
+  .verdict {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono font-medium rounded;
+  }
+  .verdict-viable  { color: #34d399; background: rgba(52,211,153,0.12); }
+  .verdict-partial { color: #fbbf24; background: rgba(251,191,36,0.12); }
+  .verdict-not-yet { color: #f87171; background: rgba(248,113,113,0.12); }
+
+  /* ── Ghost link arrows ── */
+  .link-arrow {
+    @apply inline-flex items-center gap-1.5 font-medium text-silver
+           hover:text-chalk transition-colors duration-150;
+  }
+
+  /* ── Section heading row ── */
+  .section-header {
+    @apply flex items-baseline justify-between mb-8 pb-4 border-b border-wire;
+  }
+
+  /* ── Glass pill (spec badges) ── */
+  .glass-pill {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-mono text-silver
+           border border-white/10 bg-white/5 backdrop-blur-sm;
+  }
+
+  /* ── Dark card ── */
+  .dark-card {
+    @apply bg-slate border border-wire rounded-2xl overflow-hidden
+           transition-all duration-300 hover:border-white/20 hover:bg-fog;
+  }
+
+  /* ── Gradient text ── */
+  .gradient-text {
+    background: linear-gradient(135deg, #f5f5f7 0%, #a1a1a6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .gradient-text-glow {
+    background: linear-gradient(135deg, #f5f5f7 20%, #c77dff 80%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Scroll reveal ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s cubic-bezier(0.645,0.045,0.355,1), transform 0.7s cubic-bezier(0.645,0.045,0.355,1);
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Primary button (white filled) ── */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-6 py-3 rounded-full bg-chalk text-obsidian
+           font-medium text-sm transition-all duration-200
+           hover:bg-white hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  /* ── Ghost button ── */
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 px-6 py-3 rounded-full
+           border border-white/20 text-chalk font-medium text-sm
+           transition-all duration-200 hover:border-white/40 hover:bg-white/5
+           active:scale-[0.98];
+  }
+
+  /* ── Inner page aurora header ── */
+  .page-aurora {
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid #424245;
+    background: #000;
+  }
+  .page-aurora-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 70% 60% at 50% -10%, rgba(155,93,229,0.25) 0%, transparent 70%);
+  }
+
+  /* ── Animated gradient headline text ── */
+  .gradient-text-animated {
+    background: linear-gradient(135deg, #f5f5f7 0%, #c77dff 30%, #4cc9f0 60%, #f5f5f7 100%);
+    background-size: 300% 300%;
+    animation: gradient-shift 6s ease infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Mouse-tracking spotlight card ── */
+  .glow-card {
+    position: relative;
+    overflow: hidden;
+    @apply bg-slate border border-wire rounded-2xl transition-all duration-300 hover:border-white/20;
+  }
+  .glow-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(155,93,229,0.13),
+      transparent 40%
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    border-radius: inherit;
+    z-index: 0;
+  }
+  .glow-card:hover::before { opacity: 1; }
+  .glow-card > * { position: relative; z-index: 1; }
+
+  /* ── Spinning conic border (cluster card) ── */
+  .conic-border {
+    position: relative;
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+  .conic-border::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: conic-gradient(
+      from var(--border-angle, 0deg),
+      rgba(155,93,229,0.8) 0deg,
+      rgba(76,201,240,0.6) 90deg,
+      rgba(67,97,238,0.4) 180deg,
+      rgba(155,93,229,0.1) 270deg,
+      rgba(155,93,229,0.8) 360deg
+    );
+    animation: spin-border 4s linear infinite;
+    z-index: 0;
+  }
+  .conic-border::after {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border-radius: calc(1rem - 1px);
+    background: #1d1d1f;
+    z-index: 1;
+  }
+  .conic-border > * { position: relative; z-index: 2; }
+
+  /* ── Beam sweep ── */
+  .beam {
+    position: absolute;
+    top: -20%;
+    left: 0;
+    width: 2px;
+    height: 140%;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgba(155,93,229,0.0) 10%,
+      rgba(200,150,255,0.9) 45%,
+      rgba(255,255,255,1) 50%,
+      rgba(200,150,255,0.9) 55%,
+      rgba(155,93,229,0.0) 90%,
+      transparent 100%
+    );
+    filter: blur(1px);
+    transform: rotate(12deg);
+    pointer-events: none;
+    animation: beam-sweep 8s cubic-bezier(0.645,0.045,0.355,1) infinite;
+  }
+  .beam-2 {
+    animation-delay: 4s;
+    opacity: 0.4;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgba(76,201,240,0.0) 10%,
+      rgba(76,201,240,0.7) 45%,
+      rgba(180,240,255,0.9) 50%,
+      rgba(76,201,240,0.7) 55%,
+      rgba(76,201,240,0.0) 90%,
+      transparent 100%
+    );
+  }
+
+  /* ── Floating orbs ── */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    animation: orb-drift 12s ease-in-out infinite;
+  }
+  .orb-purple {
+    background: rgba(155,93,229,0.35);
+    animation-delay: 0s;
+  }
+  .orb-blue {
+    background: rgba(67,97,238,0.25);
+    animation-delay: -4s;
+    animation-duration: 15s;
+  }
+  .orb-cyan {
+    background: rgba(76,201,240,0.18);
+    animation-delay: -8s;
+    animation-duration: 18s;
+  }
+
+  /* ── Micro particles ── */
+  .particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    pointer-events: none;
+    animation: particle-float linear infinite;
+  }
+}
+
+/* ── Keyframes (outside @layer so they're global) ── */
+
+@keyframes gradient-shift {
+  0%   { background-position: 0%   50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0%   50%; }
+}
+
+@keyframes spin-border {
+  from { --border-angle: 0deg; }
+  to   { --border-angle: 360deg; }
+}
+
+@keyframes beam-sweep {
+  0%   { transform: rotate(12deg) translateX(-120px);  opacity: 0; }
+  5%   { opacity: 1; }
+  95%  { opacity: 1; }
+  100% { transform: rotate(12deg) translateX(110vw); opacity: 0; }
+}
+
+@keyframes orb-drift {
+  0%,100% { transform: translate(0px, 0px)   scale(1);    }
+  25%      { transform: translate(40px,-30px) scale(1.08); }
+  50%      { transform: translate(-20px,20px) scale(0.95); }
+  75%      { transform: translate(25px, 10px) scale(1.03); }
+}
+
+@keyframes particle-float {
+  0%   { transform: translateY(0);      opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 0.6; }
+  100% { transform: translateY(-80vh);  opacity: 0; }
+}
+
+@property --border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}

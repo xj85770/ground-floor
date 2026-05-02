@@ -1,0 +1,272 @@
+---
+import Base from '../layouts/Base.astro';
+import ExperimentCard from '../components/ExperimentCard.astro';
+import IndustryCard from '../components/IndustryCard.astro';
+import { getCollection } from 'astro:content';
+
+const allExperiments = await getCollection('experiments');
+const allIndustries  = await getCollection('industries');
+
+const sorted = allExperiments.sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+const latest = sorted.slice(0, 3);
+
+const expCountByIndustry = allExperiments.reduce<Record<string, number>>((acc, e) => {
+  acc[e.data.industry] = (acc[e.data.industry] ?? 0) + 1;
+  return acc;
+}, {});
+---
+
+<Base title="Ground Floor">
+
+  <!-- ═══ HERO — clean, spacious, single statement ═══ -->
+  <section class="relative overflow-hidden" style="min-height:96vh;display:flex;align-items:center;justify-content:center;">
+
+    <!-- Single centered glow orb -->
+    <div aria-hidden="true" style="
+      position:absolute;top:50%;left:50%;
+      transform:translate(-50%,-55%);
+      width:900px;height:700px;
+      background:radial-gradient(ellipse at center,rgba(155,93,229,0.22) 0%,rgba(67,97,238,0.1) 40%,transparent 70%);
+      filter:blur(40px);
+      pointer-events:none;
+      animation:orb-drift 14s ease-in-out infinite;
+    "></div>
+
+    <!-- Content — centered, nothing competing with it -->
+    <div class="relative text-center max-w-4xl mx-auto px-5 md:px-10">
+
+      <h1 class="font-display font-semibold tracking-tight leading-[1.03] mb-8"
+          style="font-size:clamp(3.2rem,8vw,6rem);">
+        <span class="hero-line" style="--d:0.1s">
+          <span class="gradient-text-animated">AI that stays</span>
+        </span>
+        <br />
+        <span class="hero-line" style="--d:0.28s">
+          <span class="text-chalk">in your building.</span>
+        </span>
+      </h1>
+
+      <p class="hero-line text-xl md:text-2xl text-silver leading-relaxed max-w-2xl mx-auto mb-12"
+         style="--d:0.46s;">
+        Open-source LLMs for practices that can't ship data to the cloud.
+      </p>
+
+      <div class="hero-line flex flex-wrap justify-center gap-4" style="--d:0.6s;">
+        <a href={`/experiments/${latest[0]?.slug ?? '/experiments'}`} class="btn-primary text-base px-8 py-3.5">
+          See the experiments →
+        </a>
+        <a href="/industries" class="btn-ghost text-base px-8 py-3.5">
+          Find your industry
+        </a>
+      </div>
+    </div>
+
+    <!-- Scroll cue -->
+    <div class="hero-line absolute bottom-10 left-1/2 -translate-x-1/2" style="--d:1s;">
+      <div style="width:1px;height:48px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,0.3));margin:0 auto;animation:scroll-cue 2s ease-in-out infinite;"></div>
+    </div>
+  </section>
+
+
+  <!-- ═══ PROOF STRIP ═══ -->
+  <div style="border-top:1px solid #424245;border-bottom:1px solid #424245;background:#0a0a0a;">
+    <div class="max-w-wide mx-auto px-5 md:px-10 py-5 flex flex-wrap items-center justify-center gap-3 md:gap-6">
+      {[
+        ['M5 Max × 2 nodes', '#9b5de5'],
+        ['256 GB unified memory', '#a1a1a6'],
+        ['4 TB storage', '#a1a1a6'],
+        ['TB5 RDMA · 3 µs latency', '#a1a1a6'],
+        ['100% on-premise', '#34d399'],
+      ].map(([label, color]) => (
+        <span class="font-mono text-[0.72rem] tracking-wide" style={`color:${color};`}>{label}</span>
+      ))}
+    </div>
+  </div>
+
+
+  <!-- ═══ THE CASE ═══ -->
+  <section style="background:#000;">
+    <div class="max-w-wide mx-auto px-5 md:px-10 py-24 md:py-36">
+
+      <div class="reveal text-center mb-20">
+        <p class="font-mono text-[0.7rem] tracking-[0.2em] uppercase text-ash mb-5">The architecture argument</p>
+        <h2 class="font-display font-semibold tracking-tight text-chalk max-w-3xl mx-auto"
+            style="font-size:clamp(1.9rem,4vw,3rem);line-height:1.1;">
+          The cloud API is the weakest link.
+        </h2>
+        <p class="text-silver text-lg mt-5 max-w-xl mx-auto leading-relaxed">
+          Every API call is a data flow that exits your building. For regulated practices, that's a compliance problem before it's a technology problem.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {[
+          {
+            num: '01',
+            title: 'No API calls',
+            body: 'The model runs on hardware you own. Zero network requests leave your building. No third-party processors, no vendor security posture to audit.',
+            color: '#9b5de5',
+          },
+          {
+            num: '02',
+            title: 'No breach surface',
+            body: "Patient transcripts, client documents, financial records — none of it can appear in a vendor's incident notification. It never left.",
+            color: '#4361ee',
+          },
+          {
+            num: '03',
+            title: 'No lock-in',
+            body: 'Open weights run on open hardware. Switch models, upgrade hardware, or change tools without renegotiating a vendor agreement.',
+            color: '#4cc9f0',
+          },
+        ].map(({ num, title, body, color }) => (
+          <div class="reveal glow-card p-8 md:p-10">
+            <p class="font-mono text-[0.65rem] tracking-widest uppercase mb-6" style={`color:${color};`}>{num}</p>
+            <h3 class="font-display font-semibold text-xl text-chalk mb-4">{title}</h3>
+            <p class="text-sm text-silver leading-relaxed">{body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ THE LAB ═══ -->
+  <section style="border-top:1px solid #424245;background:#000;">
+    <div class="max-w-wide mx-auto px-5 md:px-10 py-24 md:py-36">
+
+      <div class="reveal mb-16">
+        <p class="font-mono text-[0.7rem] tracking-[0.2em] uppercase text-ash mb-4">The hardware</p>
+        <h2 class="font-display font-semibold tracking-tight text-chalk"
+            style="font-size:clamp(1.75rem,4vw,2.75rem);">The Lab</h2>
+        <p class="text-silver mt-3 max-w-xl">
+          Two M5 Max MacBook Pros on a Thunderbolt 5 RDMA cluster. Every experiment runs on this exact setup.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        {[
+          { label: 'Node A', color: '#9b5de5' },
+          { label: 'Node B', color: '#4361ee' },
+        ].map(({ label, color }) => (
+          <div class="reveal glow-card p-8">
+            <p class="font-mono text-[0.65rem] tracking-[0.18em] uppercase mb-5" style={`color:${color};`}>{label}</p>
+            <h3 class="font-display font-semibold text-2xl text-chalk mb-6">MacBook Pro M5 Max</h3>
+            <dl class="grid grid-cols-2 gap-y-4 gap-x-6">
+              {[['Chip','Apple M5 Max'],['Memory','128 GB unified'],['Storage','2 TB NVMe'],['OS','macOS Tahoe 26.2']].map(([k,v]) => (
+                <div>
+                  <dt class="font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-1">{k}</dt>
+                  <dd class="text-sm text-chalk font-medium">{v}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        ))}
+      </div>
+
+      <!-- Spinning conic cluster card -->
+      <div class="reveal conic-border">
+        <div class="p-8 md:p-10">
+          <p class="font-mono text-[0.65rem] tracking-[0.18em] uppercase text-ash mb-5">Combined cluster</p>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-8">
+            {[['256 GB','Unified memory'],['4 TB','Total storage'],['~3 µs','TB5 RDMA latency'],['~800 GB/s','Peak bandwidth']].map(([val,label]) => (
+              <div>
+                <p class="font-display font-semibold text-3xl gradient-text-animated mb-1">{val}</p>
+                <p class="font-mono text-[0.65rem] uppercase tracking-widest text-ash">{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ LATEST EXPERIMENTS ═══ -->
+  <section style="border-top:1px solid #424245;background:#000;">
+    <div class="max-w-wide mx-auto px-5 md:px-10 py-24 md:py-32">
+      <div class="reveal section-header">
+        <div>
+          <p class="font-mono text-[0.7rem] tracking-[0.2em] uppercase text-ash mb-2">Weekly</p>
+          <h2 class="font-display text-2xl font-semibold tracking-tight text-chalk">Latest experiments</h2>
+        </div>
+        <a href="/experiments" class="link-arrow text-sm shrink-0">View all →</a>
+      </div>
+      <div class="max-w-prose reveal">
+        {latest.map(exp => <ExperimentCard experiment={exp} />)}
+        {latest.length === 0 && (
+          <p class="text-silver text-sm py-8 border-t border-wire">
+            First experiment publishes soon. <a href="/experiments" class="underline underline-offset-2 hover:text-chalk transition-colors">Subscribe.</a>
+          </p>
+        )}
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ INDUSTRIES ═══ -->
+  <section style="border-top:1px solid #424245;background:#000;">
+    <div class="max-w-wide mx-auto px-5 md:px-10 py-24 md:py-32">
+      <div class="reveal section-header">
+        <div>
+          <p class="font-mono text-[0.7rem] tracking-[0.2em] uppercase text-ash mb-2">Regulated verticals</p>
+          <h2 class="font-display text-2xl font-semibold tracking-tight text-chalk">By industry</h2>
+        </div>
+        <a href="/industries" class="link-arrow text-sm shrink-0">All industries →</a>
+      </div>
+      <div class="reveal grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px" style="background:#424245;border:1px solid #424245;">
+        {allIndustries.map(ind => (
+          <div style="background:#000;"><IndustryCard industry={ind} experimentCount={expCountByIndustry[ind.slug] ?? 0} /></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ CLOSING ═══ -->
+  <section class="relative overflow-hidden" style="border-top:1px solid #424245;background:#000;">
+    <div aria-hidden="true" style="position:absolute;bottom:-30%;left:50%;transform:translateX(-50%);width:900px;height:600px;background:radial-gradient(ellipse at center,rgba(155,93,229,0.2) 0%,transparent 65%);filter:blur(80px);pointer-events:none;"></div>
+    <div class="relative max-w-3xl mx-auto px-5 md:px-10 py-32 md:py-48 text-center">
+      <p class="reveal font-mono text-[0.7rem] tracking-[0.2em] uppercase text-ash mb-8">May 2026</p>
+      <h2 class="reveal font-display font-semibold tracking-tight text-chalk mb-6"
+          style="font-size:clamp(2.2rem,5vw,4rem);line-height:1.05;">The question is answered.</h2>
+      <p class="reveal text-xl text-silver leading-relaxed mb-14">
+        An M5 Max Mac runs a 70B model faster than most cloud API round-trips —
+        on hardware you own, with data that never leaves.
+      </p>
+      <div class="reveal flex flex-wrap items-center justify-center gap-4">
+        <a href="/experiments" class="btn-primary text-base px-8 py-3.5">Explore experiments</a>
+        <a href="/playbook"    class="btn-ghost   text-base px-8 py-3.5">Read the playbook</a>
+      </div>
+    </div>
+  </section>
+
+</Base>
+
+<style>
+  .hero-line {
+    display:block;
+    opacity:0;
+    transform:translateY(28px);
+    animation:hero-reveal 0.9s cubic-bezier(0.22,1,0.36,1) var(--d,0s) forwards;
+  }
+  @keyframes hero-reveal {
+    to { opacity:1; transform:translateY(0); }
+  }
+  @keyframes scroll-cue {
+    0%,100% { opacity:0.2; transform:scaleY(0.8); }
+    50%      { opacity:0.7; transform:scaleY(1.1); }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.glow-card').forEach(card => {
+    card.addEventListener('mousemove', (e: MouseEvent) => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mouse-x', `${((e.clientX-r.left)/r.width)*100}%`);
+      card.style.setProperty('--mouse-y', `${((e.clientY-r.top)/r.height)*100}%`);
+    });
+  });
+</script>

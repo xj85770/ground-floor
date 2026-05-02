@@ -1,0 +1,119 @@
+---
+import Base from '../../layouts/Base.astro';
+import ExperimentCard from '../../components/ExperimentCard.astro';
+import { getCollection } from 'astro:content';
+
+const all    = await getCollection('experiments');
+const sorted = all.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const industries = [...new Set(all.map(e => e.data.industry))].sort();
+const verdicts   = ['viable', 'partial', 'not-yet'] as const;
+---
+
+<Base
+  title="Experiments"
+  description="Weekly experiments testing open-source LLMs on local Apple Silicon — for regulated practices that can't use cloud AI."
+>
+
+  <!-- Page hero -->
+  <div class="page-aurora">
+    <div class="page-aurora-glow"></div>
+    <div class="max-w-wide mx-auto px-5 md:px-10 pt-24 pb-20 relative">
+      <p class="font-mono text-[0.7rem] tracking-[0.2em] uppercase mb-4" style="color:#9b5de5;">
+        Real hardware · Real tasks · Honest verdicts
+      </p>
+      <h1 class="font-display font-semibold tracking-tight text-chalk mb-4"
+          style="font-size:clamp(2.4rem,5vw,3.75rem);line-height:1.06;">
+        Your data doesn't<br />leave this machine.
+      </h1>
+      <p class="text-silver text-lg max-w-xl leading-relaxed">
+        Weekly experiments on Apple Silicon. Each one targets a specific task
+        for a specific regulated industry and returns a verdict you can act on.
+      </p>
+    </div>
+  </div>
+
+  <div class="max-w-wide mx-auto px-5 md:px-10 py-16 md:py-20">
+
+    <!-- Filters -->
+    <div id="filter-bar" class="flex flex-wrap gap-2 mb-10 pb-6 border-b border-wire">
+      <button data-filter="all" data-group="all" class="filter-btn active tag cursor-pointer">All</button>
+      {industries.length > 0 && <span class="self-center text-ash text-xs font-mono mx-1">Industry:</span>}
+      {industries.map(ind => (
+        <button data-filter={ind} data-group="industry"
+          class="filter-btn tag cursor-pointer hover:border-glow-purple hover:text-glow-purple transition-colors"
+        >{ind}</button>
+      ))}
+      <span class="self-center text-ash text-xs font-mono mx-1">Verdict:</span>
+      {verdicts.map(v => (
+        <button data-filter={v} data-group="verdict"
+          class="filter-btn tag cursor-pointer hover:border-glow-purple hover:text-glow-purple transition-colors"
+        >{v}</button>
+      ))}
+    </div>
+
+    <p id="experiment-count" class="text-xs text-ash font-mono mb-4">
+      {sorted.length} experiment{sorted.length !== 1 ? 's' : ''}
+    </p>
+
+    <div id="experiment-list" class="max-w-prose">
+      {sorted.map(exp => (
+        <div class="experiment-item"
+          data-industry={exp.data.industry}
+          data-hardware={exp.data.hardware}
+          data-verdict={exp.data.verdict}
+        >
+          <ExperimentCard experiment={exp} />
+        </div>
+      ))}
+      {sorted.length === 0 && <p class="text-silver text-sm py-12 border-t border-wire">First experiment publishes soon.</p>}
+    </div>
+
+    <p id="no-results" class="hidden text-silver text-sm py-12 border-t border-wire">
+      No experiments match that filter.{' '}
+      <a href="#" id="clear-filter" class="underline underline-offset-2 hover:text-chalk transition-colors">Clear.</a>
+    </p>
+  </div>
+</Base>
+
+<style>
+  .filter-btn.active { border-color:#9b5de5; color:#9b5de5; background:rgba(155,93,229,0.12); }
+</style>
+
+<script>
+  const buttons  = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+  const items    = document.querySelectorAll<HTMLElement>('.experiment-item');
+  const countEl  = document.getElementById('experiment-count')!;
+  const noResult = document.getElementById('no-results')!;
+  const clearBtn = document.getElementById('clear-filter')!;
+  let activeGroup = 'all', activeFilter = 'all';
+
+  function applyFilter() {
+    let visible = 0;
+    items.forEach(item => {
+      const show = activeFilter === 'all' || item.dataset[activeGroup as 'industry'|'hardware'|'verdict'] === activeFilter;
+      item.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    countEl.textContent = `${visible} experiment${visible !== 1 ? 's' : ''}`;
+    noResult.classList.toggle('hidden', visible > 0);
+  }
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilter = btn.dataset.filter!;
+      activeGroup  = btn.dataset.group!;
+      applyFilter();
+    });
+  });
+
+  clearBtn.addEventListener('click', e => {
+    e.preventDefault();
+    buttons.forEach(b => b.classList.remove('active'));
+    document.querySelector<HTMLButtonElement>('[data-filter="all"]')?.classList.add('active');
+    activeFilter = 'all'; activeGroup = 'all';
+    applyFilter();
+  });
+</script>

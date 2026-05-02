@@ -1,0 +1,140 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Scope & Disclaimers"
+  description="What Ground Floor covers, what it doesn't, and why that distinction matters."
+>
+  <div class="max-w-prose mx-auto px-5 md:px-0 py-20 md:py-28">
+
+    <header class="mb-12 reveal">
+      <p class="font-mono text-[0.7rem] tracking-[0.2em] uppercase text-ash mb-4">Legal</p>
+      <h1 class="font-display text-3xl md:text-4xl font-semibold tracking-tight text-chalk mb-4">
+        Scope &amp; Disclaimers
+      </h1>
+      <p class="text-silver leading-relaxed">
+        This page is load-bearing. Please read it before applying anything on this site
+        to your practice.
+      </p>
+    </header>
+
+    <div class="prose-editorial reveal">
+
+      <h2>What Ground Floor is</h2>
+      <p>
+        Ground Floor is an independent educational project that documents experiments
+        with open-source large language models running on local Apple Silicon hardware.
+        The site covers: which models run on which hardware, at what speed, with what
+        output quality, for specific tasks in regulated industries.
+      </p>
+      <p>
+        Every experiment is a technical test. The verdict tells you whether the
+        technology is capable of a specific task at a specific level of quality.
+        Nothing more.
+      </p>
+
+      <h2>What Ground Floor is not</h2>
+      <p>
+        <strong>Not legal advice.</strong> Nothing on this site constitutes legal advice,
+        and no attorney-client relationship is formed by reading or interacting with
+        this content. If you are an attorney considering local LLM tools for your practice,
+        consult your state bar's ethics counsel before deployment.
+      </p>
+      <p>
+        <strong>Not compliance advice.</strong> Ground Floor does not tell you whether
+        any specific technology setup satisfies your regulatory obligations. It tells
+        you what the technology can do. Whether it should be part of your workflow —
+        given your jurisdiction, your specialty, your client agreements, your licensing
+        requirements — is a question with many parties and variables this site is
+        not equipped to answer.
+      </p>
+      <p>
+        <strong>Not medical advice.</strong> Nothing here is clinical guidance.
+        Experiments involving medical documentation are technical tests of AI output
+        quality, not clinical recommendations. Any AI-assisted documentation in a
+        clinical setting requires review and accountability by a licensed clinician.
+      </p>
+      <p>
+        <strong>Not financial advice.</strong> Nothing here constitutes investment advice,
+        financial planning guidance, or recommendations about products or services for
+        your clients.
+      </p>
+
+      <h2>The key distinction</h2>
+      <blockquote>
+        What Ground Floor does is document the technical foundation.
+        Your specific compliance situation — your state, your county, your specialty,
+        your licensing body, your malpractice carrier, your contracts — is a conversation
+        with someone who knows your jurisdiction. That person is not this website.
+      </blockquote>
+      <p>
+        To make this concrete: an experiment showing that a local LLM can draft SOAP notes
+        at sufficient quality for clinician review is a technical finding.
+        Whether using that setup in your specific practice satisfies HIPAA,
+        your state's medical privacy laws, your EHR vendor's terms of service,
+        your malpractice insurer's requirements, and any applicable CMS guidelines
+        is a separate, jurisdiction-specific, practice-specific question.
+        The technical finding is useful context for that conversation. It is not
+        a substitute for it.
+      </p>
+
+      <h2>Running local does not mean compliant</h2>
+      <p>
+        A common misread of local-first AI: that running a model on hardware you own
+        automatically satisfies data privacy requirements. This is not correct.
+      </p>
+      <p>
+        Running locally eliminates a specific category of risk: third-party processor
+        exposure. It simplifies the compliance picture significantly. But it does not
+        replace a written information security program, staff training, proper access
+        controls, business associate agreements with other vendors you use, incident
+        response plans, or any other element of a regulatory compliance program.
+      </p>
+      <p>
+        Local is a necessary condition for certain compliance postures. It is not
+        a sufficient condition for any of them.
+      </p>
+
+      <h2>Accuracy and currency of experiment results</h2>
+      <p>
+        Every experiment was conducted at a specific point in time with a specific
+        hardware configuration and specific model version. Results may vary based on:
+        model version updates, hardware differences, operating system and runtime
+        differences, input quality and format, and dozens of other variables.
+      </p>
+      <p>
+        Experiment verdicts reflect conditions at the time of publication.
+        The date of each experiment is shown prominently. Before relying on a result,
+        check whether newer models or hardware are available that change the picture.
+      </p>
+
+      <h2>No endorsements</h2>
+      <p>
+        Mentions of specific products, models, or vendors are for descriptive purposes.
+        They do not constitute endorsements. Ground Floor has no commercial relationships
+        with hardware manufacturers, model developers, or software vendors mentioned
+        on this site.
+      </p>
+
+      <h2>Contacting me about your specific situation</h2>
+      <p>
+        I'm happy to discuss the technical side of local LLM deployment.
+        I can explain how specific models work, what hardware configurations enable
+        specific use cases, and what the current state of open-source tooling looks like
+        for regulated industries.
+      </p>
+      <p>
+        I cannot evaluate your specific compliance situation, review your existing
+        procedures, or tell you whether a given setup satisfies your regulatory obligations.
+        That's not a hedge — it's a genuine limitation. Compliance in regulated industries
+        is jurisdiction-specific, practice-specific, and changes over time. It requires
+        a professional who knows your situation.
+      </p>
+      <p>
+        Reach me at <a href="mailto:hello@groundfloor.local">hello@groundfloor.local</a>.
+      </p>
+
+    </div>
+  </div>
+</Base>

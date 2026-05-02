@@ -1,0 +1,89 @@
+---
+const links = [
+  { href: '/experiments', label: 'Experiments' },
+  { href: '/industries',  label: 'Industries'  },
+  { href: '/hardware',    label: 'Hardware'     },
+  { href: '/playbook',    label: 'Playbook'     },
+  { href: '/about',       label: 'About'        },
+];
+
+const { pathname } = Astro.url;
+
+function isActive(href: string) {
+  if (href === '/') return pathname === '/';
+  return pathname.startsWith(href);
+}
+---
+
+<!-- Apple-style nav: rgba black + saturate + blur -->
+<header
+  id="site-nav"
+  class="sticky top-0 z-50 transition-all duration-300"
+  style="background: rgba(0,0,0,0.72); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); border-bottom: 1px solid rgba(255,255,255,0.08);"
+>
+  <div class="max-w-wide mx-auto px-5 md:px-10 flex items-center justify-between" style="height: 52px;">
+
+    <a
+      href="/"
+      class="font-display text-[0.9375rem] font-semibold tracking-tight text-chalk hover:text-white transition-colors duration-150"
+    >
+      Ground Floor
+    </a>
+
+    <nav class="hidden md:flex items-center gap-8" aria-label="Primary">
+      {links.map(link => (
+        <a
+          href={link.href}
+          class:list={[
+            'text-[0.8125rem] font-medium transition-colors duration-150',
+            isActive(link.href) ? 'text-chalk' : 'text-silver hover:text-chalk',
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    <button
+      id="nav-toggle"
+      class="md:hidden p-2 -mr-2 text-silver hover:text-chalk transition-colors"
+      aria-label="Open navigation"
+      aria-expanded="false"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+        <path id="icon-open"  stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+        <path id="icon-close" stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" class="hidden"/>
+      </svg>
+    </button>
+  </div>
+
+  <div id="mobile-menu" class="hidden md:hidden border-t border-white/10">
+    <nav class="max-w-wide mx-auto px-5 py-5 flex flex-col gap-4" aria-label="Mobile primary">
+      {links.map(link => (
+        <a
+          href={link.href}
+          class:list={[
+            'text-sm font-medium transition-colors',
+            isActive(link.href) ? 'text-chalk' : 'text-silver',
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle   = document.getElementById('nav-toggle')!;
+  const menu     = document.getElementById('mobile-menu')!;
+  const iconOpen  = document.getElementById('icon-open')!;
+  const iconClose = document.getElementById('icon-close')!;
+
+  toggle.addEventListener('click', () => {
+    const open = menu.classList.toggle('hidden') === false;
+    toggle.setAttribute('aria-expanded', String(open));
+    iconOpen.classList.toggle('hidden', open);
+    iconClose.classList.toggle('hidden', !open);
+  });
+</script>

@@ -1,0 +1,9 @@
+---
+interface Props {
+  label: string;
+  mono?: boolean;
+}
+const { label, mono = false } = Astro.props;
+const display = label.replace(/-/g, '‑'); // non-breaking hyphen
+---
+<span class:list={['tag', { 'font-mono': mono }]}>{display}</span>

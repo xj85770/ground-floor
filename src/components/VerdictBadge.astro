@@ -1,0 +1,28 @@
+---
+interface Props {
+  verdict: 'viable' | 'partial' | 'not-yet';
+}
+const { verdict } = Astro.props;
+
+const label: Record<string, string> = {
+  viable:    'Viable',
+  partial:   'Partial',
+  'not-yet': 'Not yet',
+};
+
+const cls: Record<string, string> = {
+  viable:    'verdict verdict-viable',
+  partial:   'verdict verdict-partial',
+  'not-yet': 'verdict verdict-not-yet',
+};
+
+const dot: Record<string, string> = {
+  viable:    'bg-[#34d399]',
+  partial:   'bg-[#fbbf24]',
+  'not-yet': 'bg-[#f87171]',
+};
+---
+<span class={cls[verdict]}>
+  <span class:list={['inline-block w-1.5 h-1.5 rounded-full', dot[verdict]]}></span>
+  {label[verdict]}
+</span>
