@@ -1,6 +1,6 @@
 ---
 name: "MacBook Pro (M5 Max, 128 GB)"
-priceUsd: 5199
+priceUsd: 5499
 ramGb: 128
 chip: "Apple M5 Max"
 tier: "workstation"
@@ -25,7 +25,7 @@ notSuitableFor:
   - "Large-scale serving of 10+ users without clustering"
 ---
 
-The M5 Max at 128 GB is the current practical ceiling for single-machine local inference. This is the Ground Floor lab configuration: two MacBook Pro M5 Max 128 GB / 2 TB units at $5,199 each, plus AppleCare+ ($399 each) and Thunderbolt 5 cables for the RDMA cluster — connected for 256 GB effective unified memory across nodes.
+The M5 Max at 128 GB is the current practical ceiling for single-machine local inference. This is the Ground Floor lab configuration: two MacBook Pro M5 Max 128 GB / 2 TB units at $5,499 each, plus AppleCare+ ($450 each) and Thunderbolt 5 cables for the RDMA cluster — connected for 256 GB effective unified memory across nodes.
 
 ## What changes at 128 GB in 2026
 
