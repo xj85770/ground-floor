@@ -221,6 +221,7 @@ export const CLOSED_SOURCE_REFERENCE: ClosedModel[] = [
   { name: 'Gemini 3.1 Pro Preview', provider: 'Google',    intelligenceIndex: 57, outputSpeed: 121, note: 'API only.' },
   { name: 'GPT-5.5 (low)',          provider: 'OpenAI',    intelligenceIndex: 55, outputSpeed: 80,  note: 'API only.' },
   { name: 'Claude Sonnet 4.7',      provider: 'Anthropic', intelligenceIndex: 53, outputSpeed: 95,  note: 'API only.' },
+  { name: 'Claude Sonnet 4.6',      provider: 'Anthropic', intelligenceIndex: 50, outputSpeed: 88,  note: 'Powers Claude Code. Strong agentic performance — reliable everyday benchmark. API only.' },
   { name: 'Gemini 3.1 Flash',       provider: 'Google',    intelligenceIndex: 50, outputSpeed: 220, note: 'API only, fast tier.' },
 ];
 
@@ -248,6 +249,7 @@ export const TASK_SCORES: Record<string, Record<string, number>> = {
   'Claude Opus 4.7 (max)':  { swe: 56, agentic: 58, reasoning: 58, general: 57 },
   'Gemini 3.1 Pro Preview': { swe: 55, agentic: 54, reasoning: 57, general: 57 },
   'Claude Sonnet 4.7':      { swe: 52, agentic: 54, reasoning: 51, general: 53 },
+  'Claude Sonnet 4.6':      { swe: 49, agentic: 52, reasoning: 48, general: 50 },
   'Gemini 3.1 Flash':       { swe: 47, agentic: 46, reasoning: 48, general: 50 },
 };
 

@@ -11,8 +11,8 @@ import Base from '../layouts/Base.astro';
       <h1 class="font-display font-semibold tracking-tight text-chalk mb-4"
           style="font-size:clamp(2.4rem,5vw,3.75rem);line-height:1.06;">The Playbook</h1>
       <p class="text-silver text-lg max-w-xl leading-relaxed">
-        How experiments are designed, run, documented, and published.
-        The methodology behind the verdicts — public by default.
+        How I design, run, and publish experiments.
+        The methodology is public because reproducibility matters more than mystique.
       </p>
     </div>
   </div>
@@ -22,10 +22,10 @@ import Base from '../layouts/Base.astro';
 
       <h2>Why this project exists</h2>
       <p>
-        Regulated practitioners — physicians, attorneys, financial advisors — have a genuine
-        AI problem. The models worth using require an internet connection. Sending client data
-        to a cloud API creates third-party processors, vendor agreements, and compliance overhead
-        that solo practitioners and small firms can't easily absorb.
+        Physicians, attorneys, financial advisors — they all have the same problem. The AI
+        tools worth using require an internet connection. Sending client data to a cloud API
+        means third-party processors, vendor agreements, and compliance overhead a solo
+        practice can't easily absorb. So most of them don't use AI at all.
       </p>
       <p>
         Air-gapped AI solves this architecturally. A model running on hardware you own makes no
@@ -35,8 +35,8 @@ import Base from '../layouts/Base.astro';
 
       <h2>The air-gapped AI thesis</h2>
       <p>
-        By 2025, consumer hardware crossed the threshold. Apple Silicon's unified memory
-        architecture collapsed the VRAM ceiling that had made local inference impractical.
+        By 2025, consumer hardware had crossed the threshold I'd been waiting for. Apple Silicon's unified memory
+        architecture eliminated the VRAM ceiling that had made local inference impractical for years.
         A quantized 8B model runs faster on a $599 Mac mini than most cloud API round-trips —
         with no data leaving the building. It's 2026. The question is answered.
       </p>
@@ -82,6 +82,63 @@ import Base from '../layouts/Base.astro';
         <li><strong>Video (YouTube):</strong> Screen recording of setup and inference in action. Shows what the model actually produces, not a curated highlight.</li>
         <li><strong>Post (LinkedIn):</strong> 3–5 paragraph summary with verdict. Links to writeup for depth.</li>
       </ul>
+
+      <h2>Failure modes — what to watch for</h2>
+      <p>
+        Every experiment on this site documents failure modes explicitly. Here's the
+        pattern I see across all three regulated industries.
+      </p>
+
+      <h3>False precision</h3>
+      <p>
+        The most dangerous failure mode isn't a wrong answer — it's a confidently wrong
+        answer with no signal that it's wrong. A local 8B model drafting a SOAP note
+        will occasionally invent a medication dose, a legal model will cite a clause number
+        that doesn't exist, a financial model will produce a figure that's plausible but off.
+        These aren't rare edge cases. They happen.
+      </p>
+      <p>
+        The defense: treat every output as a first draft by a junior colleague who is
+        smart but hasn't verified their work. Your review is not optional — it's the
+        point of the architecture. The model handles the drafting friction. You handle
+        the accuracy.
+      </p>
+
+      <h3>Complexity degrades quality</h3>
+      <p>
+        Smaller models (8B–13B) perform well on structured, predictable tasks.
+        They struggle on complex ones — a new patient with a complicated history, a
+        contract with cross-referencing clauses, a financial meeting with emotionally
+        complicated family dynamics. The output becomes more generic, misses nuance,
+        or confidently omits relevant detail.
+      </p>
+      <p>
+        This isn't a reason to avoid local AI. It's the reason to know which tasks
+        belong at which hardware tier. The experiments map this out explicitly.
+      </p>
+
+      <h3>Prompt quality determines output quality</h3>
+      <p>
+        A vague prompt produces vague output. "Summarize this meeting" produces something
+        generic. "Extract action items, decisions made, and follow-up commitments from
+        this meeting transcript, structured as a CRM note with the sections: Topics Discussed,
+        Decisions, Client Actions, Advisor Actions" produces something useful.
+      </p>
+      <p>
+        The experiments publish the actual prompts used. Start there.
+      </p>
+
+      <h3>Red flags by industry</h3>
+      <dl>
+        <dt><strong>Medical</strong></dt>
+        <dd>Watch for invented clinical specifics — dosages, lab values, procedure names that weren't in the transcript. The model will fill gaps with plausible-sounding detail rather than flagging uncertainty.</dd>
+
+        <dt><strong>Legal</strong></dt>
+        <dd>Watch for invented case citations, clause numbers that don't match the document, and jurisdiction-specific analysis that's generic rather than accurate. The model lacks depth on state-level variations.</dd>
+
+        <dt><strong>Financial</strong></dt>
+        <dd>Watch for misattributed action items (model swaps who owns what), invented figures in numerical summaries, and regulatory language that sounds right but doesn't match current rules.</dd>
+      </dl>
 
       <h2>What this playbook doesn't cover</h2>
       <p>

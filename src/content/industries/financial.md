@@ -19,7 +19,7 @@ commonUseCases:
 maturityNote: "Financial AI applications are subject to strict recordkeeping and suitability rules. Local models are most defensible for administrative and documentation tasks — not for generating investment recommendations or client-facing advice."
 ---
 
-Independent RIAs and solo financial advisors face an unusual AI dilemma: the tasks most amenable to AI assistance (writing, summarization, formatting) involve client data that regulatory frameworks treat with particular care.
+Independent RIAs and solo financial advisors have an unusual AI problem: the tasks most amenable to automation — writing, summarization, formatting meeting notes — involve client data that regulatory frameworks treat with particular care.
 
 The Gramm-Leach-Bliley Act requires financial institutions to protect client information with reasonable safeguards. "Reasonable" is not defined in statute — it's determined by regulators, examiners, and courts looking at what precautions were available given the risks known at the time. Sending client portfolios and financial data to an AI API without a formal vendor due diligence process and updated privacy notices is increasingly hard to describe as "reasonable."
 
@@ -27,7 +27,7 @@ A local model changes the calculus. If the model runs on hardware you own and co
 
 ## What experiments will cover here
 
-Ground Floor's financial experiments focus on documentation-heavy workflows: meeting notes from voice memos, IPS drafting, client communication templates. The throughput question — can a local model handle the volume a solo advisor processes? — is the starting point.
+My financial experiments focus on documentation-heavy workflows: meeting notes from voice memos, IPS drafting, client communication templates. The throughput question — can a local model handle the volume a solo advisor processes? — is the starting point.
 
 A secondary question: which tasks require model quality that only a larger (and more hardware-intensive) model can provide, versus which tasks work well on entry-level hardware.
 

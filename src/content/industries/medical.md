@@ -20,13 +20,13 @@ maturityNote: "Medical use cases have the tightest accuracy requirements of any 
 
 Running a local model doesn't make you HIPAA-compliant by itself. What it does is remove one of the more complicated variables from the equation: the third-party processor.
 
-When patient data leaves your building to reach a cloud API, you take on new obligations — a Business Associate Agreement with the vendor, vendor breach notification procedures, reliance on their security posture. For large health systems with dedicated compliance teams, that's manageable. For a solo physician or a two-person practice, it adds meaningful overhead and risk.
+When patient data leaves your building to reach a cloud API, you take on new obligations — a BAA with the vendor, reliance on their security posture, their breach notification timeline. Large health systems have compliance teams for this. A solo physician doesn't.
 
-The practices that benefit most from local LLMs are those doing high-volume, structured tasks where the model handles the formatting and the clinician handles the judgment: drafting notes from voice, summarizing long intake packets, generating template-based patient education materials.
+The practices that benefit most are doing high-volume, structured tasks — drafting notes from voice, summarizing intake packets, generating template-based patient education materials. The model handles the formatting. The clinician handles the judgment.
 
 ## What experiments cover here
 
-Ground Floor's medical experiments focus on tasks with high documentation volume, clear quality standards, and a human-in-the-loop review step. SOAP notes are the natural starting point: the format is well-defined, the stakes of a bad first draft are low (the clinician edits it), and the time savings compound quickly at scale.
+My medical experiments focus on tasks with high documentation volume, clear quality standards, and a human-in-the-loop review step. SOAP notes are the natural starting point: the format is well-defined, a bad first draft just gets edited, and the time savings compound quickly.
 
 Future experiments will cover intake summarization, referral drafting, and the practical tradeoffs between model size and output quality for clinical text.
 

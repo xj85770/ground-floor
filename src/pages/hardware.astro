@@ -20,8 +20,8 @@ const sorted = allHardware.sort((a,b) => tierOrder[a.data.tier] - tierOrder[b.da
         Pick your tier.<br />Run it locally.
       </h1>
       <p class="text-silver text-lg max-w-xl leading-relaxed">
-        Every config below ships with zero cloud dependency. Select a RAM and storage option
-        to see exact pricing and which open-source models it runs.
+        Pick a tier, select a config, and you'll see exactly what runs on it and what it costs.
+        Everything here is open-weight — no API keys, no vendor agreement, no data leaving your machine.
       </p>
     </div>
   </div>
@@ -33,7 +33,7 @@ const sorted = allHardware.sort((a,b) => tierOrder[a.data.tier] - tierOrder[b.da
       <div class="p-7 md:p-9">
         <p class="font-mono text-[0.65rem] tracking-[0.18em] uppercase mb-3" style="color:#9b5de5;">Ground Floor Lab · what these experiments run on</p>
         <h2 class="font-display font-semibold text-xl text-chalk mb-1">MacBook Pro M5 Max · 128 GB · 2 TB · × 2 nodes</h2>
-        <p class="text-silver text-sm max-w-lg leading-relaxed mb-3">Connected over TB5 RDMA at ~3 µs. When an experiment is documented as "viable at entry level," the config was deliberately throttled to match that tier.</p>
+        <p class="text-silver text-sm max-w-lg leading-relaxed mb-3">My actual setup. Connected over TB5 RDMA at ~3 µs. When an experiment is documented as "viable at entry level," I ran it throttled to that tier — not on this hardware.</p>
         <p class="font-mono text-[0.65rem] text-ash mb-6">Machine: $5,499 each · AppleCare+: $450 each · TB5 cables included — all open-source, fully air-gapped</p>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
           {[['256 GB','Combined memory'],['4 TB','Combined storage'],['~800 GB/s','Peak bandwidth'],['~3 µs','TB5 RDMA latency']].map(([v,l]) => (
@@ -260,9 +260,9 @@ const sorted = allHardware.sort((a,b) => tierOrder[a.data.tier] - tierOrder[b.da
     <section class="max-w-prose mb-16 border-t border-wire pt-12">
       <h2 class="font-display text-2xl font-semibold tracking-tight text-chalk mb-6">Why Apple Silicon</h2>
       <div class="space-y-4 text-[1.0625rem] leading-editorial text-silver">
-        <p>Traditional GPU inference requires fitting the entire model in VRAM. A 16 GB consumer GPU cannot run a Q4-quantized 13B model — it doesn't fit. Your options were an expensive workstation GPU or a cloud API.</p>
-        <p>Apple Silicon's unified memory means GPU and CPU share one pool. A 16 GB Mac mini loads a Q4 8B model (~5 GB) with room for the OS and other apps. No VRAM ceiling.</p>
-        <p>Every model listed here is open-weight: publicly released weights, no API keys, no telemetry, no vendor agreement. The weights you download today run the same way in five years — fully air-gapped if needed.</p>
+        <p>The old way to run local inference: fit the entire model in VRAM. A 16 GB consumer GPU can't load a Q4-quantized 13B model — it doesn't fit. Your options were a $10K+ workstation GPU or a cloud API.</p>
+        <p>Apple Silicon changed this. GPU and CPU share one memory pool. A 16 GB Mac mini loads a Q4 8B model (~5 GB) with room left for the OS and other apps. There's no VRAM ceiling.</p>
+        <p>Every model listed here is open-weight — publicly released weights, no API keys, no telemetry, no vendor agreement. The weights you download today run the same way in five years. Air-gapped by default.</p>
       </div>
     </section>
 
@@ -270,10 +270,51 @@ const sorted = allHardware.sort((a,b) => tierOrder[a.data.tier] - tierOrder[b.da
     <section class="max-w-prose border-t border-wire pt-12 mb-16">
       <h2 class="font-display text-2xl font-semibold tracking-tight text-chalk mb-6">The real cost question</h2>
       <div class="space-y-4 text-[1.0625rem] leading-editorial text-silver">
-        <p>The financial argument for local isn't API cost savings. At $0.01 per document interaction with cloud models, token savings don't recoup hardware for years.</p>
-        <p>The real cost is compliance overhead: the vendor due diligence, the BAA negotiations, the conversation with your malpractice carrier about your AI vendor's breach notification process. A local machine eliminates most of that — not by being cheaper per token, but by removing the third-party processor from the compliance equation entirely.</p>
+        <p>The financial argument for local AI isn't API cost savings. At $0.01 per document interaction, token savings don't recoup hardware costs for years. That's not the argument.</p>
+        <p>The real cost is compliance overhead: vendor due diligence, BAA negotiations, the conversation with your malpractice carrier about your AI vendor's breach notification process. A local machine eliminates most of that — not by being cheaper per token, but by removing the third-party processor from the compliance picture.</p>
         <p>The hardware also has a 4–6 year useful life and does everything else a laptop or desktop does. It's infrastructure, not a pure AI line item.</p>
       </div>
+    </section>
+
+    <!-- Cost comparison table -->
+    <section class="border-t border-wire pt-12 mb-16">
+      <p class="font-mono text-[0.65rem] tracking-[0.18em] uppercase mb-3" style="color:#4cc9f0;">Break-even analysis</p>
+      <h2 class="font-display text-2xl font-semibold tracking-tight text-chalk mb-2">Local vs. subscription</h2>
+      <p class="text-silver text-sm max-w-xl leading-relaxed mb-8">
+        One-time hardware cost vs. monthly AI subscription — for a single practitioner.
+        Break-even is when total subscription cost passes the hardware cost.
+      </p>
+      <div class="overflow-x-auto reveal" style="border:1px solid #424245;border-radius:12px;">
+        <table class="w-full text-sm">
+          <thead>
+            <tr style="border-bottom:1px solid #424245;background:rgba(255,255,255,0.02);">
+              <th class="text-left px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Hardware</th>
+              <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">One-time cost</th>
+              <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">vs. ChatGPT Teams ($30/mo)</th>
+              <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">vs. Claude Pro ($20/mo)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              { label: 'Mac mini M4 16 GB', price: '$799',   gpt: '27 months', claude: '40 months' },
+              { label: 'Mac mini M4 24 GB', price: '$1,099', gpt: '37 months', claude: '55 months' },
+              { label: 'MacBook Air M5 24 GB', price: '$1,299', gpt: '43 months', claude: '65 months' },
+              { label: 'MacBook Pro M5 Pro 48 GB', price: '$2,799', gpt: '93 months', claude: '140 months' },
+            ].map((row, i) => (
+              <tr style={`border-bottom:1px solid #2a2a2d;${i % 2 === 0 ? '' : 'background:rgba(255,255,255,0.01);'}`}>
+                <td class="px-5 py-4 text-chalk font-medium">{row.label}</td>
+                <td class="px-5 py-4 text-right font-mono" style="color:#9b5de5;">{row.price}</td>
+                <td class="px-5 py-4 text-right font-mono text-silver">{row.gpt}</td>
+                <td class="px-5 py-4 text-right font-mono text-silver">{row.claude}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-4 text-xs text-ash leading-relaxed max-w-2xl">
+        Break-even months = hardware price ÷ monthly subscription cost. After break-even the local machine costs nothing per month — and your data has never left the building.
+        The compliance overhead savings (vendor due diligence, BAA negotiations, malpractice conversations) aren't reflected here — they're harder to quantify but often exceed the hardware cost for regulated practices.
+      </p>
     </section>
 
     <!-- Scaling roadmap -->
@@ -281,9 +322,9 @@ const sorted = allHardware.sort((a,b) => tierOrder[a.data.tier] - tierOrder[b.da
       <p class="font-mono text-[0.65rem] tracking-[0.18em] uppercase mb-3" style="color:#4cc9f0;">Lab roadmap</p>
       <h2 class="font-display text-2xl font-semibold tracking-tight text-chalk mb-2">Scaling to 2 TB unified memory</h2>
       <p class="text-silver text-sm max-w-xl leading-relaxed mb-10">
-        The current two-node TB5 cluster is a step on a longer path. The goal is 2 TB of unified memory —
-        two 1 TB cluster nodes — unlocking full-precision inference on the largest open-weight models that exist
-        and will exist. No cloud. No API. No ceiling imposed by a vendor.
+        The current two-node setup is a step on a longer path. I'm building toward 2 TB of unified memory —
+        enough to run full-precision inference on the largest open-weight models that exist.
+        The goal isn't scale for its own sake. It's running the best possible models without asking a vendor for permission.
       </p>
 
       <!-- Timeline steps -->

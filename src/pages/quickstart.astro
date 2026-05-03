@@ -1,0 +1,168 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Quickstart — Run Local AI in 30 Minutes"
+  description="A Mac, Ollama, and 30 minutes. Here's the exact sequence to run your first local AI model with no cloud dependency."
+>
+
+  <div class="page-aurora">
+    <div class="page-aurora-glow" style="background:radial-gradient(ellipse 70% 60% at 50% -10%,rgba(52,211,153,0.22) 0%,transparent 70%);"></div>
+    <div class="max-w-wide mx-auto px-5 md:px-10 pt-24 pb-20 relative">
+      <p class="font-mono text-[0.7rem] tracking-[0.2em] uppercase mb-4" style="color:#34d399;">Get started</p>
+      <h1 class="font-display font-semibold tracking-tight text-chalk mb-4"
+          style="font-size:clamp(2.4rem,5vw,3.75rem);line-height:1.06;">
+        Running in 30 minutes.
+      </h1>
+      <p class="text-silver text-lg max-w-xl leading-relaxed">
+        You have a Mac. Here's the exact sequence to run a local AI model —
+        no API key, no cloud dependency, no vendor agreement.
+      </p>
+    </div>
+  </div>
+
+  <div class="max-w-prose mx-auto px-5 md:px-0 py-16 md:py-24">
+    <div class="prose-editorial">
+
+      <p>
+        I'll skip the theory. You can read the <a href="/playbook">Playbook</a> for that.
+        This is the shortest path from "I have a Mac" to "I'm running a local model."
+      </p>
+
+      <h2>Before you start</h2>
+      <p>
+        You need an Apple Silicon Mac — M1 or newer. That's any Mac bought after late 2020.
+        If you're not sure: Apple menu → About This Mac. If it says "Apple M" anything, you're good.
+      </p>
+      <p>
+        16 GB of unified memory is the minimum that's worth your time. You can run small models
+        on less, but the results aren't useful for real work. If you have 24 GB or more,
+        everything here works better.
+      </p>
+
+      <h2>Step 1 — Install Ollama</h2>
+      <p>
+        Ollama is the tool that downloads and runs open-weight models locally. It takes about
+        two minutes to install and handles everything: model storage, the inference server,
+        the API endpoint.
+      </p>
+      <p>
+        Download it at <a href="https://ollama.com" target="_blank" rel="noopener noreferrer">ollama.com</a> and run the installer.
+        Or if you have Homebrew:
+      </p>
+      <pre><code>brew install ollama</code></pre>
+      <p>
+        Once installed, start the server. It runs in the background and stays there across reboots if you let it.
+      </p>
+      <pre><code>ollama serve</code></pre>
+
+      <h2>Step 2 — Pull a model</h2>
+      <p>
+        Pick the command that matches your RAM. These are the models I'd reach for first —
+        strong benchmarks, practical speed, and they pull cleanly in one command.
+      </p>
+
+      <p class="font-mono text-[0.7rem] tracking-[0.15em] uppercase" style="color:#34d399;">16 GB — start here</p>
+      <pre><code>ollama pull qwen3.5:9b-q4_K_M</code></pre>
+      <p>
+        Qwen 3.5 9B is currently the strongest model at this size tier. Download is ~5.5 GB.
+        It'll take a few minutes on a decent connection — runs fully offline after that.
+      </p>
+
+      <p class="font-mono text-[0.7rem] tracking-[0.15em] uppercase" style="color:#4361ee;">24 GB — step up</p>
+      <pre><code>ollama pull qwen3.5:27b-q4_K_M</code></pre>
+      <p>
+        A real step up in quality. ~16 GB download. If you're going to use this for
+        actual work — drafting documents, reviewing text, structured analysis — this
+        is the tier where it starts feeling professional.
+      </p>
+
+      <p class="font-mono text-[0.7rem] tracking-[0.15em] uppercase" style="color:#9b5de5;">64 GB+ — serious work</p>
+      <pre><code>ollama pull llama3.3:70b-instruct-q4_K_M</code></pre>
+      <p>
+        70B at Q4. ~40 GB download. This is where the output quality becomes hard to
+        distinguish from a cloud API — on hardware you own.
+      </p>
+
+      <h2>Step 3 — Run it</h2>
+      <p>
+        Once the model finishes downloading, one command starts an interactive session:
+      </p>
+      <pre><code>ollama run qwen3.5:9b-q4_K_M</code></pre>
+      <p>
+        Type a prompt and hit Enter. The model runs entirely on your machine. No network
+        calls, no API keys, no tokens being consumed somewhere.
+      </p>
+      <p>
+        The first response will feel slow — the model is loading into memory. After that,
+        it stays loaded and responds faster. On a 16 GB Mac, expect 20–30 tokens per second
+        on a 9B model. On a 64 GB machine, 70B runs at 12–16 t/s. Fast enough for real use.
+      </p>
+
+      <h2>Step 4 — A better interface (optional)</h2>
+      <p>
+        The terminal works. But if you want a chat interface that looks like what you're
+        used to, Open WebUI runs locally on top of Ollama and gives you a browser-based UI:
+      </p>
+      <pre><code>docker run -d -p 3000:3000 \
+  -v open-webui:/app/backend/data \
+  --add-host=host.docker.internal:host-gateway \
+  ghcr.io/open-webui/open-webui:main</code></pre>
+      <p>
+        Then open <code>http://localhost:3000</code> in your browser. You'll see a chat interface
+        with all your Ollama models available. Runs fully offline. No account required.
+      </p>
+      <p>
+        You can also skip Docker entirely and just use the terminal. Many practitioners do.
+        The interface doesn't change what the model produces.
+      </p>
+
+      <h2>What to do next</h2>
+      <p>
+        You're running a local model. Here's what I'd suggest exploring in order:
+      </p>
+      <ol>
+        <li>
+          <strong>Try your actual work.</strong> Give it a real document from your practice —
+          a meeting transcript, a client email, a report you'd normally draft. See what it
+          produces without any fine-tuning. The output will surprise you in both directions.
+        </li>
+        <li>
+          <strong>Read the experiments relevant to your industry.</strong>
+          The <a href="/experiments">experiments</a> document exactly what works, at what hardware tier,
+          with what prompting. Don't start from scratch — start from a result.
+        </li>
+        <li>
+          <strong>Understand the failure modes</strong> before you build any workflow around
+          local AI. The <a href="/playbook">Playbook</a> covers this. The short version:
+          these models are confident even when wrong. Human review is not optional.
+        </li>
+      </ol>
+
+      <h2>Honest caveats</h2>
+      <p>
+        Running the model is the easy part. The harder part is building a workflow where
+        you're actually saving time — not just producing text that needs heavy editing.
+        That takes iteration. The experiments document what that iteration looked like
+        for specific tasks.
+      </p>
+      <p>
+        Also: these models hallucinate. They state false things confidently, especially
+        when asked about specific facts, citations, or calculations. For any professional
+        work product, every output is a first draft that requires review by someone
+        who knows the subject.
+      </p>
+      <p>
+        That's not a reason to avoid local AI. It's the reason to use it correctly —
+        as a drafting tool, not a decision-making tool.
+      </p>
+
+    </div>
+
+    <div class="mt-14 pt-8 border-t border-wire flex flex-wrap gap-4">
+      <a href="/hardware" class="btn-primary text-sm px-6 py-2.5">See hardware configs →</a>
+      <a href="/experiments" class="btn-ghost text-sm px-6 py-2.5">Browse experiments</a>
+    </div>
+  </div>
+</Base>
