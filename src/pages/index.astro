@@ -20,47 +20,111 @@ const expCountByIndustry = allExperiments.reduce<Record<string, number>>((acc, e
 
 <Base title="Ground Floor">
 
-  <!-- ═══ HERO — clean, spacious, single statement ═══ -->
-  <section class="relative overflow-hidden" style="min-height:96vh;display:flex;align-items:center;justify-content:center;">
+  <!-- ═══ HERO — split: copy left, leaderboard card right ═══ -->
+  <section class="relative overflow-hidden" style="min-height:92vh;display:flex;align-items:center;">
 
-    <!-- Single centered glow orb -->
+    <!-- Aurora glow — right-biased -->
     <div aria-hidden="true" style="
-      position:absolute;top:50%;left:50%;
-      transform:translate(-50%,-55%);
-      width:900px;height:700px;
-      background:radial-gradient(ellipse at center,rgba(155,93,229,0.22) 0%,rgba(67,97,238,0.1) 40%,transparent 70%);
-      filter:blur(40px);
+      position:absolute;top:-100px;right:-10%;
+      width:70%;height:700px;
+      background:radial-gradient(ellipse 80% 70% at 80% 30%,rgba(155,93,229,0.22) 0%,rgba(67,97,238,0.1) 50%,transparent 70%);
       pointer-events:none;
       animation:orb-drift 14s ease-in-out infinite;
     "></div>
 
-    <!-- Content — centered, nothing competing with it -->
-    <div class="relative text-center max-w-4xl mx-auto px-5 md:px-10">
+    <div class="relative w-full max-w-7xl mx-auto px-5 md:px-10 py-24 hero-split-grid">
 
-      <h1 class="font-display font-semibold tracking-tight leading-[1.03] mb-8"
-          style="font-size:clamp(3.2rem,8vw,6rem);">
-        <span class="hero-line" style="--d:0.1s">
-          <span class="gradient-text-animated">Air-gapped AI</span>
-        </span>
-        <br />
-        <span class="hero-line" style="--d:0.28s">
-          <span class="text-chalk">for regulated practices.</span>
-        </span>
-      </h1>
+      <!-- Left: copy -->
+      <div>
+        <p class="hero-line font-mono text-[0.65rem] tracking-[0.2em] uppercase mb-4" style="--d:0.05s;color:#9b5de5;">Ground Floor · Models</p>
 
-      <p class="hero-line text-xl md:text-2xl text-silver leading-relaxed max-w-2xl mx-auto mb-12"
-         style="--d:0.46s;">
-        Open-weight models running on hardware you own. No API calls. No vendor agreements. The data that goes in stays in.
-      </p>
+        <h1 class="hero-line font-display font-bold tracking-tight leading-[1.08] mb-6" style="--d:0.1s;font-size:clamp(2.4rem,4vw,3.4rem);">
+          Air-gapped AI<br/>
+          <span class="gradient-text-animated">for regulated practices.</span>
+        </h1>
 
-      <div class="hero-line flex flex-wrap justify-center gap-4" style="--d:0.6s;">
-        <a href={`/experiments/${latest[0]?.slug ?? '/experiments'}`} class="btn-primary text-base px-8 py-3.5">
-          See the experiments →
-        </a>
-        <a href="/industries" class="btn-ghost text-base px-8 py-3.5">
-          Find your industry
-        </a>
+        <p class="hero-line text-lg text-silver leading-relaxed mb-10" style="--d:0.28s;max-width:440px;">
+          Open-weight models running on hardware you own. No API calls. No vendor agreements. The data that goes in stays in.
+        </p>
+
+        <div class="hero-line flex flex-wrap gap-3 mb-10" style="--d:0.42s;">
+          <a href="/models" class="btn-primary text-base px-7 py-3">Open the leaderboard →</a>
+          <a href="/hardware" class="btn-ghost text-base px-7 py-3">Hardware guide</a>
+        </div>
+
+        <!-- RAM tier legend -->
+        <div class="hero-line" style="--d:0.54s;padding-top:20px;border-top:1px solid #2a2a2d;">
+          <p class="font-mono text-[0.58rem] tracking-[0.15em] uppercase mb-3" style="color:#6e6e73;">RAM color guide</p>
+          <div style="display:flex;flex-wrap:wrap;gap:7px;">
+            {[
+              ['≤ 36 GB · any Mac',     '#34d399','rgba(52,211,153,0.10)','rgba(52,211,153,0.25)'],
+              ['≤ 128 GB · M5 Max',     '#a78bfa','rgba(167,139,250,0.12)','rgba(167,139,250,0.3)'],
+              ['≤ 244 GB · cluster',    '#4cc9f0','rgba(76,201,240,0.10)','rgba(76,201,240,0.25)'],
+              ['> 244 GB · bigger cluster','#fb923c','rgba(251,146,60,0.10)','rgba(251,146,60,0.25)'],
+            ].map(([label, color, bg, border]) => (
+              <span class="font-mono" style={`font-size:0.6rem;padding:3px 9px;border-radius:4px;color:${color};background:${bg};border:1px solid ${border};`}>{label}</span>
+            ))}
+          </div>
+        </div>
       </div>
+
+      <!-- Right: floating leaderboard card -->
+      <div class="hero-line" style="--d:0.32s;">
+        <div style="background:#0a0a0d;border:1px solid #424245;border-radius:16px;overflow:hidden;box-shadow:0 0 60px rgba(155,93,229,0.12),0 4px 32px rgba(0,0,0,0.6);">
+
+          <!-- Card header -->
+          <div style="padding:13px 16px;border-bottom:1px solid #2a2a2d;background:rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:space-between;">
+            <span class="font-mono text-[0.58rem] tracking-[0.15em] uppercase" style="color:#6e6e73;">Open-weight leaderboard · 24 models</span>
+            <span style="width:6px;height:6px;border-radius:50%;background:#9b5de5;animation:pulse 2s ease-in-out infinite;display:inline-block;"></span>
+          </div>
+
+          <!-- Mini table -->
+          <div style="position:relative;">
+            <table style="width:100%;border-collapse:collapse;font-family:'JetBrains Mono','SF Mono',monospace;font-size:0.7rem;">
+              <thead>
+                <tr style="border-bottom:1px solid #2a2a2d;background:rgba(255,255,255,0.015);">
+                  <th style="text-align:left;padding:9px 14px;font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:#6e6e73;font-weight:500;">Model</th>
+                  <th style="text-align:right;padding:9px 14px;font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:#6e6e73;font-weight:500;">Intel</th>
+                  <th style="text-align:right;padding:9px 14px;font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:#6e6e73;font-weight:500;">Min RAM</th>
+                  <th style="text-align:right;padding:9px 14px;font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:#6e6e73;font-weight:500;">t/s</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { name: 'DeepSeek-R1 671B', cluster: true,  intel: 55, ram: '190 GB', ramColor: '#4cc9f0', ramBg: 'rgba(76,201,240,0.10)',  ramBorder: 'rgba(76,201,240,0.25)',  speed: 8  },
+                  { name: 'Kimi K2.6',        cluster: false, intel: 54, ram: '360 GB', ramColor: '#fb923c', ramBg: 'rgba(251,146,60,0.10)',  ramBorder: 'rgba(251,146,60,0.25)',  speed: 34 },
+                  { name: 'Qwen3.6 27B',      cluster: false, intel: 46, ram: '17 GB',  ramColor: '#34d399', ramBg: 'rgba(52,211,153,0.10)',  ramBorder: 'rgba(52,211,153,0.25)', speed: 66 },
+                  { name: 'Mistral Small 4',  cluster: false, intel: 28, ram: '55 GB',  ramColor: '#a78bfa', ramBg: 'rgba(167,139,250,0.12)', ramBorder: 'rgba(167,139,250,0.3)', speed: 172},
+                  { name: 'Phi-4 14B',        cluster: false, intel: 30, ram: '10 GB',  ramColor: '#34d399', ramBg: 'rgba(52,211,153,0.10)',  ramBorder: 'rgba(52,211,153,0.25)', speed: 95 },
+                  { name: 'Gemma 4 4B',       cluster: false, intel: 24, ram: '3 GB',   ramColor: '#34d399', ramBg: 'rgba(52,211,153,0.10)',  ramBorder: 'rgba(52,211,153,0.25)', speed: 290},
+                  { name: 'Granite 4.0 H Small', cluster: false, intel: 11, ram: '20 GB', ramColor: '#34d399', ramBg: 'rgba(52,211,153,0.10)', ramBorder: 'rgba(52,211,153,0.25)', speed: 364},
+                ].map((m, i) => (
+                  <tr style={`border-bottom:1px solid ${i < 6 ? '#1e1e22' : 'transparent'};${i === 6 ? 'opacity:0.45;' : ''}`}>
+                    <td style="padding:9px 14px;color:#e5e5ea;font-weight:500;font-size:0.67rem;">
+                      {m.name}
+                      {m.cluster && <span style="display:inline-flex;align-items:center;padding:1px 5px;border-radius:3px;font-size:0.52rem;margin-left:5px;color:#4cc9f0;background:rgba(76,201,240,0.08);border:1px solid rgba(76,201,240,0.2);">RDMA</span>}
+                    </td>
+                    <td style="padding:9px 14px;text-align:right;color:#9b5de5;font-weight:600;">{m.intel}</td>
+                    <td style="padding:9px 14px;text-align:right;">
+                      <span style={`display:inline-flex;align-items:center;padding:2px 7px;border-radius:4px;font-size:0.58rem;color:${m.ramColor};background:${m.ramBg};border:1px solid ${m.ramBorder};`}>{m.ram}</span>
+                    </td>
+                    <td style="padding:9px 14px;text-align:right;color:#a1a1a6;">{m.speed}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <!-- Fade mask -->
+            <div style="position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to bottom,transparent,#0a0a0d);pointer-events:none;"></div>
+          </div>
+
+          <!-- Card footer -->
+          <div style="padding:11px 16px;border-top:1px solid #1e1e22;display:flex;align-items:center;justify-content:space-between;">
+            <span class="font-mono text-[0.58rem]" style="color:#6e6e73;">Showing 7 of 24 · sorted by intelligence</span>
+            <a href="/models" class="font-mono text-[0.6rem]" style="color:#9b5de5;text-decoration:none;">Full table →</a>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- Scroll cue -->
@@ -526,6 +590,20 @@ const expCountByIndustry = allExperiments.reduce<Record<string, number>>((acc, e
   @keyframes scroll-cue {
     0%,100% { opacity:0.2; transform:scaleY(0.8); }
     50%      { opacity:0.7; transform:scaleY(1.1); }
+  }
+  @keyframes pulse {
+    0%,100% { opacity:1; }
+    50%      { opacity:0.35; }
+  }
+  .hero-split-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+  }
+  @media (max-width: 768px) {
+    .hero-split-grid { grid-template-columns: 1fr; gap: 40px; }
+    .hero-split-grid > div:last-child { display: none; }
   }
 
   /* lab floating animations */
