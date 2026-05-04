@@ -10,6 +10,16 @@ import {
   getTier,
 } from '../lib/artificialanalysis';
 
+function getRamLabel(gb: number | null): { text: string; color: string; bg: string; border: string } {
+  if (gb === null) return { text: '—', color: '#6e6e73', bg: 'transparent', border: 'transparent' };
+  if (gb <= 16)  return { text: `${gb} GB`,  color: '#34d399', bg: 'rgba(52,211,153,0.10)',  border: 'rgba(52,211,153,0.25)' };
+  if (gb <= 36)  return { text: `${gb} GB`,  color: '#34d399', bg: 'rgba(52,211,153,0.10)',  border: 'rgba(52,211,153,0.25)' };
+  if (gb <= 64)  return { text: `${gb} GB`,  color: '#60a5fa', bg: 'rgba(96,165,250,0.10)',  border: 'rgba(96,165,250,0.25)' };
+  if (gb <= 128) return { text: `${gb} GB`,  color: '#a78bfa', bg: 'rgba(167,139,250,0.12)', border: 'rgba(167,139,250,0.3)'  };
+  if (gb <= 244) return { text: `${gb} GB`,  color: '#4cc9f0', bg: 'rgba(76,201,240,0.10)',  border: 'rgba(76,201,240,0.25)' };
+  return           { text: `${gb} GB`,       color: '#fb923c', bg: 'rgba(251,146,60,0.10)',  border: 'rgba(251,146,60,0.25)' };
+}
+
 const liveModels = await fetchOpenSourceModels();
 const openModels = liveModels.length > 0 ? liveModels : STATIC_OPEN_SOURCE_MODELS;
 const isLive = liveModels.length > 0;
@@ -264,12 +274,14 @@ const buildDate = new Date().toLocaleDateString('en-US', {
               <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Math</th>
               <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Speed (t/s)</th>
               <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Context</th>
+              <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Min RAM</th>
               <th class="text-left px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Level</th>
             </tr>
           </thead>
           <tbody>
             {openModels.map((m, i) => {
               const tier = getTier(m.intelligenceIndex);
+              const ram = getRamLabel(m.minRamGb);
               return (
                 <tr style="border-bottom:1px solid #2a2a2d; transition:background 0.15s;"
                     class="hover:bg-white/[0.02]">
@@ -302,6 +314,16 @@ const buildDate = new Date().toLocaleDateString('en-US', {
                   <td class="px-5 py-4 text-right font-mono text-ash text-xs">
                     {m.contextWindow ? `${(m.contextWindow / 1000).toFixed(0)}K` : '—'}
                   </td>
+                  <td class="px-5 py-4 text-right">
+                    {m.minRamGb !== null ? (
+                      <span class="inline-flex items-center px-2 py-0.5 rounded text-[0.6rem] font-mono whitespace-nowrap"
+                            style={`color:${ram.color}; background:${ram.bg}; border:1px solid ${ram.border};`}>
+                        {ram.text}
+                      </span>
+                    ) : (
+                      <span class="font-mono text-xs text-ash">—</span>
+                    )}
+                  </td>
                   <td class="px-5 py-4">
                     <span class="inline-flex items-center px-2 py-0.5 rounded text-[0.6rem] font-mono whitespace-nowrap"
                           style={`color:${tier.accent}; background:${tier.bg}; border:1px solid ${tier.border};`}>
@@ -315,7 +337,27 @@ const buildDate = new Date().toLocaleDateString('en-US', {
         </table>
       </div>
 
-      <p class="mt-6 text-xs text-ash leading-relaxed reveal">
+      <!-- RAM tier legend -->
+      <div class="mt-5 mb-3 flex flex-wrap gap-3 items-center reveal">
+        <span class="text-[0.65rem] font-mono text-ash uppercase tracking-widest">Min RAM:</span>
+        <span class="inline-flex items-center gap-1.5 text-[0.65rem] font-mono" style="color:#34d399;">
+          <span class="w-2 h-2 rounded-full inline-block" style="background:#34d399;"></span> ≤ 36 GB — any M4/M5
+        </span>
+        <span class="inline-flex items-center gap-1.5 text-[0.65rem] font-mono" style="color:#60a5fa;">
+          <span class="w-2 h-2 rounded-full inline-block" style="background:#60a5fa;"></span> 37–64 GB — M4/M5 Pro 48 GB+
+        </span>
+        <span class="inline-flex items-center gap-1.5 text-[0.65rem] font-mono" style="color:#a78bfa;">
+          <span class="w-2 h-2 rounded-full inline-block" style="background:#a78bfa;"></span> 65–128 GB — M5 Max 128 GB
+        </span>
+        <span class="inline-flex items-center gap-1.5 text-[0.65rem] font-mono" style="color:#4cc9f0;">
+          <span class="w-2 h-2 rounded-full inline-block" style="background:#4cc9f0;"></span> 129–244 GB — RDMA cluster
+        </span>
+        <span class="inline-flex items-center gap-1.5 text-[0.65rem] font-mono" style="color:#fb923c;">
+          <span class="w-2 h-2 rounded-full inline-block" style="background:#fb923c;"></span> &gt; 244 GB — bigger cluster needed
+        </span>
+      </div>
+      <p class="mt-2 text-xs text-ash leading-relaxed reveal">
+        Min RAM = minimum unified memory to run at Q3_K_M quantization (large MoE) or Q4_K_M (dense/small).
         Intelligence Index is artificialanalysis.ai's composite quality score (0–100 scale). Scores look low because the benchmarks are hard: Humanity's Last Exam, GPQA Diamond, SciCode, and 7 other graduate-level evals. The current world ceiling is GPT-5.5 at 60 — no model has cracked 60 yet. A score of 54 means the model correctly handled 54% of that extremely difficult mix.
         All models have publicly released weights — no API key required to run them.
       </p>

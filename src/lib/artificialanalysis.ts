@@ -13,8 +13,9 @@ export interface AAModel {
   outputSpeed: number | null; // tokens/sec (API speed from AA; local Apple Silicon speeds differ)
   contextWindow: number | null;
   isOpenSource: boolean;
-  requiresCluster?: boolean; // needs TB5 RDMA cluster (256 GB effective, 244 GB usable)
-  clusterNote?: string;      // what quantization / why it needs the cluster
+  minRamGb: number | null;    // minimum unified memory (GB) to run at lowest useful quant
+  requiresCluster?: boolean;  // needs TB5 RDMA cluster (256 GB effective, 244 GB usable)
+  clusterNote?: string;       // what quantization / why it needs the cluster
 }
 
 export type UseCase =
@@ -97,6 +98,7 @@ export async function fetchOpenSourceModels(): Promise<AAModel[]> {
         outputSpeed:       m.output_speed ?? m.tokens_per_second ?? null,
         contextWindow:     m.context_window ?? null,
         isOpenSource:      true,
+        minRamGb:          null,
       }))
       .sort((a, b) => (b.intelligenceIndex ?? 0) - (a.intelligenceIndex ?? 0))
       .slice(0, 24);
@@ -243,6 +245,7 @@ export const TASK_SCORES: Record<string, Record<string, number>> = {
   'Qwen3.5 397B A17B':       { swe: 42, agentic: 43, reasoning: 44, general: 45 },
   'Qwen3.5 27B':             { swe: 40, agentic: 39, reasoning: 41, general: 42 },
   'Ling 2.6 Flash':          { swe: 24, agentic: 23, reasoning: 23, general: 26 },
+  'Ling-1T':                 { swe: 19, agentic: 18, reasoning: 18, general: 20 },
   'Gemma 4 31B':             { swe: 36, agentic: 35, reasoning: 37, general: 39 },
   'Mistral Medium 3.5':      { swe: 37, agentic: 36, reasoning: 37, general: 39 },
   // RDMA cluster models
@@ -408,34 +411,36 @@ export function getTier(score: number | null): Tier {
 // Intelligence index: 0–100 scale. No model has scored above 60 yet (May 2026).
 // Output speeds are API inference speeds; local Apple Silicon speeds are lower for large models
 export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
-  // ── Frontier open-weight ─────────────────────────────────────────────────
-  { name: 'Kimi K2.6',              provider: 'Moonshot AI', intelligenceIndex: 54, codingScore: 54, mathScore: 50, outputSpeed: 34,  contextWindow: 262144,  isOpenSource: true },
-  { name: 'MiMo-V2.5-Pro',          provider: 'Xiaomi',      intelligenceIndex: 54, codingScore: 51, mathScore: 53, outputSpeed: 68,  contextWindow: 1000000, isOpenSource: true },
-  { name: 'Qwen3.6 Max Preview',    provider: 'Alibaba',     intelligenceIndex: 52, codingScore: 50, mathScore: 51, outputSpeed: 36,  contextWindow: 262144,  isOpenSource: true },
-  { name: 'DeepSeek V4 Pro',        provider: 'DeepSeek',    intelligenceIndex: 52, codingScore: 50, mathScore: 55, outputSpeed: 34,  contextWindow: 1000000, isOpenSource: true },
-  { name: 'GLM-5.1 Reasoning',      provider: 'Z AI',        intelligenceIndex: 51, codingScore: 48, mathScore: 52, outputSpeed: 60,  contextWindow: 200000,  isOpenSource: true },
-  { name: 'GLM-5 Reasoning',        provider: 'Z AI',        intelligenceIndex: 50, codingScore: 47, mathScore: 51, outputSpeed: 65,  contextWindow: 200000,  isOpenSource: true },
-  { name: 'Qwen3.6 Plus',           provider: 'Alibaba',     intelligenceIndex: 50, codingScore: 48, mathScore: 50, outputSpeed: 53,  contextWindow: 1000000, isOpenSource: true },
-  { name: 'MiniMax-M2.7',           provider: 'MiniMax',     intelligenceIndex: 50, codingScore: 46, mathScore: 49, outputSpeed: 55,  contextWindow: 205000,  isOpenSource: true },
+  // ── Frontier open-weight (1T+ MoE — need 3–4 node cluster or future 512 GB hardware) ──
+  // minRamGb = Q2_K quantization minimum. These do NOT fit the current 2-node 244 GB cluster.
+  { name: 'Kimi K2.6',              provider: 'Moonshot AI', intelligenceIndex: 54, codingScore: 54, mathScore: 50, outputSpeed: 34,  contextWindow: 262144,  isOpenSource: true, minRamGb: 360 },  // 1T total / 32B active
+  { name: 'MiMo-V2.5-Pro',          provider: 'Xiaomi',      intelligenceIndex: 54, codingScore: 51, mathScore: 53, outputSpeed: 68,  contextWindow: 1000000, isOpenSource: true, minRamGb: 360 },  // 1T total / 42B active
+  { name: 'Qwen3.6 Max Preview',    provider: 'Alibaba',     intelligenceIndex: 52, codingScore: 50, mathScore: 51, outputSpeed: 36,  contextWindow: 262144,  isOpenSource: true, minRamGb: null }, // param count undisclosed
+  { name: 'DeepSeek V4 Pro',        provider: 'DeepSeek',    intelligenceIndex: 52, codingScore: 50, mathScore: 55, outputSpeed: 34,  contextWindow: 1000000, isOpenSource: true, minRamGb: 580 },  // 1.6T total / 49B active
+  { name: 'GLM-5.1 Reasoning',      provider: 'Z AI',        intelligenceIndex: 51, codingScore: 48, mathScore: 52, outputSpeed: 60,  contextWindow: 200000,  isOpenSource: true, minRamGb: null }, // param count not published
+  { name: 'GLM-5 Reasoning',        provider: 'Z AI',        intelligenceIndex: 50, codingScore: 47, mathScore: 51, outputSpeed: 65,  contextWindow: 200000,  isOpenSource: true, minRamGb: null }, // param count not published
+  { name: 'Qwen3.6 Plus',           provider: 'Alibaba',     intelligenceIndex: 50, codingScore: 48, mathScore: 50, outputSpeed: 53,  contextWindow: 1000000, isOpenSource: true, minRamGb: null }, // proprietary, size undisclosed
+  { name: 'MiniMax-M2.7',           provider: 'MiniMax',     intelligenceIndex: 50, codingScore: 46, mathScore: 49, outputSpeed: 55,  contextWindow: 205000,  isOpenSource: true, minRamGb: 110 },  // 230B total / 10B active — Q3 ~110 GB
   // ── Strong mid-tier ──────────────────────────────────────────────────────
-  { name: 'DeepSeek V4 Flash',   provider: 'DeepSeek',    intelligenceIndex: 47, codingScore: 44, mathScore: 46, outputSpeed: 82,  contextWindow: 1000000, isOpenSource: true },
-  { name: 'Qwen3.6 27B',         provider: 'Alibaba',     intelligenceIndex: 46, codingScore: 43, mathScore: 44, outputSpeed: 66,  contextWindow: 262144,  isOpenSource: true },
-  { name: 'Qwen3.5 397B A17B',   provider: 'Alibaba',     intelligenceIndex: 45, codingScore: 42, mathScore: 44, outputSpeed: 53,  contextWindow: 262144,  isOpenSource: true },
-  { name: 'Qwen3.6 35B A3B',     provider: 'Alibaba',     intelligenceIndex: 43, codingScore: 41, mathScore: 42, outputSpeed: 200, contextWindow: 262144,  isOpenSource: true },
-  { name: 'Qwen3.5 27B',         provider: 'Alibaba',     intelligenceIndex: 42, codingScore: 40, mathScore: 41, outputSpeed: 87,  contextWindow: 262144,  isOpenSource: true },
-  { name: 'Mistral Medium 3.5',  provider: 'Mistral',     intelligenceIndex: 39, codingScore: 37, mathScore: 37, outputSpeed: 173, contextWindow: 131072,  isOpenSource: true },
-  { name: 'Gemma 4 31B',         provider: 'Google',      intelligenceIndex: 39, codingScore: 36, mathScore: 37, outputSpeed: 35,  contextWindow: 131072,  isOpenSource: true },
-  { name: 'Kimi K2.5',           provider: 'Moonshot AI', intelligenceIndex: 37, codingScore: 36, mathScore: 36, outputSpeed: 50,  contextWindow: 262144,  isOpenSource: true },
-  // ── TB5 RDMA cluster only (256 GB / 244 GB usable across two M5 Max nodes) ─
+  { name: 'DeepSeek V4 Flash',   provider: 'DeepSeek',    intelligenceIndex: 47, codingScore: 44, mathScore: 46, outputSpeed: 82,  contextWindow: 1000000, isOpenSource: true, minRamGb: 135 },  // 284B total / 13B active — Q3 ~135 GB
+  { name: 'Qwen3.6 27B',         provider: 'Alibaba',     intelligenceIndex: 46, codingScore: 43, mathScore: 44, outputSpeed: 66,  contextWindow: 262144,  isOpenSource: true, minRamGb: 17 },
+  { name: 'Qwen3.5 397B A17B',   provider: 'Alibaba',     intelligenceIndex: 45, codingScore: 42, mathScore: 44, outputSpeed: 53,  contextWindow: 262144,  isOpenSource: true, minRamGb: 150 },  // 397B total — Q2_K ~150 GB
+  { name: 'Qwen3.6 35B A3B',     provider: 'Alibaba',     intelligenceIndex: 43, codingScore: 41, mathScore: 42, outputSpeed: 200, contextWindow: 262144,  isOpenSource: true, minRamGb: 23 },
+  { name: 'Qwen3.5 27B',         provider: 'Alibaba',     intelligenceIndex: 42, codingScore: 40, mathScore: 41, outputSpeed: 87,  contextWindow: 262144,  isOpenSource: true, minRamGb: 17 },
+  { name: 'Mistral Medium 3.5',  provider: 'Mistral',     intelligenceIndex: 39, codingScore: 37, mathScore: 37, outputSpeed: 173, contextWindow: 131072,  isOpenSource: true, minRamGb: null }, // param count not published
+  { name: 'Gemma 4 31B',         provider: 'Google',      intelligenceIndex: 39, codingScore: 36, mathScore: 37, outputSpeed: 35,  contextWindow: 131072,  isOpenSource: true, minRamGb: 20 },
+  { name: 'Kimi K2.5',           provider: 'Moonshot AI', intelligenceIndex: 37, codingScore: 36, mathScore: 36, outputSpeed: 50,  contextWindow: 262144,  isOpenSource: true, minRamGb: 360 },  // 1T MoE like K2.6
+  // ── TB5 RDMA cluster (244 GB usable, current 2-node setup) ───────────────
   {
     name: 'DeepSeek-R1 671B',
     provider: 'DeepSeek',
     intelligenceIndex: 55,
     codingScore: 52,
     mathScore: 58,
-    outputSpeed: 8,  // ~8 t/s distributed over RDMA; latency from bandwidth split
+    outputSpeed: 8,
     contextWindow: 131072,
     isOpenSource: true,
+    minRamGb: 190,
     requiresCluster: true,
     clusterNote: 'Q2_K ~190 GB — fits in 244 GB usable across both nodes. The full 671B reasoning model, not a distilled version.',
   },
@@ -445,18 +450,33 @@ export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
     intelligenceIndex: 50,
     codingScore: 48,
     mathScore: 50,
-    outputSpeed: 12, // ~12 t/s distributed; 22B active params per pass keeps it practical
+    outputSpeed: 12,
     contextWindow: 262144,
     isOpenSource: true,
+    minRamGb: 235,
     requiresCluster: true,
     clusterNote: 'Q8 full precision ~235 GB — exactly fills the 244 GB cluster window. Highest quality Qwen3.5 MoE run.',
   },
+  // ── Needs 3–4 node cluster or 512 GB hardware (future) ───────────────────
+  {
+    name: 'Ling-1T',
+    provider: 'InclusionAI',
+    intelligenceIndex: 20,
+    codingScore: null,
+    mathScore: null,
+    outputSpeed: null,
+    contextWindow: 128000,
+    isOpenSource: true,
+    minRamGb: 375,
+    requiresCluster: true,
+    clusterNote: 'Q3_K_M ~375 GB — beyond the current 2-node setup (244 GB). Needs 3-node cluster (~366 GB usable) or a future 512 GB Mac. At Q4: ~500 GB (4 nodes). 1T total / 50B active params, MIT license.',
+  },
   // ── Small / edge models ──────────────────────────────────────────────────
-  { name: 'Qwen3.5 9B',          provider: 'Alibaba',      intelligenceIndex: 32, codingScore: 30, mathScore: 31, outputSpeed: 120, contextWindow: 131072,  isOpenSource: true },
-  { name: 'Phi-4 14B',           provider: 'Microsoft',    intelligenceIndex: 30, codingScore: 31, mathScore: 33, outputSpeed: 95,  contextWindow: 16384,   isOpenSource: true },
-  { name: 'Qwen3.5 4B',          provider: 'Alibaba',      intelligenceIndex: 27, codingScore: 26, mathScore: 26, outputSpeed: 182, contextWindow: 131072,  isOpenSource: true },
-  { name: 'Ling 2.6 Flash',      provider: 'InclusionAI',  intelligenceIndex: 26, codingScore: null, mathScore: null, outputSpeed: 206, contextWindow: 262144, isOpenSource: true },
-  { name: 'Gemma 4 4B',          provider: 'Google',       intelligenceIndex: 24, codingScore: 22, mathScore: 22, outputSpeed: 290, contextWindow: 131072,  isOpenSource: true },
-  { name: 'Phi-4-mini 3.8B',     provider: 'Microsoft',    intelligenceIndex: 22, codingScore: 24, mathScore: 26, outputSpeed: 310, contextWindow: 16384,   isOpenSource: true },
-  { name: 'Llama 3.2 3B',        provider: 'Meta',         intelligenceIndex: 18, codingScore: 16, mathScore: 15, outputSpeed: 340, contextWindow: 131072,  isOpenSource: true },
+  { name: 'Qwen3.5 9B',          provider: 'Alibaba',      intelligenceIndex: 32, codingScore: 30, mathScore: 31, outputSpeed: 120, contextWindow: 131072,  isOpenSource: true, minRamGb: 6 },
+  { name: 'Phi-4 14B',           provider: 'Microsoft',    intelligenceIndex: 30, codingScore: 31, mathScore: 33, outputSpeed: 95,  contextWindow: 16384,   isOpenSource: true, minRamGb: 10 },
+  { name: 'Qwen3.5 4B',          provider: 'Alibaba',      intelligenceIndex: 27, codingScore: 26, mathScore: 26, outputSpeed: 182, contextWindow: 131072,  isOpenSource: true, minRamGb: 3 },
+  { name: 'Ling 2.6 Flash',      provider: 'InclusionAI',  intelligenceIndex: 26, codingScore: null, mathScore: null, outputSpeed: 206, contextWindow: 262144, isOpenSource: true, minRamGb: null },
+  { name: 'Gemma 4 4B',          provider: 'Google',       intelligenceIndex: 24, codingScore: 22, mathScore: 22, outputSpeed: 290, contextWindow: 131072,  isOpenSource: true, minRamGb: 3 },
+  { name: 'Phi-4-mini 3.8B',     provider: 'Microsoft',    intelligenceIndex: 22, codingScore: 24, mathScore: 26, outputSpeed: 310, contextWindow: 16384,   isOpenSource: true, minRamGb: 3 },
+  { name: 'Llama 3.2 3B',        provider: 'Meta',         intelligenceIndex: 18, codingScore: 16, mathScore: 15, outputSpeed: 340, contextWindow: 131072,  isOpenSource: true, minRamGb: 2 },
 ];
