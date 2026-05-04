@@ -60,6 +60,8 @@ const OPEN_SOURCE_KEYWORDS = [
   // Chinese open-weight ecosystem
   'minimax', 'glm', 'internlm', 'intern-lm', 'baichuan', 'exaone', 'olmo',
   'hunyuan', 'mimo', 'skywork', 'moonshot',
+  // InclusionAI
+  'ling',
 ];
 
 function isOpenWeight(m: RawAAModel): boolean {
@@ -230,14 +232,17 @@ export const TASK_SCORES: Record<string, Record<string, number>> = {
   // Open-weight
   'Kimi K2.6':               { swe: 54, agentic: 51, reasoning: 50, general: 54 },
   'MiMo-V2.5-Pro':           { swe: 51, agentic: 50, reasoning: 53, general: 54 },
+  'Qwen3.6 Max Preview':     { swe: 51, agentic: 50, reasoning: 52, general: 52 },
   'DeepSeek V4 Pro':         { swe: 50, agentic: 49, reasoning: 55, general: 52 },
   'GLM-5.1 Reasoning':       { swe: 48, agentic: 47, reasoning: 52, general: 51 },
   'GLM-5 Reasoning':         { swe: 47, agentic: 46, reasoning: 51, general: 50 },
   'MiniMax-M2.7':            { swe: 46, agentic: 48, reasoning: 49, general: 50 },
+  'Qwen3.6 Plus':            { swe: 47, agentic: 51, reasoning: 49, general: 50 },
   'DeepSeek V4 Flash':       { swe: 44, agentic: 43, reasoning: 46, general: 47 },
   'Qwen3.6 27B':             { swe: 43, agentic: 44, reasoning: 44, general: 46 },
   'Qwen3.5 397B A17B':       { swe: 42, agentic: 43, reasoning: 44, general: 45 },
   'Qwen3.5 27B':             { swe: 40, agentic: 39, reasoning: 41, general: 42 },
+  'Ling 2.6 Flash':          { swe: 24, agentic: 23, reasoning: 23, general: 26 },
   'Gemma 4 31B':             { swe: 36, agentic: 35, reasoning: 37, general: 39 },
   'Mistral Medium 3.5':      { swe: 37, agentic: 36, reasoning: 37, general: 39 },
   // RDMA cluster models
@@ -404,12 +409,14 @@ export function getTier(score: number | null): Tier {
 // Output speeds are API inference speeds; local Apple Silicon speeds are lower for large models
 export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
   // ── Frontier open-weight ─────────────────────────────────────────────────
-  { name: 'Kimi K2.6',           provider: 'Moonshot AI', intelligenceIndex: 54, codingScore: 54, mathScore: 50, outputSpeed: 34,  contextWindow: 262144,  isOpenSource: true },
-  { name: 'MiMo-V2.5-Pro',       provider: 'Xiaomi',      intelligenceIndex: 54, codingScore: 51, mathScore: 53, outputSpeed: 68,  contextWindow: 1000000, isOpenSource: true },
-  { name: 'DeepSeek V4 Pro',     provider: 'DeepSeek',    intelligenceIndex: 52, codingScore: 50, mathScore: 55, outputSpeed: 34,  contextWindow: 1000000, isOpenSource: true },
-  { name: 'GLM-5.1 Reasoning',   provider: 'Z AI',        intelligenceIndex: 51, codingScore: 48, mathScore: 52, outputSpeed: 60,  contextWindow: 200000,  isOpenSource: true },
-  { name: 'GLM-5 Reasoning',     provider: 'Z AI',        intelligenceIndex: 50, codingScore: 47, mathScore: 51, outputSpeed: 65,  contextWindow: 200000,  isOpenSource: true },
-  { name: 'MiniMax-M2.7',        provider: 'MiniMax',     intelligenceIndex: 50, codingScore: 46, mathScore: 49, outputSpeed: 55,  contextWindow: 205000,  isOpenSource: true },
+  { name: 'Kimi K2.6',              provider: 'Moonshot AI', intelligenceIndex: 54, codingScore: 54, mathScore: 50, outputSpeed: 34,  contextWindow: 262144,  isOpenSource: true },
+  { name: 'MiMo-V2.5-Pro',          provider: 'Xiaomi',      intelligenceIndex: 54, codingScore: 51, mathScore: 53, outputSpeed: 68,  contextWindow: 1000000, isOpenSource: true },
+  { name: 'Qwen3.6 Max Preview',    provider: 'Alibaba',     intelligenceIndex: 52, codingScore: 50, mathScore: 51, outputSpeed: 36,  contextWindow: 262144,  isOpenSource: true },
+  { name: 'DeepSeek V4 Pro',        provider: 'DeepSeek',    intelligenceIndex: 52, codingScore: 50, mathScore: 55, outputSpeed: 34,  contextWindow: 1000000, isOpenSource: true },
+  { name: 'GLM-5.1 Reasoning',      provider: 'Z AI',        intelligenceIndex: 51, codingScore: 48, mathScore: 52, outputSpeed: 60,  contextWindow: 200000,  isOpenSource: true },
+  { name: 'GLM-5 Reasoning',        provider: 'Z AI',        intelligenceIndex: 50, codingScore: 47, mathScore: 51, outputSpeed: 65,  contextWindow: 200000,  isOpenSource: true },
+  { name: 'Qwen3.6 Plus',           provider: 'Alibaba',     intelligenceIndex: 50, codingScore: 48, mathScore: 50, outputSpeed: 53,  contextWindow: 1000000, isOpenSource: true },
+  { name: 'MiniMax-M2.7',           provider: 'MiniMax',     intelligenceIndex: 50, codingScore: 46, mathScore: 49, outputSpeed: 55,  contextWindow: 205000,  isOpenSource: true },
   // ── Strong mid-tier ──────────────────────────────────────────────────────
   { name: 'DeepSeek V4 Flash',   provider: 'DeepSeek',    intelligenceIndex: 47, codingScore: 44, mathScore: 46, outputSpeed: 82,  contextWindow: 1000000, isOpenSource: true },
   { name: 'Qwen3.6 27B',         provider: 'Alibaba',     intelligenceIndex: 46, codingScore: 43, mathScore: 44, outputSpeed: 66,  contextWindow: 262144,  isOpenSource: true },
@@ -445,10 +452,11 @@ export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
     clusterNote: 'Q8 full precision ~235 GB — exactly fills the 244 GB cluster window. Highest quality Qwen3.5 MoE run.',
   },
   // ── Small / edge models ──────────────────────────────────────────────────
-  { name: 'Qwen3.5 9B',          provider: 'Alibaba',     intelligenceIndex: 32, codingScore: 30, mathScore: 31, outputSpeed: 120, contextWindow: 131072,  isOpenSource: true },
-  { name: 'Phi-4 14B',           provider: 'Microsoft',   intelligenceIndex: 30, codingScore: 31, mathScore: 33, outputSpeed: 95,  contextWindow: 16384,   isOpenSource: true },
-  { name: 'Qwen3.5 4B',          provider: 'Alibaba',     intelligenceIndex: 27, codingScore: 26, mathScore: 26, outputSpeed: 182, contextWindow: 131072,  isOpenSource: true },
-  { name: 'Gemma 4 4B',          provider: 'Google',      intelligenceIndex: 24, codingScore: 22, mathScore: 22, outputSpeed: 290, contextWindow: 131072,  isOpenSource: true },
-  { name: 'Phi-4-mini 3.8B',     provider: 'Microsoft',   intelligenceIndex: 22, codingScore: 24, mathScore: 26, outputSpeed: 310, contextWindow: 16384,   isOpenSource: true },
-  { name: 'Llama 3.2 3B',        provider: 'Meta',        intelligenceIndex: 18, codingScore: 16, mathScore: 15, outputSpeed: 340, contextWindow: 131072,  isOpenSource: true },
+  { name: 'Qwen3.5 9B',          provider: 'Alibaba',      intelligenceIndex: 32, codingScore: 30, mathScore: 31, outputSpeed: 120, contextWindow: 131072,  isOpenSource: true },
+  { name: 'Phi-4 14B',           provider: 'Microsoft',    intelligenceIndex: 30, codingScore: 31, mathScore: 33, outputSpeed: 95,  contextWindow: 16384,   isOpenSource: true },
+  { name: 'Qwen3.5 4B',          provider: 'Alibaba',      intelligenceIndex: 27, codingScore: 26, mathScore: 26, outputSpeed: 182, contextWindow: 131072,  isOpenSource: true },
+  { name: 'Ling 2.6 Flash',      provider: 'InclusionAI',  intelligenceIndex: 26, codingScore: null, mathScore: null, outputSpeed: 206, contextWindow: 262144, isOpenSource: true },
+  { name: 'Gemma 4 4B',          provider: 'Google',       intelligenceIndex: 24, codingScore: 22, mathScore: 22, outputSpeed: 290, contextWindow: 131072,  isOpenSource: true },
+  { name: 'Phi-4-mini 3.8B',     provider: 'Microsoft',    intelligenceIndex: 22, codingScore: 24, mathScore: 26, outputSpeed: 310, contextWindow: 16384,   isOpenSource: true },
+  { name: 'Llama 3.2 3B',        provider: 'Meta',         intelligenceIndex: 18, codingScore: 16, mathScore: 15, outputSpeed: 340, contextWindow: 131072,  isOpenSource: true },
 ];
