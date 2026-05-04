@@ -246,6 +246,8 @@ export const TASK_SCORES: Record<string, Record<string, number>> = {
   'Qwen3.5 27B':             { swe: 40, agentic: 39, reasoning: 41, general: 42 },
   'Ling 2.6 Flash':          { swe: 24, agentic: 23, reasoning: 23, general: 26 },
   'Ling-1T':                 { swe: 19, agentic: 18, reasoning: 18, general: 20 },
+  'Mistral Small 4':         { swe: 27, agentic: 26, reasoning: 25, general: 28 },
+  'Granite 4.0 H Small':     { swe: 10, agentic: 10, reasoning: 9,  general: 11 },
   'Gemma 4 31B':             { swe: 36, agentic: 35, reasoning: 37, general: 39 },
   'Mistral Medium 3.5':      { swe: 37, agentic: 36, reasoning: 37, general: 39 },
   // RDMA cluster models
@@ -474,9 +476,11 @@ export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
   // ── Small / edge models ──────────────────────────────────────────────────
   { name: 'Qwen3.5 9B',          provider: 'Alibaba',      intelligenceIndex: 32, codingScore: 30, mathScore: 31, outputSpeed: 120, contextWindow: 131072,  isOpenSource: true, minRamGb: 6 },
   { name: 'Phi-4 14B',           provider: 'Microsoft',    intelligenceIndex: 30, codingScore: 31, mathScore: 33, outputSpeed: 95,  contextWindow: 16384,   isOpenSource: true, minRamGb: 10 },
+  { name: 'Mistral Small 4',     provider: 'Mistral',      intelligenceIndex: 28, codingScore: null, mathScore: null, outputSpeed: 172, contextWindow: 262144, isOpenSource: true, minRamGb: 55 },  // 119B total / 6.5B active MoE
   { name: 'Qwen3.5 4B',          provider: 'Alibaba',      intelligenceIndex: 27, codingScore: 26, mathScore: 26, outputSpeed: 182, contextWindow: 131072,  isOpenSource: true, minRamGb: 3 },
   { name: 'Ling 2.6 Flash',      provider: 'InclusionAI',  intelligenceIndex: 26, codingScore: null, mathScore: null, outputSpeed: 206, contextWindow: 262144, isOpenSource: true, minRamGb: null },
   { name: 'Gemma 4 4B',          provider: 'Google',       intelligenceIndex: 24, codingScore: 22, mathScore: 22, outputSpeed: 290, contextWindow: 131072,  isOpenSource: true, minRamGb: 3 },
   { name: 'Phi-4-mini 3.8B',     provider: 'Microsoft',    intelligenceIndex: 22, codingScore: 24, mathScore: 26, outputSpeed: 310, contextWindow: 16384,   isOpenSource: true, minRamGb: 3 },
   { name: 'Llama 3.2 3B',        provider: 'Meta',         intelligenceIndex: 18, codingScore: 16, mathScore: 15, outputSpeed: 340, contextWindow: 131072,  isOpenSource: true, minRamGb: 2 },
+  { name: 'Granite 4.0 H Small', provider: 'IBM',          intelligenceIndex: 11, codingScore: null, mathScore: null, outputSpeed: 364, contextWindow: 128000, isOpenSource: true, minRamGb: 20 }, // 32B total / 9B active MoE — speed leader
 ];
