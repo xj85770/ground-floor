@@ -272,6 +272,7 @@ const sorted = allHardware.sort((a,b) => tierOrder[a.data.tier] - tierOrder[b.da
       <div class="space-y-4 text-[1.0625rem] leading-editorial text-silver">
         <p>I get this question a lot: does local pay for itself in API savings? Honestly — not on token costs alone. At $0.01 per interaction, you're looking at years before hardware pencils out. That's not the argument and I won't pretend it is.</p>
         <p>The real cost is what I'd call compliance overhead: the vendor due diligence, the BAA negotiation, the conversation with your malpractice carrier about someone else's breach notification process. A local machine removes the third party entirely — not cheaper per token, but simpler in a way that actually matters to a solo practice.</p>
+        <p>There's also a cost nobody thinks about until they see the invoice: runaway API calls. Cloud models are metered at both ends — GPT-5.5 runs $5 per million input tokens, $30 per million output. GPT-5.5 Pro is $30 in, $180 out. Most of the time that's manageable. But agentic workflows that loop, integration bugs, or a script left running overnight don't stop billing because something went wrong. The meter runs regardless. A $20/month habit becomes a $1,200 charge before anyone notices. With local inference, there is no meter. The model runs or it doesn't. Nothing accumulates.</p>
         <p>The hardware also has a 4–6 year useful life and does everything else a laptop or desktop does. It's not a pure AI line item. It's infrastructure.</p>
       </div>
     </section>
