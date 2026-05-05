@@ -16,6 +16,22 @@ const expCountByIndustry = allExperiments.reduce<Record<string, number>>((acc, e
   acc[e.data.industry] = (acc[e.data.industry] ?? 0) + 1;
   return acc;
 }, {});
+
+const industryIcons: Record<string, string> = {
+  medical: '✚', legal: '§', financial: '$', accounting: '∑',
+};
+
+const industriesForStage = allIndustries.map(ind => ({
+  slug: ind.slug,
+  shortName: ind.data.shortName,
+  name: ind.data.name,
+  whyLocal: ind.data.whyLocal,
+  commonUseCases: ind.data.commonUseCases,
+  maturityNote: ind.data.maturityNote,
+  regulation: ind.data.regulation,
+  experimentCount: expCountByIndustry[ind.slug] ?? 0,
+  icon: industryIcons[ind.slug] ?? '◆',
+}));
 ---
 
 <Base title="Ground Floor">
@@ -537,23 +553,119 @@ const expCountByIndustry = allExperiments.reduce<Record<string, number>>((acc, e
   </section>
 
 
-  <!-- ═══ INDUSTRIES ═══ -->
+  <!-- ═══ INDUSTRIES — Stage Manager ═══ -->
   <section style="border-top:1px solid #424245;background:#000;">
     <div class="max-w-wide mx-auto px-5 md:px-10 py-24 md:py-32">
-      <div class="reveal section-header">
+
+      <div class="reveal section-header" style="margin-bottom:28px;">
         <div>
           <p class="font-mono text-[0.7rem] tracking-[0.2em] uppercase text-ash mb-2">Regulated verticals</p>
           <h2 class="font-display text-2xl font-semibold tracking-tight text-chalk">By industry</h2>
         </div>
         <a href="/industries" class="link-arrow text-sm shrink-0">All industries →</a>
       </div>
-      <div class="reveal grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {allIndustries.map(ind => (
-          <IndustryCard industry={ind} experimentCount={expCountByIndustry[ind.slug] ?? 0} />
-        ))}
+
+      <!-- Stage Manager layout -->
+      <div class="reveal" id="sm-root" style="display:grid;grid-template-columns:200px 1fr;gap:12px;align-items:start;">
+
+        <!-- Left: persistent industry list -->
+        <div id="sm-tabs" style="display:flex;flex-direction:column;gap:6px;">
+          {industriesForStage.map((ind, i) => (
+            <button
+              class="sm-tab"
+              data-idx={String(i)}
+              style={`display:flex;flex-direction:column;gap:4px;padding:12px 14px;border-radius:10px;border:1px solid ${i === 0 ? '#9b5de5' : '#2a2a2d'};background:${i === 0 ? 'rgba(155,93,229,0.12)' : 'rgba(255,255,255,0.02)'};cursor:pointer;text-align:left;transition:all 0.18s;position:relative;`}
+            >
+              <span class="sm-pulse-dot" style={`position:absolute;top:10px;right:10px;width:5px;height:5px;border-radius:50%;background:#9b5de5;animation:pulse 2s ease-in-out infinite;display:${i === 0 ? 'block' : 'none'};`}></span>
+              <span style={`font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:${i === 0 ? '#9b5de5' : '#6e6e73'};`}>{ind.icon}</span>
+              <span style={`font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:${i === 0 ? '#9b5de5' : '#a1a1a6'};`}>{ind.shortName}</span>
+              {ind.experimentCount > 0 && (
+                <span style="font-family:'JetBrains Mono',monospace;font-size:0.55rem;color:#424245;">{ind.experimentCount} exp.</span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        <!-- Center: detail card -->
+        <div id="sm-stage" class="glow-card" style="min-height:340px;border-radius:14px!important;">
+          <div id="sm-card" style="padding:28px 32px;">
+            <!-- filled by JS -->
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
+
+  <script define:vars={{ industriesForStage }}>
+    const tabs  = document.querySelectorAll('.sm-tab');
+    const card  = document.getElementById('sm-card');
+    let active  = 0;
+
+    function render(idx) {
+      const d = industriesForStage[idx];
+      card.style.animation = 'none';
+      card.offsetHeight; // reflow
+      card.style.animation = 'sm-stage-in 0.26s cubic-bezier(0.22,1,0.36,1) forwards';
+      card.innerHTML = `
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;">
+          <div>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:#9b5de5;margin-bottom:8px;">${d.icon} · ${d.shortName}</p>
+            <h3 style="font-family:'Fraunces',Georgia,serif;font-size:1.4rem;font-weight:700;color:#e5e5ea;line-height:1.2;letter-spacing:-0.01em;">${d.name}</h3>
+          </div>
+          <a href="/industries/${d.slug}" style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:#9b5de5;text-decoration:none;white-space:nowrap;padding-top:4px;flex-shrink:0;">Full guide →</a>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+          <div>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:0.16em;text-transform:uppercase;color:#6e6e73;margin-bottom:10px;">Why local</p>
+            <p style="font-size:0.85rem;color:#a1a1a6;line-height:1.65;">${d.whyLocal}</p>
+          </div>
+          <div>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:0.16em;text-transform:uppercase;color:#6e6e73;margin-bottom:10px;">Common use cases</p>
+            <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
+              ${d.commonUseCases.slice(0,5).map(u => `
+                <li style="display:flex;align-items:flex-start;gap:8px;font-size:0.82rem;color:#a1a1a6;line-height:1.45;">
+                  <span style="color:#9b5de5;margin-top:2px;flex-shrink:0;">·</span>${u}
+                </li>`).join('')}
+            </ul>
+            <div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:5px;">
+              ${d.regulation.slice(0,3).map(r => `<span style="font-family:'JetBrains Mono',monospace;font-size:0.55rem;padding:2px 8px;border-radius:4px;background:rgba(155,93,229,0.08);border:1px solid rgba(155,93,229,0.2);color:#9b5de5;">${r}</span>`).join('')}
+              ${d.regulation.length > 3 ? `<span style="font-family:'JetBrains Mono',monospace;font-size:0.55rem;padding:2px 8px;border-radius:4px;background:rgba(155,93,229,0.08);border:1px solid rgba(155,93,229,0.2);color:#9b5de5;">+${d.regulation.length - 3}</span>` : ''}
+            </div>
+          </div>
+        </div>
+
+        ${d.maturityNote ? `
+        <div style="margin-top:20px;padding-top:18px;border-top:1px solid #1e1e22;">
+          <p style="font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:0.16em;text-transform:uppercase;color:#6e6e73;margin-bottom:6px;">Maturity note</p>
+          <p style="font-size:0.78rem;color:#6e6e73;line-height:1.6;font-style:italic;">${d.maturityNote}</p>
+        </div>` : ''}
+      `;
+    }
+
+    function setActive(idx) {
+      tabs.forEach((t, i) => {
+        const isActive = i === idx;
+        t.style.borderColor = isActive ? '#9b5de5' : '#2a2a2d';
+        t.style.background  = isActive ? 'rgba(155,93,229,0.12)' : 'rgba(255,255,255,0.02)';
+        const dot = t.querySelector('.sm-pulse-dot');
+        if (dot) dot.style.display = isActive ? 'block' : 'none';
+        const spans = t.querySelectorAll('span:not(.sm-pulse-dot)');
+        spans.forEach((s, si) => {
+          const isExpCount = si === spans.length - 1 && industriesForStage[i].experimentCount > 0;
+          s.style.color = isExpCount ? '#424245' : (isActive ? '#9b5de5' : (si === 0 ? '#6e6e73' : '#a1a1a6'));
+        });
+      });
+      active = idx;
+      render(idx);
+    }
+
+    tabs.forEach((t, i) => t.addEventListener('click', () => setActive(i)));
+
+    // init
+    render(0);
+  </script>
 
 
   <!-- ═══ CLOSING ═══ -->
@@ -583,6 +695,15 @@ const expCountByIndustry = allExperiments.reduce<Record<string, number>>((acc, e
     opacity:0;
     transform:translateY(28px);
     animation:hero-reveal 0.9s cubic-bezier(0.22,1,0.36,1) var(--d,0s) forwards;
+  }
+  @keyframes sm-stage-in {
+    from { opacity:0; transform:translateY(6px) scale(0.997); }
+    to   { opacity:1; transform:translateY(0)   scale(1); }
+  }
+  @media (max-width: 640px) {
+    #sm-root { grid-template-columns: 1fr !important; }
+    #sm-tabs { flex-direction: row !important; flex-wrap: wrap; }
+    .sm-tab  { flex: 1 1 calc(50% - 4px); }
   }
   @keyframes hero-reveal {
     to { opacity:1; transform:translateY(0); }
