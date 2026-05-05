@@ -171,13 +171,13 @@ const industriesForStage = allIndustries.map(ind => ({
     <div class="max-w-wide mx-auto px-5 md:px-10 py-24 md:py-36">
 
       <div class="reveal text-center mb-20">
-        <p class="font-mono text-[0.7rem] tracking-[0.2em] uppercase text-ash mb-5">The architecture argument</p>
+        <p class="font-mono text-[0.7rem] tracking-[0.2em] uppercase text-ash mb-5">Why local</p>
         <h2 class="font-display font-semibold tracking-tight text-chalk max-w-3xl mx-auto"
             style="font-size:clamp(1.9rem,4vw,3rem);line-height:1.1;">
           The cloud API is the weakest link.
         </h2>
         <p class="text-silver text-lg mt-5 max-w-xl mx-auto leading-relaxed">
-          Here's what happens every time you use a cloud AI: your data leaves the building. That's not an edge case — it's the architecture. Air-gapped is the only approach that eliminates this risk category entirely.
+          Something I kept noticing: the practitioners who most need good AI tools are often the ones most exposed by cloud architecture. Every API call routes data somewhere else. For patient records, client files, and financial accounts — that's not a quirk. That's the whole problem. Air-gapped removes it from the equation entirely.
         </p>
       </div>
 
@@ -186,7 +186,7 @@ const industriesForStage = allIndustries.map(ind => ({
           {
             num: '01',
             title: 'No API calls',
-            body: 'The model runs on your hardware. There are no network requests to intercept, no vendor security posture to trust. Inference happens locally — full stop.',
+            body: 'The model runs on the machine in front of you. No network call leaves, no vendor handles the data, no API logs it. Inference happens locally — that\'s the whole point.',
             color: '#9b5de5',
           },
           {

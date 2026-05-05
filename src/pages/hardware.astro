@@ -260,8 +260,8 @@ const sorted = allHardware.sort((a,b) => tierOrder[a.data.tier] - tierOrder[b.da
     <section class="max-w-prose mb-16 border-t border-wire pt-12">
       <h2 class="font-display text-2xl font-semibold tracking-tight text-chalk mb-6">Why Apple Silicon</h2>
       <div class="space-y-4 text-[1.0625rem] leading-editorial text-silver">
-        <p>The old way to run local inference: fit the entire model in VRAM. A 16 GB consumer GPU can't load a Q4-quantized 13B model — it doesn't fit. Your options were a $10K+ workstation GPU or a cloud API.</p>
-        <p>Apple Silicon changed this. GPU and CPU share one memory pool. A 16 GB Mac mini loads a Q4 8B model (~5 GB) with room left for the OS and other apps. There's no VRAM ceiling.</p>
+        <p>The old constraint: fit the entire model in VRAM. A 16 GB consumer GPU can't load a Q4-quantized 13B model — it just doesn't fit. For a long time that felt like the ceiling. Your options were a $10K+ workstation GPU or a cloud API, and most people quietly chose the API.</p>
+        <p>Apple Silicon changed this in a way I don't think has been fully absorbed. GPU and CPU share one memory pool. A 16 GB Mac mini loads a Q4 8B model (~5 GB) with room left for the OS and other apps. There's no VRAM ceiling.</p>
         <p>Every model listed here is open-weight — publicly released weights, no API keys, no telemetry, no vendor agreement. The weights you download today run the same way in five years. Air-gapped by default.</p>
       </div>
     </section>
@@ -270,9 +270,9 @@ const sorted = allHardware.sort((a,b) => tierOrder[a.data.tier] - tierOrder[b.da
     <section class="max-w-prose border-t border-wire pt-12 mb-16">
       <h2 class="font-display text-2xl font-semibold tracking-tight text-chalk mb-6">The real cost question</h2>
       <div class="space-y-4 text-[1.0625rem] leading-editorial text-silver">
-        <p>The financial argument for local AI isn't API cost savings. At $0.01 per document interaction, token savings don't recoup hardware costs for years. That's not the argument.</p>
-        <p>The real cost is compliance overhead: vendor due diligence, BAA negotiations, the conversation with your malpractice carrier about your AI vendor's breach notification process. A local machine eliminates most of that — not by being cheaper per token, but by removing the third-party processor from the compliance picture.</p>
-        <p>The hardware also has a 4–6 year useful life and does everything else a laptop or desktop does. It's infrastructure, not a pure AI line item.</p>
+        <p>I get this question a lot: does local pay for itself in API savings? Honestly — not on token costs alone. At $0.01 per interaction, you're looking at years before hardware pencils out. That's not the argument and I won't pretend it is.</p>
+        <p>The real cost is what I'd call compliance overhead: the vendor due diligence, the BAA negotiation, the conversation with your malpractice carrier about someone else's breach notification process. A local machine removes the third party entirely — not cheaper per token, but simpler in a way that actually matters to a solo practice.</p>
+        <p>The hardware also has a 4–6 year useful life and does everything else a laptop or desktop does. It's not a pure AI line item. It's infrastructure.</p>
       </div>
     </section>
 

@@ -24,7 +24,7 @@ notSuitableFor:
   - "Models requiring more than ~20 GB of weights"
 ---
 
-The M4 Pro Mac mini is the first tier where the quality step-up from entry is clearly noticeable. At 24 GB base or 48 GB expanded, you can run 13–14B models at Q4 or push 8B models to Q8 (higher precision, better output) — and the 273 GB/s memory bandwidth means you feel the difference.
+The M4 Pro Mac mini is the first tier where the quality step-up from entry stops being something you have to argue for — it's visible in the output. At 24 GB base or 48 GB expanded, you can run 13–14B models at Q4 or push 8B models to Q8, and the 273 GB/s memory bandwidth means you feel the difference on the first response.
 
 ## The quality difference
 

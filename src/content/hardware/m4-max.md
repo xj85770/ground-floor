@@ -24,7 +24,7 @@ notSuitableFor:
   - "Large-scale serving without additional hardware"
 ---
 
-The M4 Max at 36–64 GB is where the quality ceiling lifts significantly. This is the first tier where **Llama 3.3 70B** — Meta's current flagship open-weight model — runs at practical speeds (~14 t/s at Q4). For complex regulated-industry tasks, 70B models produce qualitatively different output than the 13–32B tier.
+The M4 Max at 36–64 GB is where the quality ceiling lifts in a way I wasn't fully prepared for. This is the first tier where **Llama 3.3 70B** — Meta's current flagship open-weight model — runs at practical speeds (~14 t/s at Q4). For complex regulated-industry tasks, 70B models produce qualitatively different output than the 13–32B tier — not better in every way, but better in the ways that matter for hard tasks.
 
 ## The 70B threshold
 
