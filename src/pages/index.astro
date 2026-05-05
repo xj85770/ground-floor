@@ -453,7 +453,7 @@ const industriesForStage = allIndustries.map(ind => ({
       </div>
 
       <!-- Spinning conic cluster card -->
-      <div class="reveal conic-border">
+      <div class="reveal conic-border glow-card">
         <div class="p-8 md:p-10">
           <p class="font-mono text-[0.65rem] tracking-[0.18em] uppercase text-ash mb-5">Combined cluster</p>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-8">
@@ -812,10 +812,10 @@ const industriesForStage = allIndustries.map(ind => ({
     100% { left: 100%; opacity: 0; }
   }
   @keyframes lab-pulse-rtl {
-    0%   { right: -20%; opacity: 0; }
+    0%   { left: 120%; opacity: 0; }
     10%  { opacity: 1; }
     90%  { opacity: 1; }
-    100% { right: 100%; opacity: 0; }
+    100% { left: -20%; opacity: 0; }
   }
 
   /* ── responsive ── */
