@@ -1,6 +1,7 @@
 // Build-time fetch from artificialanalysis.ai API
 // Returns only open-weight/open-source models, sorted by intelligence index
-// Intelligence Index is 0–100 scale. Current world ceiling is GPT-5.5 at 60 (May 2026).
+// Intelligence Index is 0–100 scale. Current world ceiling is GPT-5.5 at 60 (June 2026).
+// Top open-weight model is now MiniMax M3 at 55 (AA Intelligence Index v4.0).
 // Scores are low because benchmarks are hard: Humanity's Last Exam, GPQA Diamond, SciCode, etc.
 // A score of 54 means the model answered 54% of an extremely difficult multi-domain eval mix.
 
@@ -208,7 +209,7 @@ export const USE_CASE_RECS: UseCaseRec[] = [
   },
 ];
 
-// Closed-source reference — scores from artificialanalysis.ai, May 2026
+// Closed-source reference — scores from artificialanalysis.ai, June 2026
 // Same 0–100 scale. Shown for context only.
 export interface ClosedModel {
   name: string;
@@ -219,7 +220,7 @@ export interface ClosedModel {
 }
 
 export const CLOSED_SOURCE_REFERENCE: ClosedModel[] = [
-  { name: 'GPT-5.5 (xhigh)',       provider: 'OpenAI',    intelligenceIndex: 60, outputSpeed: 85,  note: 'Top model, May 2026. API only.' },
+  { name: 'GPT-5.5 (xhigh)',       provider: 'OpenAI',    intelligenceIndex: 60, outputSpeed: 85,  note: 'Top model, June 2026. API only.' },
   { name: 'GPT-5.5 (high)',         provider: 'OpenAI',    intelligenceIndex: 59, outputSpeed: 83,  note: 'API only.' },
   { name: 'Claude Opus 4.7 (max)',  provider: 'Anthropic', intelligenceIndex: 57, outputSpeed: 56,  note: 'API only.' },
   { name: 'Gemini 3.1 Pro Preview', provider: 'Google',    intelligenceIndex: 57, outputSpeed: 141, note: 'API only.' },
@@ -229,9 +230,10 @@ export const CLOSED_SOURCE_REFERENCE: ClosedModel[] = [
   { name: 'Claude Sonnet 4.6',      provider: 'Anthropic', intelligenceIndex: 44, outputSpeed: 51,  note: 'Powers Claude Code. Strong agentic performance — reliable everyday benchmark. API only.' },
 ];
 
-// Per-task scores — derived from benchmark data, May 2026 (0–100 scale, current ceiling ~60)
+// Per-task scores — derived from benchmark data, May–June 2026 (0–100 scale, current ceiling ~60)
 export const TASK_SCORES: Record<string, Record<string, number>> = {
   // Open-weight
+  'MiniMax M3':              { swe: 55, agentic: 53, reasoning: 49, general: 55 },  // derived: leads SWE-Bench Pro, strong agentic browsing, weak abstract reasoning (ARC-AGI-2 <12%)
   'Kimi K2.6':               { swe: 54, agentic: 51, reasoning: 50, general: 54 },
   'MiMo-V2.5-Pro':           { swe: 51, agentic: 50, reasoning: 53, general: 54 },
   'Qwen3.6 Max Preview':     { swe: 51, agentic: 50, reasoning: 52, general: 52 },
@@ -409,10 +411,24 @@ export function getTier(score: number | null): Tier {
   return TIERS[TIERS.length - 1];
 }
 
-// Static fallback — source: artificialanalysis.ai, May 2026
-// Intelligence index: 0–100 scale. No model has scored above 60 yet (May 2026).
+// Static fallback — source: artificialanalysis.ai, June 2026
+// Intelligence index: 0–100 scale. No model has scored above 60 yet (June 2026).
 // Output speeds are API inference speeds; local Apple Silicon speeds are lower for large models
 export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
+  // ── New #1 open-weight (Jun 2026) — large MoE that DOES fit the 2-node cluster at low quant ──
+  {
+    name: 'MiniMax M3',
+    provider: 'MiniMax',
+    intelligenceIndex: 55,
+    codingScore: null,      // AA reports the composite Index for M3; no separate coding sub-score published yet
+    mathScore: null,        //   (M3 leads SWE-Bench Pro but is weak on abstract reasoning — see task scores)
+    outputSpeed: 58,        // notably slow + very verbose (took 91M tokens to run the Intelligence Index eval)
+    contextWindow: 1000000, // 1M-token context via MiniMax Sparse Attention
+    isOpenSource: true,
+    minRamGb: 160,          // 428B total / 23B active MoE — Q2_K ~160 GB
+    requiresCluster: true,
+    clusterNote: 'First multimodal M-series (text + image + video in), 1M context. 428B total / 23B active MoE — Q2_K (~160 GB) fits inside the 244 GB 2-node window; needs both nodes. Top open-weight Intelligence Index (55, AA v4.0), but slow and very verbose in practice — a marginal local pick despite the score. Self-hostable open weights, which suits air-gapped deployment.',
+  },
   // ── Frontier open-weight (1T+ MoE — need 3–4 node cluster or future 512 GB hardware) ──
   // minRamGb = Q2_K quantization minimum. These do NOT fit the current 2-node 244 GB cluster.
   { name: 'Kimi K2.6',              provider: 'Moonshot AI', intelligenceIndex: 54, codingScore: 54, mathScore: 50, outputSpeed: 34,  contextWindow: 262144,  isOpenSource: true, minRamGb: 360 },  // 1T total / 32B active
