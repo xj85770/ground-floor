@@ -11,7 +11,7 @@ suitableModels:
   - "Gemma 3 27B (Q4_K_M) — Google, excellent for long-context tasks"
   - "DeepSeek-R1 32B (Q4_K_M) — best local reasoning at this tier"
   - "Mistral Small 3 22B (Q8) — high-precision mid-size model"
-  - "Kimi K2.6 32B (Q4_K_M) — strongest open-source coding model"
+  - "Kimi K2.6 32B (Q4_K_M) — top-tier open-source coding model"
 suitableFor:
   - "High-quality 70B inference at 64 GB configuration"
   - "Small team serving (3–6 concurrent users)"
@@ -46,7 +46,7 @@ Every model listed here has publicly released weights:
 - **Llama 3.3 70B** — Meta, Apache 2.0, the benchmark reference
 - **Qwen3.5 32B** — Alibaba, Qwen License (commercial-friendly)
 - **DeepSeek-R1 32B** — DeepSeek AI, MIT license
-- **Kimi K2.6 32B** — Moonshot AI, best open-source coding model currently
+- **Kimi K2.6 32B** — Moonshot AI, top-tier open-source coding model
 
 No API keys. No usage telemetry. No vendor dependencies.
 

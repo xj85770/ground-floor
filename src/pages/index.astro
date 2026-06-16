@@ -107,6 +107,7 @@ const industriesForStage = allIndustries.map(ind => ({
               </thead>
               <tbody>
                 {[
+                  { name: 'MiniMax M3',       cluster: true,  intel: 55, ram: '160 GB', ramColor: '#4cc9f0', ramBg: 'rgba(76,201,240,0.10)',  ramBorder: 'rgba(76,201,240,0.25)',  speed: 58 },
                   { name: 'DeepSeek-R1 671B', cluster: true,  intel: 55, ram: '190 GB', ramColor: '#4cc9f0', ramBg: 'rgba(76,201,240,0.10)',  ramBorder: 'rgba(76,201,240,0.25)',  speed: 8  },
                   { name: 'Kimi K2.6',        cluster: false, intel: 54, ram: '360 GB', ramColor: '#fb923c', ramBg: 'rgba(251,146,60,0.10)',  ramBorder: 'rgba(251,146,60,0.25)',  speed: 34 },
                   { name: 'Qwen3.6 27B',      cluster: false, intel: 46, ram: '17 GB',  ramColor: '#34d399', ramBg: 'rgba(52,211,153,0.10)',  ramBorder: 'rgba(52,211,153,0.25)', speed: 66 },
@@ -135,7 +136,7 @@ const industriesForStage = allIndustries.map(ind => ({
 
           <!-- Card footer -->
           <div style="padding:11px 16px;border-top:1px solid #1e1e22;display:flex;align-items:center;justify-content:space-between;">
-            <span class="font-mono text-[0.58rem]" style="color:#6e6e73;">Showing 7 of 24 · sorted by intelligence</span>
+            <span class="font-mono text-[0.58rem]" style="color:#6e6e73;">Showing 8 of 24 · sorted by intelligence</span>
             <a href="/models" class="font-mono text-[0.6rem]" style="color:#9b5de5;text-decoration:none;">Full table →</a>
           </div>
         </div>
@@ -672,7 +673,7 @@ const industriesForStage = allIndustries.map(ind => ({
   <section class="relative overflow-hidden" style="border-top:1px solid #424245;background:#000;">
     <div aria-hidden="true" style="position:absolute;bottom:-30%;left:50%;transform:translateX(-50%);width:900px;height:600px;background:radial-gradient(ellipse at center,rgba(155,93,229,0.2) 0%,transparent 65%);filter:blur(80px);pointer-events:none;"></div>
     <div class="relative max-w-3xl mx-auto px-5 md:px-10 py-32 md:py-48 text-center">
-      <p class="reveal font-mono text-[0.7rem] tracking-[0.2em] uppercase text-ash mb-8">May 2026</p>
+      <p class="reveal font-mono text-[0.7rem] tracking-[0.2em] uppercase text-ash mb-8">June 2026</p>
       <h2 class="reveal font-display font-semibold tracking-tight text-chalk mb-6"
           style="font-size:clamp(2.2rem,5vw,4rem);line-height:1.05;">The question is answered.</h2>
       <p class="reveal text-xl text-silver leading-relaxed mb-14">
