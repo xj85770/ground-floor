@@ -17,7 +17,6 @@ const experiments = defineCollection({
     model:      z.string(),
     verdict:    z.enum(['viable', 'partial', 'not-yet']),
     hypothesis: z.string(),
-    youtube:    z.string().url().optional(),
     linkedin:   z.string().url().optional(),
     description: z.string(),
   }),

@@ -494,67 +494,6 @@ const industriesForStage = allIndustries.map(ind => ({
   </section>
 
 
-  <!-- ═══ WATCH ═══ -->
-  <section style="border-top:1px solid #424245;background:#000;">
-    <div class="max-w-wide mx-auto px-5 md:px-10 py-24 md:py-32">
-      <div class="reveal section-header mb-10">
-        <div>
-          <p class="font-mono text-[0.7rem] tracking-[0.2em] uppercase text-ash mb-2">YouTube</p>
-          <h2 class="font-display text-2xl font-semibold tracking-tight text-chalk">Watch the experiments</h2>
-        </div>
-        <a href="https://www.youtube.com/@XavierOutside" target="_blank" rel="noopener noreferrer" class="link-arrow text-sm shrink-0">All videos →</a>
-      </div>
-
-      <div class="reveal grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
-        {[
-          {
-            label: 'Week 1',
-            title: 'SOAP Notes on a $599 Mac Mini',
-            desc: 'Can an 8B model draft clinical notes fast enough to use between patients? The full setup and results.',
-            color: '#9b5de5',
-          },
-          {
-            label: 'Week 2',
-            title: 'Contract Review with a 13B Local Model',
-            desc: 'Testing clause flagging on five real vendor agreements. What it catches. What it misses.',
-            color: '#4361ee',
-          },
-          {
-            label: 'Week 3',
-            title: 'Meeting Notes to CRM for a Solo RIA',
-            desc: '12 client meeting transcripts, one local 8B model, and 20 minutes of post-meeting work cut to 5.',
-            color: '#4cc9f0',
-          },
-        ].map(({ label, title, desc, color }) => (
-          <a
-            href="https://www.youtube.com/@XavierOutside"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="glow-card group block p-7 transition-all"
-            style="text-decoration:none;"
-          >
-            <div class="flex items-center gap-3 mb-5">
-              <div style={`width:42px;height:42px;border-radius:10px;background:${color}22;border:1px solid ${color}44;display:flex;align-items:center;justify-content:center;flex-shrink:0;`}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill={color}>
-                  <path d="M8 5v14l11-7z"/>
-                </svg>
-              </div>
-              <span class="font-mono text-[0.6rem] tracking-widest uppercase text-ash">{label}</span>
-            </div>
-            <h3 class="font-display font-semibold text-chalk mb-2 group-hover:text-white transition-colors" style="font-size:1rem;line-height:1.35;">{title}</h3>
-            <p class="text-sm text-silver leading-relaxed">{desc}</p>
-          </a>
-        ))}
-      </div>
-
-      <p class="reveal text-sm text-ash">
-        Screen recordings of the actual setup and inference — not edited highlights. Each video covers the same experiment documented in the writeup.{' '}
-        <a href="https://www.youtube.com/@XavierOutside" target="_blank" rel="noopener noreferrer" class="text-silver hover:text-chalk transition-colors underline underline-offset-2">Subscribe on YouTube</a> for new experiments weekly.
-      </p>
-    </div>
-  </section>
-
-
   <!-- ═══ INDUSTRIES — Stage Manager ═══ -->
   <section style="border-top:1px solid #424245;background:#000;">
     <div class="max-w-wide mx-auto px-5 md:px-10 py-24 md:py-32">
