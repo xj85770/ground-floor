@@ -1,0 +1,1113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Will-It-Run?</title>
+  <style>
+:root {
+  color-scheme: light dark;
+  --bg: #f7f7f4;
+  --panel: #ffffff;
+  --text: #1b1d1f;
+  --muted: #626a70;
+  --line: #d7dadc;
+  --ok: #0b7d42;
+  --warn: #9a6500;
+  --bad: #b42318;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+main { max-width: 1220px; margin: 0 auto; padding: 28px 18px; }
+header { margin-bottom: 20px; }
+h1 { margin: 0 0 4px; font-size: 32px; letter-spacing: 0; }
+p { color: var(--muted); }
+.controls {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
+  gap: 12px;
+  align-items: end;
+  padding: 16px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+label { display: grid; gap: 6px; font-size: 13px; color: var(--muted); }
+select, input, button {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font: inherit;
+  color: var(--text);
+  background: var(--panel);
+}
+button { cursor: pointer; font-weight: 650; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.check { display: flex; grid-auto-flow: column; align-items: center; justify-content: start; gap: 8px; }
+.check input { min-height: auto; }
+.nodes { grid-column: 1 / -1; color: var(--muted); font-size: 13px; }
+.tableWrap {
+  margin-top: 18px;
+  overflow: auto;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+table { width: 100%; border-collapse: collapse; min-width: 980px; }
+th, td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; color: var(--muted); background: color-mix(in srgb, var(--panel), var(--line) 22%); }
+.badge { display: inline-flex; min-width: 118px; justify-content: center; border-radius: 999px; padding: 4px 8px; font-weight: 750; }
+.comfortable { color: var(--ok); background: color-mix(in srgb, var(--ok), transparent 88%); }
+.tight { color: var(--warn); background: color-mix(in srgb, var(--warn), transparent 86%); }
+.not_reliably { color: var(--bad); background: color-mix(in srgb, var(--bad), transparent 88%); }
+.unknown { color: var(--muted); background: color-mix(in srgb, var(--muted), transparent 88%); }
+.tag { margin-left: 6px; color: var(--muted); font-size: 11px; border: 1px solid var(--line); border-radius: 999px; padding: 1px 5px; }
+.footnote { font-size: 13px; }
+@media (max-width: 760px) {
+  .controls { grid-template-columns: 1fr; }
+}
+
+</style>
+</head>
+<body>
+  <main>
+    <a href="/" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;font:600 13px/1 ui-sans-serif,system-ui,-apple-system,sans-serif;color:#9b5de5;margin-bottom:18px;">&larr; Ground Floor</a>
+    <header>
+      <h1>Will-It-Run?</h1>
+      <p>Local model fit and speed advisor for open-weight LLMs. Pick your Mac and a model &mdash; get an honest can-you-run-it verdict with required memory and expected tokens/sec, from Ground Floor&rsquo;s own measured data. Runs entirely in your browser; nothing is sent anywhere.</p>
+    </header>
+
+    <section class="controls" aria-label="Hardware and model controls">
+      <label>Hardware
+        <select id="chip"></select>
+      </label>
+      <label>RAM / VRAM
+        <select id="memory"></select>
+      </label>
+      <label>Bandwidth GB/s
+        <input id="bandwidth" type="number" min="1" step="1">
+      </label>
+      <label>Context
+        <input id="context" type="range" min="1024" max="262144" step="1024" value="8192">
+        <output id="contextOut">8192</output>
+      </label>
+      <div class="actions">
+        <button id="addNode" type="button">+ add node</button>
+        <button id="clusterPreset" type="button">Cluster preset</button>
+        <button id="autoDetect" type="button">Auto-detect</button>
+      </div>
+      <label class="check"><input id="advanced" type="checkbox"> I raised my GPU memory limit (advanced)</label>
+      <label class="check"><input id="openOnly" type="checkbox" checked> open-weight only</label>
+      <label class="check"><input id="hideNo" type="checkbox"> hide ❌</label>
+      <div id="nodes" class="nodes"></div>
+    </section>
+
+    <section class="tableWrap" aria-label="Ranked model table">
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th><th>Verdict</th><th>Quant</th><th>tok/s</th><th>GB</th><th>Max ctx</th><th>Reason</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </section>
+
+    <p class="footnote">tok/s and KV-cache are ESTIMATES; bandwidth values marked unverified are approximate; verdicts assume a clean machine. Discrete GPU mode ignores CPU offload in v1.</p>
+  </main>
+  <script type="module">
+export const QUANT_ORDER = ["fp16", "q8", "q6", "q5", "q4", "mxfp4", "q3", "q2", "q1_5"];
+export const GOOD_QUANTS = new Set(["fp16", "q8", "q6", "q5", "q4", "mxfp4"]);
+export const VERDICT_ORDER = { comfortable: 0, tight: 1, not_reliably: 2, unknown: 3 };
+
+function requireField(obj, field, label) {
+  if (!obj || obj[field] === undefined || obj[field] === null) {
+    throw new Error(`${label} missing ${field}`);
+  }
+  return obj[field];
+}
+
+export function weightsGB(model, quant, bytesPerParamGB) {
+  requireField(model, "params_total_b", model?.id || "model");
+  if (model.measured_gb && typeof model.measured_gb[quant] === "number") return model.measured_gb[quant];
+  const bytes = requireField(bytesPerParamGB, quant, "bytes_per_param_gb");
+  return model.params_total_b * bytes;
+}
+
+export function kvGB(model, contextTokens) {
+  requireField(model, "params_total_b", model?.id || "model");
+  const base = typeof model.kv8k_gb === "number" ? model.kv8k_gb : Math.sqrt(model.params_total_b) * 0.18;
+  return (contextTokens / 8192) * base;
+}
+
+export function neededGB(model, quant, contextTokens, defaults, bytesPerParamGB) {
+  return weightsGB(model, quant, bytesPerParamGB) * (1 + defaults.runtime_overhead_fraction) + kvGB(model, contextTokens);
+}
+
+function chipById(hardwareData) {
+  return new Map((hardwareData.chips || []).map((chip) => [chip.id, chip]));
+}
+
+export function normalizeHardware(hardware, hardwareData) {
+  const chips = chipById(hardwareData);
+  if (hardware.nodes) {
+    return {
+      ...hardware,
+      nodes: hardware.nodes.map((node) => {
+        const chip = chips.get(node.chip) || {};
+        return { ...chip, ...node, chip: node.chip || chip.id };
+      }),
+    };
+  }
+  if (hardware.chip) {
+    const chip = chips.get(hardware.chip) || {};
+    return { ...chip, ...hardware, nodes: [{ ...chip, ...hardware, chip: hardware.chip }] };
+  }
+  if (hardware.id && chips.has(hardware.id)) {
+    const chip = chips.get(hardware.id);
+    const ram = hardware.ram_gb || chip.default_gb;
+    return { ...chip, ...hardware, chip: chip.id, ram_gb: ram, nodes: [{ ...chip, ...hardware, chip: chip.id, ram_gb: ram }] };
+  }
+  return { ...hardware, nodes: hardware.nodes || [hardware] };
+}
+
+export function isClusterPreset(hardware) {
+  return hardware.id === "kingme_queenme_cluster" || hardware.presetId === "kingme_queenme_cluster";
+}
+
+export function usableGB(hardware, defaults, advanced = false) {
+  const nodes = hardware.nodes || [hardware];
+  const discrete = nodes.some((node) => node.type === "discrete_gpu");
+  if (discrete) return nodes.reduce((sum, node) => sum + Number(node.vram_gb || 0), 0);
+  const frac = advanced || isClusterPreset(hardware)
+    ? defaults.memory_usable_fraction_unified_advanced
+    : defaults.memory_usable_fraction_unified;
+  return nodes.reduce((sum, node) => sum + Number(node.ram_gb || 0), 0) * frac;
+}
+
+export function estimateTokS(model, hardware, quant, defaults, bytesPerParamGB) {
+  if (model.measured_tok_s?.cluster_2node && isClusterPreset(hardware)) {
+    return model.measured_tok_s.cluster_2node;
+  }
+  const nodes = hardware.nodes || [hardware];
+  const bandwidths = nodes.map((node) => Number(node.bandwidth_gbps)).filter((value) => Number.isFinite(value) && value > 0);
+  if (!bandwidths.length) throw new Error("hardware missing bandwidth_gbps");
+  const bw = nodes.length > 1 ? Math.min(...bandwidths) * 0.9 : bandwidths[0];
+  const activeGB = requireField(model, "params_active_b", model?.id || "model") * requireField(bytesPerParamGB, quant, "bytes_per_param_gb");
+  return (bw * defaults.mbu) / activeGB;
+}
+
+function maxContextForQuant(model, quant, haveGB, defaults, bytesPerParamGB) {
+  let ctx = 1;
+  while (ctx * 2 <= model.context_max) ctx *= 2;
+  for (; ctx >= 1; ctx /= 2) {
+    if (neededGB(model, quant, ctx, defaults, bytesPerParamGB) <= haveGB) return ctx;
+  }
+  return 0;
+}
+
+function formatReason(parts) {
+  return parts.filter(Boolean).join("; ");
+}
+
+export function evaluateModel(model, hardwareInput, contextTokens, options = {}) {
+  try {
+    const modelsData = requireField(options, "modelsData", "options");
+    const hardwareData = requireField(options, "hardwareData", "options");
+    const defaults = hardwareData.defaults;
+    const bytesPerParamGB = modelsData.bytes_per_param_gb;
+    const hardware = normalizeHardware(hardwareInput, hardwareData);
+    const haveGB = usableGB(hardware, defaults, Boolean(options.advanced));
+    let chosenQuant = null;
+    let needGB = null;
+
+    const fitting = [];
+    for (const quant of QUANT_ORDER) {
+      const need = neededGB(model, quant, contextTokens, defaults, bytesPerParamGB);
+      if (need <= haveGB) fitting.push({ quant, need });
+    }
+
+    // Prefer the highest-quality quant that runs COMFORTABLY (good quant + reliable
+    // speed + healthy headroom) over the highest quant that merely fits at the ceiling.
+    // Falls back to best reliable-speed quant, then to the best-quality fitting quant.
+    const isComfortableFit = (fit) => {
+      const tokS = estimateTokS(model, hardware, fit.quant, defaults, bytesPerParamGB);
+      const headroom = (haveGB - fit.need) / haveGB;
+      return GOOD_QUANTS.has(fit.quant) && tokS >= defaults.reliable_tok_s_floor && headroom >= 0.10;
+    };
+    const pick = fitting.find(isComfortableFit)
+      || fitting.find((fit) => estimateTokS(model, hardware, fit.quant, defaults, bytesPerParamGB) >= defaults.reliable_tok_s_floor)
+      || fitting[0];
+    if (pick) {
+      chosenQuant = pick.quant;
+      needGB = pick.need;
+    }
+
+    if (!chosenQuant) {
+      const smallestQuant = QUANT_ORDER[QUANT_ORDER.length - 1];
+      const smallestNeed = neededGB(model, smallestQuant, contextTokens, defaults, bytesPerParamGB);
+      return {
+        model,
+        verdict: "not_reliably",
+        chosenQuant: null,
+        neededGB: smallestNeed,
+        usableGB: haveGB,
+        tokS: 0,
+        maxContextThatFits: 0,
+        reason: `won't fit: smallest ${smallestQuant} needs ${smallestNeed.toFixed(1)} GB vs ${haveGB.toFixed(1)} GB usable`,
+      };
+    }
+
+    const tokS = estimateTokS(model, hardware, chosenQuant, defaults, bytesPerParamGB);
+    const headroom = (haveGB - needGB) / haveGB;
+    const heavyQuant = !GOOD_QUANTS.has(chosenQuant);
+    const maxContextThatFits = maxContextForQuant(model, chosenQuant, haveGB, defaults, bytesPerParamGB);
+
+    if (tokS < defaults.tight_tok_s_floor) {
+      return {
+        model,
+        verdict: "not_reliably",
+        chosenQuant,
+        neededGB: needGB,
+        usableGB: haveGB,
+        tokS,
+        maxContextThatFits,
+        reason: formatReason([
+          `too slow: ${tokS.toFixed(1)} tok/s below ${defaults.tight_tok_s_floor}`,
+          heavyQuant ? `${chosenQuant.toUpperCase()} heavy quant loss` : "",
+        ]),
+      };
+    }
+
+    const tightReasons = [];
+    if (heavyQuant) tightReasons.push(`${chosenQuant.toUpperCase()} heavy quant loss`);
+    if (tokS < defaults.reliable_tok_s_floor) tightReasons.push(`speed ${tokS.toFixed(1)} tok/s below reliable ${defaults.reliable_tok_s_floor}`);
+    if (headroom < 0.10) tightReasons.push(`low headroom ${(headroom * 100).toFixed(1)}%`);
+
+    const comfortable = !tightReasons.length;
+    return {
+      model,
+      verdict: comfortable ? "comfortable" : "tight",
+      chosenQuant,
+      neededGB: needGB,
+      usableGB: haveGB,
+      tokS,
+      maxContextThatFits,
+      reason: comfortable ? `fits with ${(headroom * 100).toFixed(1)}% headroom` : formatReason(tightReasons),
+    };
+  } catch (error) {
+    return {
+      model,
+      verdict: "unknown",
+      chosenQuant: null,
+      neededGB: null,
+      usableGB: null,
+      tokS: null,
+      maxContextThatFits: 0,
+      reason: error.message,
+    };
+  }
+}
+
+export function rankModels(hardware, contextTokens, options = {}) {
+  const modelsData = requireField(options, "modelsData", "options");
+  const hardwareData = requireField(options, "hardwareData", "options");
+  const rows = (modelsData.models || []).map((model) => evaluateModel(model, hardware, contextTokens, {
+    ...options,
+    modelsData,
+    hardwareData,
+  }));
+  return rows.sort((a, b) => {
+    const verdictDelta = (VERDICT_ORDER[a.verdict] ?? 99) - (VERDICT_ORDER[b.verdict] ?? 99);
+    if (verdictDelta) return verdictDelta;
+    const ac = a.model?.scores?.coding;
+    const bc = b.model?.scores?.coding;
+    if (ac == null && bc != null) return 1;
+    if (ac != null && bc == null) return -1;
+    if (ac != null && bc != null && bc !== ac) return bc - ac;
+    return (b.model?.params_total_b || 0) - (a.model?.params_total_b || 0);
+  });
+}
+
+if (typeof window !== "undefined") {
+  window.WIR = { QUANT_ORDER, weightsGB, kvGB, neededGB, usableGB, normalizeHardware, evaluateModel, rankModels };
+}
+
+
+const $ = (id) => document.getElementById(id);
+
+const MODELS_DATA = {
+  "_meta": {
+    "title": "Will-It-Run model catalog",
+    "source": "~/vault/open-source-model-tracker.md (2026-06-17) + ~/bin/local-agent --list (live inventory) + CLAUDE.md routing table",
+    "note": "Curated ground truth. 'measured_gb' = real footprints we have observed; absent quants are computed by the engine from params x bytes_per_param. 'measured_tok_s' = observed throughput on our 2x M5 Max 128GB cluster (RDMA). '~' / estimated flags mark numbers not directly observed (Rule 25 honesty).",
+    "updated": "2026-06-20"
+  },
+  "bytes_per_param_gb": {
+    "fp16": 2,
+    "q8": 1.06,
+    "q6": 0.82,
+    "q5": 0.69,
+    "q4": 0.56,
+    "mxfp4": 0.55,
+    "q3": 0.43,
+    "q2": 0.33,
+    "q1_5": 0.23
+  },
+  "models": [
+    {
+      "id": "qwen36-plus",
+      "name": "Qwen 3.6 Plus",
+      "org": "Alibaba",
+      "open_weight": true,
+      "kind": "moe",
+      "params_total_b": 235,
+      "params_active_b": 22,
+      "active_estimated": true,
+      "context_max": 262144,
+      "measured_gb": {},
+      "measured_tok_s": {
+        "cluster_2node": 26.2
+      },
+      "our_verdict": "oMLX or EXO cluster (200-420B tier)",
+      "scores": {
+        "coding": 78.18,
+        "agentic": 55,
+        "reasoning": 75.83
+      },
+      "notes": "LiveBench top open-weight all-rounder. Hosted API; open-weight self-host alts = Qwen3.6-35B-A3B / 27B."
+    },
+    {
+      "id": "qwen36-35b-a3b",
+      "name": "Qwen3.6-35B-A3B",
+      "org": "Alibaba",
+      "open_weight": true,
+      "kind": "moe",
+      "params_total_b": 35,
+      "params_active_b": 3,
+      "context_max": 262144,
+      "measured_gb": {
+        "q4": 20
+      },
+      "our_verdict": "single Mac (installed)",
+      "scores": null,
+      "notes": "Installed kingme-mlx (4bit-DWQ). Great single-box daily driver."
+    },
+    {
+      "id": "qwen36-27b",
+      "name": "Qwen3.6-27B",
+      "org": "Alibaba",
+      "open_weight": true,
+      "kind": "dense",
+      "params_total_b": 27,
+      "params_active_b": 27,
+      "context_max": 262144,
+      "measured_gb": {
+        "q4": 14
+      },
+      "our_verdict": "single Mac (installed)",
+      "scores": null,
+      "notes": "Installed (4bit) [coding]."
+    },
+    {
+      "id": "qwen35-122b-a10b",
+      "name": "Qwen3.5-122B-A10B",
+      "org": "Alibaba",
+      "open_weight": true,
+      "kind": "moe",
+      "params_total_b": 122,
+      "params_active_b": 10,
+      "context_max": 262144,
+      "measured_gb": {
+        "q4": 68
+      },
+      "our_verdict": "single Mac (tight) / cluster (installed)",
+      "scores": null,
+      "notes": "Installed (4bit) [quality]."
+    },
+    {
+      "id": "glm47",
+      "name": "GLM 4.7",
+      "org": "Z.AI",
+      "open_weight": true,
+      "kind": "moe",
+      "params_total_b": 355,
+      "params_active_b": 32,
+      "active_estimated": true,
+      "context_max": 200000,
+      "measured_gb": {},
+      "our_verdict": "EXO/oMLX cluster (200-420B tier)",
+      "scores": {
+        "coding": 73.13,
+        "agentic": 41.67,
+        "reasoning": 59.73
+      },
+      "notes": "Erika reports QueenMe may host the full GLM-4.7 (UNVERIFIED)."
+    },
+    {
+      "id": "glm47-flash",
+      "name": "GLM-4.7-Flash",
+      "org": "Z.AI",
+      "open_weight": true,
+      "kind": "moe",
+      "params_total_b": 40,
+      "params_active_b": 6,
+      "active_estimated": true,
+      "context_max": 200000,
+      "measured_gb": {
+        "q4": 21
+      },
+      "our_verdict": "single Mac (installed)",
+      "scores": null,
+      "notes": "Installed (4bit). GF-deployable Zhipu path. params_total approximate."
+    },
+    {
+      "id": "glm45-air",
+      "name": "GLM-4.5-Air",
+      "org": "Z.AI",
+      "open_weight": true,
+      "kind": "moe",
+      "params_total_b": 110,
+      "params_active_b": 12,
+      "active_estimated": true,
+      "context_max": 131072,
+      "measured_gb": {
+        "q4": 55
+      },
+      "our_verdict": "single Mac (pullable, not installed)",
+      "scores": null,
+      "notes": "MIT. Fits one 128GB box."
+    },
+    {
+      "id": "glm46",
+      "name": "GLM 4.6",
+      "org": "Z.AI",
+      "open_weight": true,
+      "kind": "moe",
+      "params_total_b": 200,
+      "params_total_estimated": true,
+      "params_active_b": 32,
+      "active_estimated": true,
+      "context_max": 200000,
+      "measured_gb": {},
+      "our_verdict": "oMLX single Mac (tight)",
+      "scores": {
+        "coding": 71.02,
+        "agentic": 35,
+        "reasoning": 62.06
+      },
+      "notes": "Total params estimated ~200B."
+    },
+    {
+      "id": "glm51",
+      "name": "GLM 5.1",
+      "org": "Z.AI",
+      "open_weight": true,
+      "kind": "moe",
+      "params_total_b": 744,
+      "params_active_b": 40,
+      "context_max": 200000,
+      "measured_gb": {
+        "q4": 377
+      },
+      "our_verdict": "EXO cluster at Q2 only; FULL model UNRUNNABLE on 256GB (INV-8)",
+      "scores": {
+        "coding": 75.37,
+        "agentic": 55,
+        "reasoning": 72.52
+      },
+      "notes": "Needs 512GB Mac Studio or 4-box cluster for higher quant."
+    },
+    {
+      "id": "glm52",
+      "name": "GLM 5.2",
+      "org": "Z.AI",
+      "open_weight": true,
+      "kind": "moe",
+      "params_total_b": 750,
+      "params_active_b": 40,
+      "context_max": 1000000,
+      "measured_gb": {
+        "q4": 380
+      },
+      "measured_gb_estimated": true,
+      "our_verdict": "UNRUNNABLE on 256GB (needs bigger metal)",
+      "scores": null,
+      "notes": "Released 2026-06-13, MIT. IndexShare sparse attn, 1M ctx. Not on LiveBench yet."
+    },
+    {
+      "id": "deepseek-v32",
+      "name": "DeepSeek V3.2",
+      "org": "DeepSeek",
+      "open_weight": true,
+      "kind": "moe",
+      "params_total_b": 671,
+      "params_active_b": 37,
+      "active_estimated": true,
+      "context_max": 163840,
+      "measured_gb": {},
+      "measured_tok_s": {
+        "cluster_2node": 27.8
+      },
+      "our_verdict": "EXO cluster at Q2",
+      "scores": {
+        "coding": 75.69,
+        "agentic": 46.67,
+        "reasoning": 44.25
+      },
+      "notes": "671B 2-node RDMA ~27.8 tok/s (measured)."
+    },
+    {
+      "id": "minimax-m25",
+      "name": "Minimax M2.5",
+      "org": "Minimax",
+      "open_weight": true,
+      "kind": "moe",
+      "params_total_b": 230,
+      "params_active_b": 10,
+      "active_estimated": true,
+      "context_max": 200000,
+      "measured_gb": {},
+      "our_verdict": "oMLX cluster (200-420B tier)",
+      "scores": {
+        "coding": 70.7,
+        "agentic": 51.67,
+        "reasoning": 59.3
+      },
+      "notes": ""
+    },
+    {
+      "id": "gpt-oss-120b",
+      "name": "gpt-oss-120b",
+      "org": "OpenAI",
+      "open_weight": true,
+      "kind": "moe",
+      "params_total_b": 120,
+      "params_active_b": 5.1,
+      "active_estimated": true,
+      "context_max": 131072,
+      "measured_gb": {
+        "mxfp4": 63
+      },
+      "our_verdict": "single Mac (installed, MXFP4)",
+      "scores": null,
+      "notes": "Installed kingme-mlx (MXFP4-Q8)."
+    },
+    {
+      "id": "gpt-oss-20b",
+      "name": "gpt-oss-20b",
+      "org": "OpenAI",
+      "open_weight": true,
+      "kind": "moe",
+      "params_total_b": 20,
+      "params_active_b": 3.6,
+      "active_estimated": true,
+      "context_max": 131072,
+      "measured_gb": {
+        "mxfp4": 12
+      },
+      "our_verdict": "single Mac (installed) - runs on almost anything",
+      "scores": null,
+      "notes": "Installed (MXFP4-Q8)."
+    },
+    {
+      "id": "gemma4-26b-a4b",
+      "name": "Gemma 4 26B-A4B",
+      "org": "Google",
+      "open_weight": true,
+      "kind": "moe",
+      "params_total_b": 26,
+      "params_active_b": 4,
+      "context_max": 131072,
+      "measured_gb": {
+        "q4": 15
+      },
+      "our_verdict": "single Mac (installed)",
+      "scores": {
+        "coding": 60.33,
+        "agentic": null,
+        "reasoning": null
+      },
+      "notes": "Installed (4bit). Below coding threshold but fast."
+    },
+    {
+      "id": "gemma3-12b",
+      "name": "Gemma 3 12B",
+      "org": "Google",
+      "open_weight": true,
+      "kind": "dense",
+      "params_total_b": 12,
+      "params_active_b": 12,
+      "context_max": 131072,
+      "measured_gb": {
+        "q4": 7
+      },
+      "our_verdict": "single Mac (installed) - laptop-friendly",
+      "scores": null,
+      "notes": "Installed (4bit)."
+    },
+    {
+      "id": "qwen3-vl-32b",
+      "name": "Qwen3-VL-32B",
+      "org": "Alibaba",
+      "open_weight": true,
+      "kind": "dense",
+      "params_total_b": 32,
+      "params_active_b": 32,
+      "context_max": 131072,
+      "measured_gb": {
+        "q8": 33,
+        "q4": 18
+      },
+      "our_verdict": "single Mac (installed, 8bit)",
+      "scores": null,
+      "notes": "Vision-language. Installed (8bit)."
+    },
+    {
+      "id": "qwen25-coder-32b",
+      "name": "Qwen2.5-Coder-32B",
+      "org": "Alibaba",
+      "open_weight": true,
+      "kind": "dense",
+      "params_total_b": 32,
+      "params_active_b": 32,
+      "context_max": 131072,
+      "measured_gb": {
+        "q4": 18
+      },
+      "our_verdict": "single Mac (installed)",
+      "scores": null,
+      "notes": "Installed (4bit) [coding]."
+    },
+    {
+      "id": "llama-70b-class",
+      "name": "70B dense (Llama-class)",
+      "org": "(generic anchor)",
+      "open_weight": true,
+      "kind": "dense",
+      "params_total_b": 70,
+      "params_active_b": 70,
+      "context_max": 131072,
+      "measured_gb": {},
+      "our_verdict": "single 128GB Mac at Q4 (calibration anchor)",
+      "scores": null,
+      "notes": "Generic anchor: 70B Q4 ~39GB -> fits one 128GB box comfortably."
+    },
+    {
+      "id": "llama-8b-class",
+      "name": "8B dense (Llama-class)",
+      "org": "(generic anchor)",
+      "open_weight": true,
+      "kind": "dense",
+      "params_total_b": 8,
+      "params_active_b": 8,
+      "context_max": 131072,
+      "measured_gb": {},
+      "our_verdict": "runs on almost any modern machine",
+      "scores": null,
+      "notes": "Generic anchor: 8B Q4 ~4.5GB -> laptops, 16GB+."
+    }
+  ]
+};
+
+const HARDWARE_DATA = {
+  "_meta": {
+    "title": "Will-It-Run hardware presets",
+    "note": "bandwidth_gbps drives the tok/s estimate. Apple M5 values from Apple specs (M5 Max 614 GB/s 40-core / 460 GB/s 32-core, M5 Pro 307; LPDDR5X-9600). Others are [BASELINE] from public specs - verify before trusting. memory_usable_fraction = share of unified RAM the GPU can use for weights+KV (raisable via iogpu.wired_limit on Apple).",
+    "updated": "2026-06-20"
+  },
+  "defaults": {
+    "memory_usable_fraction_unified": 0.75,
+    "memory_usable_fraction_unified_advanced": 0.9,
+    "runtime_overhead_fraction": 0.08,
+    "mbu": 0.75,
+    "reliable_tok_s_floor": 10,
+    "tight_tok_s_floor": 4,
+    "_note": "Default 0.75 = stock macOS GPU share. Advanced 0.90 = user raised iogpu.wired_limit (our cluster runs this). Engine uses advanced when the 'raised GPU memory limit' toggle is on OR the cluster preset is selected."
+  },
+  "chips": [
+    {
+      "id": "m5_max_40c",
+      "label": "Apple M5 Max (40-core GPU)",
+      "type": "apple_unified",
+      "bandwidth_gbps": 614,
+      "memory_options_gb": [
+        36,
+        48,
+        64,
+        128
+      ],
+      "default_gb": 128,
+      "verified": true
+    },
+    {
+      "id": "m5_max_32c",
+      "label": "Apple M5 Max (32-core GPU)",
+      "type": "apple_unified",
+      "bandwidth_gbps": 460,
+      "memory_options_gb": [
+        36,
+        48,
+        64,
+        128
+      ],
+      "default_gb": 128,
+      "verified": true
+    },
+    {
+      "id": "m5_pro",
+      "label": "Apple M5 Pro",
+      "type": "apple_unified",
+      "bandwidth_gbps": 307,
+      "memory_options_gb": [
+        24,
+        32,
+        48,
+        64
+      ],
+      "default_gb": 48,
+      "verified": true
+    },
+    {
+      "id": "m5",
+      "label": "Apple M5",
+      "type": "apple_unified",
+      "bandwidth_gbps": 153,
+      "memory_options_gb": [
+        16,
+        24,
+        32
+      ],
+      "default_gb": 24,
+      "verified": false
+    },
+    {
+      "id": "m4_max",
+      "label": "Apple M4 Max",
+      "type": "apple_unified",
+      "bandwidth_gbps": 546,
+      "memory_options_gb": [
+        36,
+        48,
+        64,
+        128
+      ],
+      "default_gb": 128,
+      "verified": false
+    },
+    {
+      "id": "m4_pro",
+      "label": "Apple M4 Pro",
+      "type": "apple_unified",
+      "bandwidth_gbps": 273,
+      "memory_options_gb": [
+        24,
+        48,
+        64
+      ],
+      "default_gb": 48,
+      "verified": false
+    },
+    {
+      "id": "m4",
+      "label": "Apple M4",
+      "type": "apple_unified",
+      "bandwidth_gbps": 120,
+      "memory_options_gb": [
+        16,
+        24,
+        32
+      ],
+      "default_gb": 16,
+      "verified": false
+    },
+    {
+      "id": "m3_ultra",
+      "label": "Apple M3 Ultra",
+      "type": "apple_unified",
+      "bandwidth_gbps": 800,
+      "memory_options_gb": [
+        96,
+        256,
+        512
+      ],
+      "default_gb": 256,
+      "verified": false
+    },
+    {
+      "id": "m3_max",
+      "label": "Apple M3 Max",
+      "type": "apple_unified",
+      "bandwidth_gbps": 400,
+      "memory_options_gb": [
+        36,
+        48,
+        64,
+        128
+      ],
+      "default_gb": 48,
+      "verified": false
+    },
+    {
+      "id": "m2_ultra",
+      "label": "Apple M2 Ultra",
+      "type": "apple_unified",
+      "bandwidth_gbps": 800,
+      "memory_options_gb": [
+        64,
+        128,
+        192
+      ],
+      "default_gb": 128,
+      "verified": false
+    },
+    {
+      "id": "m1_max",
+      "label": "Apple M1 Max",
+      "type": "apple_unified",
+      "bandwidth_gbps": 400,
+      "memory_options_gb": [
+        32,
+        64
+      ],
+      "default_gb": 32,
+      "verified": false
+    },
+    {
+      "id": "rtx_4090",
+      "label": "NVIDIA RTX 4090 (24GB)",
+      "type": "discrete_gpu",
+      "bandwidth_gbps": 1008,
+      "vram_gb": 24,
+      "verified": false
+    },
+    {
+      "id": "rtx_3090",
+      "label": "NVIDIA RTX 3090 (24GB)",
+      "type": "discrete_gpu",
+      "bandwidth_gbps": 936,
+      "vram_gb": 24,
+      "verified": false
+    },
+    {
+      "id": "rtx_4080",
+      "label": "NVIDIA RTX 4080 (16GB)",
+      "type": "discrete_gpu",
+      "bandwidth_gbps": 717,
+      "vram_gb": 16,
+      "verified": false
+    },
+    {
+      "id": "rtx_4070ti",
+      "label": "NVIDIA RTX 4070 Ti (12GB)",
+      "type": "discrete_gpu",
+      "bandwidth_gbps": 504,
+      "vram_gb": 12,
+      "verified": false
+    },
+    {
+      "id": "a100_80",
+      "label": "NVIDIA A100 (80GB)",
+      "type": "discrete_gpu",
+      "bandwidth_gbps": 2039,
+      "vram_gb": 80,
+      "verified": false
+    },
+    {
+      "id": "h100_80",
+      "label": "NVIDIA H100 (80GB)",
+      "type": "discrete_gpu",
+      "bandwidth_gbps": 3350,
+      "vram_gb": 80,
+      "verified": false
+    },
+    {
+      "id": "ryzen_ai_max_395",
+      "label": "AMD Ryzen AI Max+ 395",
+      "type": "apu_unified",
+      "bandwidth_gbps": 273,
+      "memory_options_gb": [
+        32,
+        64,
+        128
+      ],
+      "default_gb": 64,
+      "verified": false
+    },
+    {
+      "id": "custom",
+      "label": "Custom / enter manually",
+      "type": "custom",
+      "bandwidth_gbps": null,
+      "default_gb": null,
+      "verified": false
+    }
+  ],
+  "presets": [
+    {
+      "id": "kingme_queenme_cluster",
+      "label": "Our cluster: 2x M5 Max 128GB (TB5+RDMA)",
+      "nodes": [
+        {
+          "chip": "m5_max_40c",
+          "ram_gb": 128
+        },
+        {
+          "chip": "m5_max_40c",
+          "ram_gb": 128
+        }
+      ],
+      "interconnect": "rdma_tb5",
+      "note": "256GB combined. Use measured_tok_s for >200B models."
+    }
+  ]
+};
+
+async function loadJson(path, fallback) {
+  try {
+    if (location.protocol !== "file:") {
+      const res = await fetch(path, { cache: "no-store" });
+      if (res.ok) return await res.json();
+    }
+  } catch {}
+  return fallback;
+}
+
+const modelsData = await loadJson("data/models.json", MODELS_DATA);
+const hardwareData = await loadJson("data/hardware.json", HARDWARE_DATA);
+const chips = new Map(hardwareData.chips.map((chip) => [chip.id, chip]));
+
+let clusterMode = false;
+let nodes = [];
+
+function chipOptions() {
+  $("chip").innerHTML = hardwareData.chips.map((chip) => `<option value="${chip.id}">${chip.label}${chip.verified ? "" : " (unverified)"}</option>`).join("");
+  $("chip").value = "m5_max_40c";
+}
+
+function updateMemory() {
+  const chip = chips.get($("chip").value);
+  if (chip.id === "custom") {
+    $("memory").innerHTML = `<option value="64">64</option><option value="128">128</option><option value="256">256</option>`;
+    $("bandwidth").disabled = false;
+    $("bandwidth").value = 400;
+    return;
+  }
+  const options = chip.memory_options_gb || [chip.vram_gb];
+  $("memory").innerHTML = options.map((gb) => `<option value="${gb}">${gb} GB</option>`).join("");
+  $("memory").value = String(chip.default_gb || chip.vram_gb || options[0]);
+  $("bandwidth").disabled = chip.id !== "custom";
+  $("bandwidth").value = chip.bandwidth_gbps || "";
+}
+
+function currentHardware() {
+  if (clusterMode) {
+    const preset = hardwareData.presets.find((item) => item.id === "kingme_queenme_cluster");
+    return { ...preset, id: preset.id };
+  }
+  const chip = chips.get($("chip").value);
+  const ram = Number($("memory").value);
+  const bandwidth = Number($("bandwidth").value);
+  return {
+    chip: chip.id,
+    type: chip.type === "custom" ? "apple_unified" : chip.type,
+    ram_gb: chip.type === "discrete_gpu" ? undefined : ram,
+    vram_gb: chip.type === "discrete_gpu" ? ram : undefined,
+    bandwidth_gbps: chip.id === "custom" ? bandwidth : chip.bandwidth_gbps,
+  };
+}
+
+function verdictLabel(verdict) {
+  if (verdict === "comfortable") return "✅ Comfortable";
+  if (verdict === "tight") return "⚠️ Tight";
+  if (verdict === "not_reliably") return "❌ Not reliably";
+  return "Unknown";
+}
+
+function renderNodes() {
+  if (clusterMode) {
+    $("nodes").textContent = "2 nodes: M5 Max 128GB + M5 Max 128GB. Advanced memory fraction is applied.";
+  } else if (nodes.length > 1) {
+    $("nodes").textContent = `${nodes.length} nodes selected. Multi-node speed uses the slowest node bandwidth × 0.9.`;
+  } else {
+    $("nodes").textContent = "";
+  }
+}
+
+function render() {
+  const ctx = Number($("context").value);
+  $("contextOut").textContent = ctx.toLocaleString();
+  const hardware = nodes.length > 1 && !clusterMode ? { nodes } : currentHardware();
+  let rows = rankModels(hardware, ctx, { modelsData, hardwareData, advanced: $("advanced").checked || clusterMode });
+  if ($("openOnly").checked) rows = rows.filter((row) => row.model.open_weight);
+  if ($("hideNo").checked) rows = rows.filter((row) => row.verdict !== "not_reliably");
+  $("rows").innerHTML = rows.map((row) => {
+    const measured = row.model.measured_gb?.[row.chosenQuant] || (row.model.measured_tok_s?.cluster_2node && clusterMode);
+    return `<tr>
+      <td>${row.model.name}${measured ? '<span class="tag">measured</span>' : ""}</td>
+      <td><span class="badge ${row.verdict}">${verdictLabel(row.verdict)}</span></td>
+      <td>${row.chosenQuant || "—"}</td>
+      <td>${row.tokS == null ? "—" : row.tokS.toFixed(1)}</td>
+      <td>${row.neededGB == null ? "—" : `${row.neededGB.toFixed(1)} / ${row.usableGB.toFixed(1)}`}</td>
+      <td>${row.maxContextThatFits ? row.maxContextThatFits.toLocaleString() : "—"}</td>
+      <td>${row.reason}</td>
+    </tr>`;
+  }).join("");
+  renderNodes();
+}
+
+async function autoDetect() {
+  clusterMode = false;
+  const memory = navigator.deviceMemory ? Math.max(16, Math.round(navigator.deviceMemory)) : 16;
+  const ua = navigator.userAgent;
+  let guess = ua.includes("Mac") ? "m4" : "custom";
+  try {
+    if (navigator.gpu?.requestAdapter) await navigator.gpu.requestAdapter();
+  } catch {}
+  $("chip").value = guess;
+  updateMemory();
+  const chip = chips.get(guess);
+  if (chip.memory_options_gb) {
+    const best = chip.memory_options_gb.find((gb) => gb >= memory) || chip.memory_options_gb.at(-1);
+    $("memory").value = String(best);
+  }
+  nodes = [];
+  render();
+}
+
+chipOptions();
+updateMemory();
+render();
+
+$("chip").addEventListener("change", () => { clusterMode = false; nodes = []; updateMemory(); render(); });
+$("memory").addEventListener("change", () => { clusterMode = false; nodes = []; render(); });
+$("bandwidth").addEventListener("input", render);
+$("context").addEventListener("input", render);
+$("advanced").addEventListener("change", render);
+$("openOnly").addEventListener("change", render);
+$("hideNo").addEventListener("change", render);
+$("clusterPreset").addEventListener("click", () => { clusterMode = true; nodes = []; render(); });
+$("autoDetect").addEventListener("click", autoDetect);
+$("addNode").addEventListener("click", () => {
+  clusterMode = false;
+  const chip = chips.get($("chip").value);
+  nodes.push({
+    chip: chip.id,
+    type: chip.type === "custom" ? "apple_unified" : chip.type,
+    ram_gb: chip.type === "discrete_gpu" ? undefined : Number($("memory").value),
+    vram_gb: chip.type === "discrete_gpu" ? Number($("memory").value) : undefined,
+    bandwidth_gbps: chip.id === "custom" ? Number($("bandwidth").value) : chip.bandwidth_gbps,
+  });
+  render();
+});
+
+</script>
+</body>
+</html>
