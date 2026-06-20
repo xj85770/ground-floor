@@ -36,16 +36,6 @@ const date = data.date.toLocaleDateString('en-US', { month: 'long', day: 'numeri
 
   <div class="max-w-prose mx-auto px-5 md:px-0 py-16 md:py-20">
 
-    {data.youtube && (
-      <div class="mb-10 aspect-video bg-slate border border-wire rounded-xl overflow-hidden">
-        <iframe class="w-full h-full"
-          src={data.youtube.replace('watch?v=', 'embed/')}
-          title="Experiment video" frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen />
-      </div>
-    )}
-
     <blockquote class="border-l-2 pl-6 my-8" style="border-color:#ff6b47;">
       <p class="font-display text-lg italic text-silver leading-relaxed">{data.hypothesis}</p>
     </blockquote>
