@@ -32,11 +32,11 @@ const sorted = allHardware.sort((a,b) => tierOrder[a.data.tier] - tierOrder[b.da
     <div class="conic-border glow-card mb-16">
       <div class="p-7 md:p-9">
         <p class="font-mono text-[0.65rem] tracking-[0.18em] uppercase mb-3" style="color:#9b5de5;">Ground Floor Lab · what these experiments run on</p>
-        <h2 class="font-display font-semibold text-xl text-chalk mb-1">MacBook Pro M5 Max · 128 GB · 2 TB · × 2 nodes</h2>
+        <h2 class="font-display font-semibold text-xl text-chalk mb-1">MacBook Pro M5 Max · 128 GB · 8 TB · × 2 nodes</h2>
         <p class="text-silver text-sm max-w-lg leading-relaxed mb-3">My actual setup. Connected over TB5 RDMA at ~3 µs. When an experiment is documented as "viable at entry level," I ran it throttled to that tier — not on this hardware.</p>
-        <p class="font-mono text-[0.65rem] text-ash mb-6">Machine: $5,499 each · AppleCare+: $450 each · TB5 cables included — all open-source, fully air-gapped</p>
+        <p class="font-mono text-[0.65rem] text-ash mb-6">~$15.4K to build today · 3-year AppleCare+ on both nodes · Thunderbolt 5 cables — all open-source, fully air-gapped</p>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
-          {[['256 GB','Combined memory'],['4 TB','Combined storage'],['~800 GB/s','Peak bandwidth'],['~3 µs','TB5 RDMA latency']].map(([v,l]) => (
+          {[['256 GB','Combined memory'],['16 TB','Combined storage'],['~800 GB/s','Peak bandwidth'],['~3 µs','TB5 RDMA latency']].map(([v,l]) => (
             <div>
               <p class="font-display font-semibold text-2xl gradient-text-animated mb-0.5">{v}</p>
               <p class="font-mono text-[0.6rem] uppercase tracking-widest text-ash">{l}</p>
@@ -67,13 +67,13 @@ const sorted = allHardware.sort((a,b) => tierOrder[a.data.tier] - tierOrder[b.da
         data-configs='[
           {"label":"16 GB · 512 GB SSD","price":799,"models":["Qwen3.5 9B Q4_K_M — strongest 9B on current benchmarks","Phi-4-mini 3.8B Q8 — fastest, structured tasks","Gemma 4 4B Q8 — Google, excellent instruction-following","DeepSeek-R1 7B Q4_K_M — chain-of-thought reasoning","Qwen3.5 4B Q8 — very fast, solid for simple drafts","Llama 3.2 3B Q8 — lightweight, simple drafts"],"note":"Runs one model at a time. Hot-swap in ~10 s via Ollama."},
           {"label":"16 GB · 1 TB SSD","price":999,"models":["Qwen3.5 9B Q4_K_M — strongest 9B on current benchmarks","Phi-4-mini 3.8B Q8 — fastest, structured tasks","Gemma 4 4B Q8 — Google, excellent instruction-following","DeepSeek-R1 7B Q4_K_M — chain-of-thought reasoning","Qwen3.5 4B Q8 — very fast, solid for simple drafts","Llama 3.2 3B Q8 — lightweight, simple drafts"],"note":"Same RAM as base — extra storage for more models on disk."},
-          {"label":"24 GB · 512 GB SSD","price":1099,"models":["Qwen3.5 27B Q4_K_M — big step up, current gen Alibaba","DeepSeek-R1 14B Q4_K_M — shows chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, best for structured docs","Gemma 4 31B Q4_K_M — Google, runs tight in 24 GB","Qwen3.5 9B Q8 — full-precision 9B, noticeably sharper","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"First tier where 14–27B models run at practical speed."},
-          {"label":"24 GB · 1 TB SSD","price":1299,"models":["Qwen3.5 27B Q4_K_M — big step up, current gen Alibaba","DeepSeek-R1 14B Q4_K_M — shows chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, best for structured docs","Gemma 4 31B Q4_K_M — Google, runs tight in 24 GB","Qwen3.5 9B Q8 — full-precision 9B, noticeably sharper","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"More disk space for storing multiple models."}
+          {"label":"24 GB · 512 GB SSD","price":999,"models":["Qwen3.5 27B Q4_K_M — big step up, current gen Alibaba","DeepSeek-R1 14B Q4_K_M — shows chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, best for structured docs","Gemma 4 31B Q4_K_M — Google, runs tight in 24 GB","Qwen3.5 9B Q8 — full-precision 9B, noticeably sharper","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"First tier where 14–27B models run at practical speed."},
+          {"label":"24 GB · 1 TB SSD","price":1199,"models":["Qwen3.5 27B Q4_K_M — big step up, current gen Alibaba","DeepSeek-R1 14B Q4_K_M — shows chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, best for structured docs","Gemma 4 31B Q4_K_M — Google, runs tight in 24 GB","Qwen3.5 9B Q8 — full-precision 9B, noticeably sharper","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"More disk space for storing multiple models."}
         ]'>
         <option>16 GB · 512 GB SSD — $799</option>
         <option>16 GB · 1 TB SSD — $999</option>
-        <option>24 GB · 512 GB SSD — $1,099</option>
-        <option>24 GB · 1 TB SSD — $1,299</option>
+        <option>24 GB · 512 GB SSD — $999</option>
+        <option>24 GB · 1 TB SSD — $1,199</option>
       </select>
 
       <div class="config-models grid grid-cols-1 md:grid-cols-2 gap-2 mb-4"></div>
@@ -98,13 +98,13 @@ const sorted = allHardware.sort((a,b) => tierOrder[a.data.tier] - tierOrder[b.da
         data-configs='[
           {"label":"24 GB · 512 GB SSD","price":1399,"models":["Qwen3.5 27B Q4_K_M — current-gen Alibaba, best at tier","DeepSeek-R1 14B Q4_K_M — auditable chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, structured docs","Gemma 4 31B Q4_K_M — Google, excellent instruction-following","Qwen3.5 9B Q8 — full-precision 9B","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"Hot-load one 14–27B model. Swap to a second in ~15 s."},
           {"label":"24 GB · 1 TB SSD","price":1599,"models":["Qwen3.5 27B Q4_K_M — current-gen Alibaba, best at tier","DeepSeek-R1 14B Q4_K_M — auditable chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, structured docs","Gemma 4 31B Q4_K_M — Google, excellent instruction-following","Qwen3.5 9B Q8 — full-precision 9B","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"More storage — keep 8–10 models on disk, swap freely."},
-          {"label":"48 GB · 512 GB SSD","price":1799,"models":["Qwen3.5 27B Q8 — full-precision, near-frontier quality","DeepSeek-R1 32B Q4_K_M — deep reasoning with CoT","Gemma 4 31B Q4_K_M — Google, fast and capable","Phi-4 14B Q8 — full-precision, best quality at size","Mistral Small 3 22B Q8 — full-precision mid-size","Two 14B models simultaneously (hot-loaded)"],"note":"First tier for 32B models at Q4. Runs two 14B models simultaneously."},
-          {"label":"48 GB · 1 TB SSD","price":1999,"models":["Qwen3.5 27B Q8 — full-precision, near-frontier quality","DeepSeek-R1 32B Q4_K_M — deep reasoning with CoT","Gemma 4 31B Q4_K_M — Google, fast and capable","Phi-4 14B Q8 — full-precision, best quality at size","Mistral Small 3 22B Q8 — full-precision mid-size","Two 14B models simultaneously (hot-loaded)"],"note":"Recommended config for small-team serving (2–4 users)."}
+          {"label":"48 GB · 512 GB SSD","price":1999,"models":["Qwen3.5 27B Q8 — full-precision, near-frontier quality","DeepSeek-R1 32B Q4_K_M — deep reasoning with CoT","Gemma 4 31B Q4_K_M — Google, fast and capable","Phi-4 14B Q8 — full-precision, best quality at size","Mistral Small 3 22B Q8 — full-precision mid-size","Two 14B models simultaneously (hot-loaded)"],"note":"First tier for 32B models at Q4. Runs two 14B models simultaneously."},
+          {"label":"48 GB · 1 TB SSD","price":2199,"models":["Qwen3.5 27B Q8 — full-precision, near-frontier quality","DeepSeek-R1 32B Q4_K_M — deep reasoning with CoT","Gemma 4 31B Q4_K_M — Google, fast and capable","Phi-4 14B Q8 — full-precision, best quality at size","Mistral Small 3 22B Q8 — full-precision mid-size","Two 14B models simultaneously (hot-loaded)"],"note":"Recommended config for small-team serving (2–4 users)."}
         ]'>
         <option>24 GB · 512 GB SSD — $1,399</option>
         <option>24 GB · 1 TB SSD — $1,599</option>
-        <option>48 GB · 512 GB SSD — $1,799</option>
-        <option>48 GB · 1 TB SSD — $1,999</option>
+        <option>48 GB · 512 GB SSD — $1,999</option>
+        <option>48 GB · 1 TB SSD — $2,199</option>
       </select>
 
       <div class="config-models grid grid-cols-1 md:grid-cols-2 gap-2 mb-4"></div>
@@ -234,21 +234,21 @@ const sorted = allHardware.sort((a,b) => tierOrder[a.data.tier] - tierOrder[b.da
           {"label":"36 GB · 2 TB · 32-core GPU","price":3899,"models":["Kimi K2.6 32B Q4_K_M — top-tier open-weight benchmark","Gemma 4 31B Q4_K_M — Google MoE, blazing fast","DeepSeek-R1 32B Q4_K_M — reasoning with chain-of-thought","Qwen3.5 27B Q8 — full-precision current-gen","Mistral Small 3 22B Q8 — reliable full-precision mid-size"],"note":"Base M5 Max. Strong 32B inference. Fast for team serving."},
           {"label":"48 GB · 2 TB · 40-core GPU","price":4399,"models":["Kimi K2.6 32B Q8 — full-precision, top-tier open-weight","Gemma 4 31B Q8 — full-precision Google MoE","DeepSeek-R1 32B Q8 — full-precision reasoning","Llama 3.3 70B Q4_K_M — 70B at practical speed (~14 t/s)","Two 27B models simultaneously (hot-loaded)"],"note":"40-core GPU baseline. First M5 Max tier for 70B at practical speed."},
           {"label":"64 GB · 2 TB · 40-core GPU","price":4599,"models":["Kimi K2.6 Q4_K_M — top-tier open-weight (~16 t/s)","Llama 3.3 70B Q4_K_M — ~16 t/s","DeepSeek-R1 70B Q4_K_M — best open reasoning","Gemma 4 31B Q8 — full-precision, very fast","Qwen3.5 27B Q8 — full-precision current-gen"],"note":"Headroom for 70B + OS + tools simultaneously. Good team server."},
-          {"label":"128 GB · 2 TB · 40-core GPU","price":5499,"models":["Kimi K2.6 Q4_K_M — top-tier open-weight (54/100)","Kimi K2.6 Q8 — full-precision, highest quality (~18 t/s)","Llama 3.3 70B Q8 — full-precision Meta flagship","DeepSeek-R1 70B Q8 — full-precision reasoning","Qwen3.5 122B A10B Q4_K_M — 122B MoE, fits in ~61 GB","Two 70B models simultaneously (hot-loaded)"],"note":"Lab config (standard display). Three 70B models hot-loaded simultaneously."},
-          {"label":"128 GB · 2 TB · nano-texture","price":5649,"models":["Kimi K2.6 Q4_K_M — top-tier open-weight (54/100)","Kimi K2.6 Q8 — full-precision, highest quality","Llama 3.3 70B Q8 — full-precision Meta flagship","DeepSeek-R1 70B Q8 — full-precision reasoning","Qwen3.5 122B A10B Q4_K_M — 122B MoE, fits in ~61 GB","Two 70B models simultaneously (hot-loaded)"],"note":"Lab config + nano-texture display. Same inference performance."},
+          {"label":"128 GB · 2 TB · 40-core GPU","price":5499,"models":["Kimi K2.6 Q4_K_M — top-tier open-weight (54/100)","Kimi K2.6 Q8 — full-precision, highest quality (~18 t/s)","Llama 3.3 70B Q8 — full-precision Meta flagship","DeepSeek-R1 70B Q8 — full-precision reasoning","Qwen3.5 122B A10B Q4_K_M — 122B MoE, fits in ~61 GB","Two 70B models simultaneously (hot-loaded)"],"note":"128 GB tier, standard display. Three 70B models hot-loaded simultaneously."},
+          {"label":"128 GB · 2 TB · nano-texture","price":5649,"models":["Kimi K2.6 Q4_K_M — top-tier open-weight (54/100)","Kimi K2.6 Q8 — full-precision, highest quality","Llama 3.3 70B Q8 — full-precision Meta flagship","DeepSeek-R1 70B Q8 — full-precision reasoning","Qwen3.5 122B A10B Q4_K_M — 122B MoE, fits in ~61 GB","Two 70B models simultaneously (hot-loaded)"],"note":"128 GB, nano-texture display. Same inference performance."},
           {"label":"128 GB · 4 TB · 40-core GPU","price":5799,"models":["Kimi K2.6 Q8 — full-precision, top-tier open-weight","Llama 3.3 70B Q8 — full-precision 70B","DeepSeek-R1 70B Q8 — full-precision reasoning","Qwen3.5 122B A10B Q4_K_M — 122B MoE","Gemma 4 31B Q8 + Qwen3.5 27B Q8 (simultaneously)","Three 70B models hot-loaded simultaneously"],"note":"Extra storage for full model library. Same inference speed as 2 TB."},
           {"label":"128 GB · 4 TB · nano-texture","price":5949,"models":["Kimi K2.6 Q8 — full-precision, top-tier open-weight","Llama 3.3 70B Q8 — full-precision 70B","DeepSeek-R1 70B Q8 — full-precision reasoning","Qwen3.5 122B A10B Q4_K_M — 122B MoE","Gemma 4 31B Q8 + Qwen3.5 27B Q8 (simultaneously)","Three 70B models hot-loaded simultaneously"],"note":"Most popular high-end config. Nano display + full model library storage."},
-          {"label":"128 GB · 8 TB · standard display","price":7199,"models":["Entire open-weight model library fits on disk","Kimi K2.6 Q8 + Llama 3.3 70B Q8 (simultaneously)","DeepSeek-R1 70B Q8","Qwen3.5 122B A10B Q4_K_M — 122B MoE","MiMo-V2.5-Pro Q4_K_M — Xiaomi, 54/100 on benchmark","FP16 models possible via TB5 cluster"],"note":"Maximum storage. Keep every major open-weight model on disk."},
+          {"label":"128 GB · 8 TB · standard display","price":7199,"models":["Entire open-weight model library fits on disk","Kimi K2.6 Q8 + Llama 3.3 70B Q8 (simultaneously)","DeepSeek-R1 70B Q8","Qwen3.5 122B A10B Q4_K_M — 122B MoE","MiMo-V2.5-Pro Q4_K_M — Xiaomi, 54/100 on benchmark","FP16 models possible via TB5 cluster"],"note":"The Ground Floor lab config. Maximum storage — keep every major open-weight model on disk."},
           {"label":"128 GB · 8 TB · nano-texture","price":7349,"models":["Entire open-weight model library fits on disk","Kimi K2.6 Q8 + Llama 3.3 70B Q8 (simultaneously)","DeepSeek-R1 70B Q8","Qwen3.5 122B A10B Q4_K_M — 122B MoE","MiMo-V2.5-Pro Q4_K_M — Xiaomi, 54/100 on benchmark","FP16 models possible via TB5 cluster"],"note":"Maxed out. $7,349 list price before tax. Nano display + full model library."}
         ]'>
         <option>36 GB · 2 TB · 32-core GPU — $3,899</option>
         <option>48 GB · 2 TB · 40-core GPU — $4,399</option>
         <option>64 GB · 2 TB · 40-core GPU — $4,599</option>
-        <option>128 GB · 2 TB · standard display — $5,499 ★ Lab config</option>
+        <option>128 GB · 2 TB · standard display — $5,499</option>
         <option>128 GB · 2 TB · nano-texture — $5,649</option>
         <option>128 GB · 4 TB · standard display — $5,799</option>
         <option>128 GB · 4 TB · nano-texture — $5,949</option>
-        <option>128 GB · 8 TB · standard display — $7,199</option>
+        <option>128 GB · 8 TB · standard display — $7,199 ★ Lab config</option>
         <option>128 GB · 8 TB · nano-texture — $7,349</option>
       </select>
 
@@ -292,16 +292,16 @@ const sorted = allHardware.sort((a,b) => tierOrder[a.data.tier] - tierOrder[b.da
             <tr style="border-bottom:1px solid #424245;background:rgba(255,255,255,0.02);">
               <th class="text-left px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Hardware</th>
               <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">One-time cost</th>
-              <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">vs. ChatGPT Teams ($30/mo)</th>
-              <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">vs. Claude Pro ($20/mo)</th>
+              <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">vs. ChatGPT Pro ($200/mo)</th>
+              <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">vs. Claude Max ($100/mo)</th>
             </tr>
           </thead>
           <tbody>
             {[
-              { label: 'Mac mini M4 16 GB', price: '$799',   gpt: '27 months', claude: '40 months' },
-              { label: 'Mac mini M4 24 GB', price: '$1,099', gpt: '37 months', claude: '55 months' },
-              { label: 'MacBook Air M5 24 GB', price: '$1,299', gpt: '43 months', claude: '65 months' },
-              { label: 'MacBook Pro M5 Pro 48 GB', price: '$2,799', gpt: '93 months', claude: '140 months' },
+              { label: 'Mac mini M4 16 GB', price: '$799',   gpt: '4 months', claude: '8 months' },
+              { label: 'Mac mini M4 24 GB', price: '$999', gpt: '5 months', claude: '10 months' },
+              { label: 'MacBook Air M5 24 GB', price: '$1,299', gpt: '7 months', claude: '13 months' },
+              { label: 'MacBook Pro M5 Pro 48 GB', price: '$2,799', gpt: '14 months', claude: '28 months' },
             ].map((row, i) => (
               <tr style={`border-bottom:1px solid #2a2a2d;${i % 2 === 0 ? '' : 'background:rgba(255,255,255,0.01);'}`}>
                 <td class="px-5 py-4 text-chalk font-medium">{row.label}</td>
@@ -345,14 +345,14 @@ const sorted = allHardware.sort((a,b) => tierOrder[a.data.tier] - tierOrder[b.da
           <div class="flex items-baseline justify-between mb-4">
             <div>
               <p class="font-display font-semibold text-chalk text-lg mb-0.5">256 GB cluster</p>
-              <p class="font-mono text-[0.65rem] text-ash">2× M5 Max 128 GB · TB5 RDMA</p>
+              <p class="font-mono text-[0.65rem] text-ash">2× M5 Max 128 GB / 8 TB · TB5 RDMA</p>
             </div>
-            <p class="font-display font-semibold text-xl" style="color:#9b5de5;">~$11,300</p>
+            <p class="font-display font-semibold text-xl" style="color:#9b5de5;">~$15,400</p>
           </div>
           <div class="space-y-1.5 mb-4">
             {[
-              ['2× MBP M5 Max 128 GB', '$10,998'],
-              ['2× AppleCare+', '$900'],
+              ['2× MBP M5 Max 128 GB / 8 TB', '$14,398'],
+              ['2× AppleCare+ (3-yr)', '$900'],
               ['TB5 cables', '~$100'],
             ].map(([label, price]) => (
               <div class="flex items-center justify-between text-xs">

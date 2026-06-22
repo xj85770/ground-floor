@@ -1,5 +1,5 @@
 ---
-title: "Can a $600 Mac Mini draft SOAP notes for a solo medical practice?"
+title: "Can an $800 Mac Mini draft SOAP notes for a solo medical practice?"
 date: 2026-05-04
 week: 1
 industry: "medical"
@@ -21,7 +21,7 @@ This experiment tests whether that tradeoff is necessary.
 
 ## Setup
 
-**Hardware:** M4 Mac mini (base model) — 16GB unified memory, 10-core GPU, 256GB SSD. $599 at the Apple Store.
+**Hardware:** M4 Mac mini (base model) — 16GB unified memory, 10-core GPU, 512GB SSD. $799 at the Apple Store.
 
 **Model:** `Llama-3.1-8B-Instruct-Q4_K_M` via [Ollama](https://ollama.com). Download size: ~4.7GB. Loaded entirely into unified memory with headroom to spare.
 

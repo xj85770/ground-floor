@@ -1,6 +1,6 @@
 ---
 name: "Mac mini (M4, 16 GB)"
-priceUsd: 599
+priceUsd: 799
 ramGb: 16
 chip: "Apple M4"
 tier: "entry"
@@ -23,7 +23,7 @@ notSuitableFor:
   - "13B or larger models"
 ---
 
-The $599 Mac mini is the entry point I keep recommending first. At 16 GB unified memory it runs Q4-quantized 7–8B models with room for the OS and other apps — no dedicated GPU, no fan noise, no cloud dependency. Most practitioners I've talked to are surprised by how far this gets them before they need to upgrade.
+The $799 Mac mini is the entry point I keep recommending first. At 16 GB unified memory it runs Q4-quantized 7–8B models with room for the OS and other apps — no dedicated GPU, no fan noise, no cloud dependency. Most practitioners I've talked to are surprised by how far this gets them before they need to upgrade.
 
 ## What 16 GB gets you in May 2026
 
