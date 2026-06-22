@@ -21,7 +21,7 @@ This experiment does not test whether the model gives good legal advice. It test
 
 ## Setup
 
-**Hardware:** M4 Pro Mac mini — 24 GB unified memory, 12-core CPU/GPU. $1,299.
+**Hardware:** M4 Pro Mac mini — 24 GB unified memory, 12-core CPU/GPU. $1,399.
 
 **Model:** `Llama-3.1-13B-Instruct-Q4_K_M` via Ollama. ~8.1 GB loaded into unified memory.
 

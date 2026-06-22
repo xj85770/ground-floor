@@ -21,7 +21,7 @@ The local model test here is not about accuracy of financial advice — the advi
 
 ## Setup
 
-**Hardware:** M4 Mac mini (base) — 16 GB unified memory. $599.
+**Hardware:** M4 Mac mini (base) — 16 GB unified memory. $799.
 
 **Model:** `Llama-3.1-8B-Instruct-Q4_K_M` via Ollama. Identical to the Week 1 medical experiment.
 

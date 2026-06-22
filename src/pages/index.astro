@@ -158,7 +158,7 @@ const industriesForStage = allIndustries.map(ind => ({
       {[
         ['M5 Max × 2 nodes', '#9b5de5'],
         ['256 GB unified memory', '#a1a1a6'],
-        ['4 TB storage', '#a1a1a6'],
+        ['16 TB storage', '#a1a1a6'],
         ['TB5 RDMA · 3 µs latency', '#a1a1a6'],
         ['100% on-premise', '#34d399'],
       ].map(([label, color]) => (
@@ -224,7 +224,7 @@ const industriesForStage = allIndustries.map(ind => ({
         <h2 class="font-display font-semibold tracking-tight text-chalk"
             style="font-size:clamp(1.75rem,4vw,2.75rem);">The Lab</h2>
         <p class="text-silver mt-3 max-w-xl">
-          I have two M5 Max MacBook Pros connected over Thunderbolt 5 RDMA — 256 GB combined memory, 4 TB of storage, ~3 µs between nodes. It's an unreasonably powerful home office setup. But it means every experiment documented here has a specific, real hardware answer.
+          I have two M5 Max MacBook Pros connected over Thunderbolt 5 RDMA — 256 GB combined memory, 16 TB of storage, ~3 µs between nodes. It's an unreasonably powerful home office setup. But it means every experiment documented here has a specific, real hardware answer.
         </p>
       </div>
 
@@ -325,7 +325,7 @@ const industriesForStage = allIndustries.map(ind => ({
             </svg>
           </div>
           <dl style="display:grid;grid-template-columns:1fr 1fr;gap:5px 20px;text-align:center;">
-            {[['Chip','M5 Max'],['Memory','128 GB'],['Storage','2 TB NVMe'],['OS','Tahoe 26.2']].map(([k,v]) => (
+            {[['Chip','M5 Max'],['Memory','128 GB'],['Storage','8 TB NVMe'],['OS','Tahoe 26.2']].map(([k,v]) => (
               <div>
                 <dt class="font-mono" style="font-size:0.55rem;letter-spacing:0.14em;text-transform:uppercase;color:#6e6e73;margin-bottom:2px;">{k}</dt>
                 <dd style="font-size:0.8rem;color:#f5f5f7;font-weight:500;">{v}</dd>
@@ -443,7 +443,7 @@ const industriesForStage = allIndustries.map(ind => ({
             </svg>
           </div>
           <dl style="display:grid;grid-template-columns:1fr 1fr;gap:5px 20px;text-align:center;">
-            {[['Chip','M5 Max'],['Memory','128 GB'],['Storage','2 TB NVMe'],['OS','Tahoe 26.2']].map(([k,v]) => (
+            {[['Chip','M5 Max'],['Memory','128 GB'],['Storage','8 TB NVMe'],['OS','Tahoe 26.2']].map(([k,v]) => (
               <div>
                 <dt class="font-mono" style="font-size:0.55rem;letter-spacing:0.14em;text-transform:uppercase;color:#6e6e73;margin-bottom:2px;">{k}</dt>
                 <dd style="font-size:0.8rem;color:#f5f5f7;font-weight:500;">{v}</dd>
@@ -459,7 +459,7 @@ const industriesForStage = allIndustries.map(ind => ({
         <div class="p-8 md:p-10">
           <p class="font-mono text-[0.65rem] tracking-[0.18em] uppercase text-ash mb-5">Combined cluster</p>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-8">
-            {[['256 GB','Unified memory'],['4 TB','Total storage'],['~3 µs','TB5 RDMA latency'],['~800 GB/s','Peak bandwidth']].map(([val,label]) => (
+            {[['256 GB','Unified memory'],['16 TB','Total storage'],['~3 µs','TB5 RDMA latency'],['~800 GB/s','Peak bandwidth']].map(([val,label]) => (
               <div>
                 <p class="font-display font-semibold text-3xl gradient-text-animated mb-1">{val}</p>
                 <p class="font-mono text-[0.65rem] uppercase tracking-widest text-ash">{label}</p>

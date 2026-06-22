@@ -46,7 +46,7 @@ At 48 GB you can also run **Mistral Small 3 22B** — Mistral's current mid-size
 | GPU cores | 10 | 20 |
 | Memory bandwidth | 120 GB/s | 273 GB/s |
 | Best model tier | 7–8B Q4 | 13–22B Q4 |
-| Price | $599 | $1,399+ |
+| Price | $799 | $1,399+ |
 
 The memory bandwidth difference is significant: 273 GB/s vs 120 GB/s means the Pro feeds the GPU tokens faster — directly translating to higher tokens/second on larger models.
 
