@@ -3,6 +3,6 @@ import tailwind from '@astrojs/tailwind';
 
 export default defineConfig({
   integrations: [tailwind()],
-  site: 'https://groundfloor.pages.dev',
+  site: 'https://gflocal.netlify.app',
   output: 'static',
 });

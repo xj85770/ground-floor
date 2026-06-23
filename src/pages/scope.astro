@@ -1,10 +1,16 @@
 ---
 import Base from '../layouts/Base.astro';
+import { page, breadcrumb } from '../lib/seo';
+const schema = [
+  page('WebPage', { site: Astro.site, path: '/scope', name: 'Scope & Disclaimers', description: "What Ground Floor covers, what it doesn't, and why that distinction matters." }),
+  breadcrumb(Astro.site, [{ name: 'Scope & Disclaimers', path: '/scope' }]),
+];
 ---
 
 <Base
   title="Scope & Disclaimers"
   description="What Ground Floor covers, what it doesn't, and why that distinction matters."
+  schema={schema}
 >
   <div class="max-w-prose mx-auto px-5 md:px-0 py-20 md:py-28">
 

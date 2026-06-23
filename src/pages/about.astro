@@ -1,8 +1,13 @@
 ---
 import Base from '../layouts/Base.astro';
+import { page, breadcrumb } from '../lib/seo';
+const schema = [
+  page('AboutPage', { site: Astro.site, path: '/about', name: 'About Ground Floor', description: 'Who is behind Ground Floor and why this project exists.' }),
+  breadcrumb(Astro.site, [{ name: 'About', path: '/about' }]),
+];
 ---
 
-<Base title="About" description="Who is behind Ground Floor and why this project exists.">
+<Base title="About" description="Who is behind Ground Floor and why this project exists." schema={schema}>
 
   <div class="page-aurora">
     <div class="page-aurora-glow"></div>

@@ -1,15 +1,21 @@
 ---
 import Base from '../layouts/Base.astro';
 import { getCollection } from 'astro:content';
+import { dataset, breadcrumb } from '../lib/seo';
 
 const allHardware = await getCollection('hardware');
 const tierOrder: Record<string, number> = { entry:0, mid:1, high:2, workstation:3 };
 const sorted = allHardware.sort((a,b) => tierOrder[a.data.tier] - tierOrder[b.data.tier]);
+const schema = [
+  dataset({ site: Astro.site, path: '/hardware', name: 'Apple Silicon Macs for local LLM inference', description: 'Every Apple Silicon Mac configuration for local LLM inference — specs, prices, and which open-source models run on each.' }),
+  breadcrumb(Astro.site, [{ name: 'Hardware', path: '/hardware' }]),
+];
 ---
 
 <Base
   title="Hardware"
   description="Every Apple Silicon Mac configuration for local LLM inference — specs, prices, and which open-source models run on each."
+  schema={schema}
 >
   <div class="page-aurora">
     <div class="page-aurora-glow" style="background:radial-gradient(ellipse 70% 60% at 50% -10%,rgba(76,201,240,0.2) 0%,transparent 70%);"></div>

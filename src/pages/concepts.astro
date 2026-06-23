@@ -1,8 +1,13 @@
 ---
 import Base from '../layouts/Base.astro';
+import { article, breadcrumb } from '../lib/seo';
+const schema = [
+  article({ site: Astro.site, path: '/concepts', headline: 'Local LLM concepts: parameters, tokenizers, context windows, and Apple Silicon', description: 'The mechanics behind local LLMs — how parameters, tokenizers, context windows, and Apple Silicon fit together.' }),
+  breadcrumb(Astro.site, [{ name: 'Concepts', path: '/concepts' }]),
+];
 ---
 
-<Base title="Concepts" description="The mechanics behind local LLMs — how parameters, tokenizers, context windows, and Apple Silicon fit together.">
+<Base title="Concepts" description="The mechanics behind local LLMs — how parameters, tokenizers, context windows, and Apple Silicon fit together." schema={schema}>
 
   <div class="page-aurora">
     <div class="page-aurora-glow" style="background:radial-gradient(ellipse 70% 60% at 50% -10%,rgba(155,93,229,0.22) 0%,transparent 70%);"></div>

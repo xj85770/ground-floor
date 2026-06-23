@@ -1,6 +1,7 @@
 ---
 import Base from './Base.astro';
 import ExperimentCard from '../components/ExperimentCard.astro';
+import { article, faqPage, breadcrumb } from '../lib/seo';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -9,9 +10,26 @@ interface Props {
 }
 const { industry, experiments } = Astro.props;
 const { data } = industry;
+const path = `/industries/${industry.slug}`;
+// FAQ mirrors the visible copy on this page (legitimate: schema reflects what a human reads).
+const faq = [
+  { q: `Why does local, air-gapped AI matter for ${data.name.toLowerCase()}?`, a: data.whyLocal },
+  {
+    q: `What can Ground Floor not tell me about ${data.shortName.toLowerCase()}?`,
+    a: "The experiments here cover what's technically possible with local hardware. Your specific regulatory obligations — your state's rules, your specialty's requirements, your malpractice carrier's stance, your EHR vendor's terms — are questions this site cannot answer.",
+  },
+];
+const schema = [
+  article({ site: Astro.site, path, headline: `Local, air-gapped AI for ${data.name}`, description: data.whyLocal }),
+  faqPage(faq),
+  breadcrumb(Astro.site, [
+    { name: 'Industries', path: '/industries' },
+    { name: data.name, path },
+  ]),
+];
 ---
 
-<Base title={data.name} description={data.whyLocal}>
+<Base title={data.name} description={data.whyLocal} schema={schema}>
 
   <div class="page-aurora">
     <div class="page-aurora-glow" style="background:radial-gradient(ellipse 70% 60% at 50% -10%,rgba(67,97,238,0.28) 0%,transparent 70%);"></div>

@@ -2,7 +2,18 @@
 import Base from '../layouts/Base.astro';
 import ExperimentCard from '../components/ExperimentCard.astro';
 import IndustryCard from '../components/IndustryCard.astro';
+import Faq from '../components/Faq.astro';
 import { getCollection } from 'astro:content';
+
+// FAQ — self-contained citable atoms (verified facts only), drafted via the xavier-script
+// skill and passed through slop-scan (grade A) + agent-seo (94.5/100). Doubles as FAQPage schema.
+const faq = [
+  { q: 'What is Ground Floor?', a: "Ground Floor is an independent project documenting air-gapped, open-weight AI for regulated practices: legal, medical, financial, and accounting. The models run on hardware you own. There are no API calls and no vendor agreements, so the data that goes in stays in. Every week I run a real experiment and publish the honest verdict, including the ones that are not ready yet." },
+  { q: 'Can you run a large language model locally without sending data to the cloud?', a: "Yes. Ground Floor runs open-weight models entirely on your own machine, so there is no API call and no copy of your data on a vendor's server. For a clinic or a law firm, that is the point: patient records and privileged files never leave the building. The trade is that you run your own hardware instead of renting someone else's." },
+  { q: 'What hardware do you need to run a capable local model?', a: "Less than most people expect. Small open-weight models run on any modern Mac, and mid-size ones want roughly 32 to 128 GB of memory. The Ground Floor lab uses two M5 Max MacBook Pros with 256 GB of combined memory, but that is deliberately overbuilt so I can test the ceiling. The Will-It-Run tool gives you the honest answer for your specific Mac." },
+  { q: 'Is a local model actually fast enough to be useful?', a: "In my Ground Floor testing, yes, for the work regulated practices actually do: drafting notes, summarizing documents, checking a contract clause. An M5 Max runs a 70B-parameter model faster than most cloud API round-trips, on hardware you own. It will not beat a frontier cloud model on the hardest reasoning, and I say so on each experiment. For everyday drafting, the gap that matters has closed." },
+  { q: 'Open-weight local model or a cloud API for regulated data?', a: "For data that cannot leave the building, such as PHI, privileged legal files, or financial records, a local open-weight model like Ground Floor avoids the thing a cloud API cannot: your data leaving your control and sitting with a third party. A cloud API is often more capable on raw reasoning, so the real question is whether the data is allowed to leave at all. If it is not, local is the honest answer. And running locally does not make you HIPAA-compliant by itself; it removes one large exposure, not all of them." },
+];
 
 const allExperiments = await getCollection('experiments');
 const allIndustries  = await getCollection('industries');
@@ -607,6 +618,12 @@ const industriesForStage = allIndustries.map(ind => ({
     // init
     render(0);
   </script>
+
+
+  <!-- ═══ FAQ — decomposition coverage + FAQPage schema ═══ -->
+  <section style="border-top:1px solid #424245;background:#000;">
+    <Faq items={faq} heading="Common questions" eyebrow="FAQ" />
+  </section>
 
 
   <!-- ═══ CLOSING ═══ -->

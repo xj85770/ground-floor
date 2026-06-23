@@ -1,10 +1,16 @@
 ---
 import Base from '../layouts/Base.astro';
+import { article, breadcrumb } from '../lib/seo';
+const schema = [
+  article({ site: Astro.site, path: '/quickstart', headline: 'Quickstart: run local AI in 30 minutes', description: "A Mac, Ollama, and 30 minutes. Here's the exact sequence to run your first local AI model with no cloud dependency.", techArticle: true }),
+  breadcrumb(Astro.site, [{ name: 'Quickstart', path: '/quickstart' }]),
+];
 ---
 
 <Base
   title="Quickstart — Run Local AI in 30 Minutes"
   description="A Mac, Ollama, and 30 minutes. Here's the exact sequence to run your first local AI model with no cloud dependency."
+  schema={schema}
 >
 
   <div class="page-aurora">

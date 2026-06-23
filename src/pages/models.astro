@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import { dataset, breadcrumb } from '../lib/seo';
 import {
   fetchOpenSourceModels,
   STATIC_OPEN_SOURCE_MODELS,
@@ -65,6 +66,10 @@ const buildDate = new Date().toLocaleDateString('en-US', {
 <Base
   title="Open-Source vs Closed — Model Rankings by Task"
   description="Head-to-head: open-weight vs closed models on SWE, agentic, reasoning, clinical, legal. Which open model competes with GPT-4.1? Rebuilt every 12 hours from artificialanalysis.ai."
+  schema={[
+    dataset({ site: Astro.site, path: '/models', name: 'Open-weight LLM leaderboard by task', description: 'Open-weight vs closed model rankings across coding, agentic, reasoning, clinical, and legal tasks, with minimum RAM and tokens/sec for Apple Silicon. Refreshed from artificialanalysis.ai.' }),
+    breadcrumb(Astro.site, [{ name: 'Models', path: '/models' }]),
+  ]}
 >
 
   <div class="page-aurora">

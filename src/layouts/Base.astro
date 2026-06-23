@@ -1,22 +1,27 @@
 ---
 import Nav from '../components/Nav.astro';
 import '../styles/global.css';
+import { graph } from '../lib/seo';
 
 interface Props {
   title: string;
   description?: string;
   ogType?: string;
+  /** Page-specific JSON-LD nodes; Organization + WebSite are always added automatically. */
+  schema?: Record<string, unknown>[];
 }
 
 const {
   title,
   description = "Air-gapped AI for regulated practices. Open-weight models that run on hardware you own — no data leaves the building. Weekly experiments. Honest verdicts.",
   ogType = 'website',
+  schema = [],
 } = Astro.props;
 
 const siteName  = 'Ground Floor';
 const pageTitle = title === siteName ? siteName : `${title} — ${siteName}`;
-const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://groundfloor.pages.dev');
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://gflocal.netlify.app');
+const jsonLd    = graph(Astro.site, schema);
 ---
 
 <!DOCTYPE html>
@@ -26,6 +31,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://groundfloor
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content={description} />
   <link rel="canonical" href={canonical} />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+  <meta name="author" content="Xavier Jones" />
 
   <meta property="og:title"       content={pageTitle} />
   <meta property="og:description" content={description} />
@@ -45,6 +52,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://groundfloor
     href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
     rel="stylesheet"
   />
+
+  <script type="application/ld+json" set:html={jsonLd} is:inline />
 </head>
 
 <body class="bg-obsidian text-chalk antialiased">

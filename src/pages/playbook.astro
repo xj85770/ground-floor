@@ -1,8 +1,13 @@
 ---
 import Base from '../layouts/Base.astro';
+import { article, breadcrumb } from '../lib/seo';
+const schema = [
+  article({ site: Astro.site, path: '/playbook', headline: 'The Ground Floor experiment playbook', description: 'How Ground Floor experiments are structured, evaluated, and published.' }),
+  breadcrumb(Astro.site, [{ name: 'Playbook', path: '/playbook' }]),
+];
 ---
 
-<Base title="Playbook" description="How Ground Floor experiments are structured, evaluated, and published.">
+<Base title="Playbook" description="How Ground Floor experiments are structured, evaluated, and published." schema={schema}>
 
   <div class="page-aurora">
     <div class="page-aurora-glow" style="background:radial-gradient(ellipse 70% 60% at 50% -10%,rgba(67,97,238,0.28) 0%,transparent 70%);"></div>
