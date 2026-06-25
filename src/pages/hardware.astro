@@ -40,7 +40,7 @@ const schema = [
         <p class="font-mono text-[0.65rem] tracking-[0.18em] uppercase mb-3" style="color:#9b5de5;">Ground Floor Lab · what these experiments run on</p>
         <h2 class="font-display font-semibold text-xl text-chalk mb-1">MacBook Pro M5 Max · 128 GB · 8 TB · × 2 nodes</h2>
         <p class="text-silver text-sm max-w-lg leading-relaxed mb-3">My actual setup. Connected over TB5 RDMA at ~3 µs. When an experiment is documented as "viable at entry level," I ran it throttled to that tier — not on this hardware.</p>
-        <p class="font-mono text-[0.65rem] text-ash mb-6">~$15.4K to build today · 3-year AppleCare+ on both nodes · Thunderbolt 5 cables — all open-source, fully air-gapped</p>
+        <p class="font-mono text-[0.65rem] text-ash mb-6">~$21K to build today · 3-year AppleCare+ on both nodes · Thunderbolt 5 cables — all open-source, fully air-gapped</p>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
           {[['256 GB','Combined memory'],['16 TB','Combined storage'],['~800 GB/s','Peak bandwidth'],['~3 µs','TB5 RDMA latency']].map(([v,l]) => (
             <div>
@@ -71,15 +71,13 @@ const schema = [
       <label class="block font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-2">Configuration</label>
       <select class="config-select w-full md:w-auto bg-fog border border-wire text-chalk text-sm rounded-lg px-4 py-2.5 mb-6 cursor-pointer focus:outline-none focus:border-glow-purple"
         data-configs='[
-          {"label":"16 GB · 512 GB SSD","price":799,"models":["Qwen3.5 9B Q4_K_M — strongest 9B on current benchmarks","Phi-4-mini 3.8B Q8 — fastest, structured tasks","Gemma 4 4B Q8 — Google, excellent instruction-following","DeepSeek-R1 7B Q4_K_M — chain-of-thought reasoning","Qwen3.5 4B Q8 — very fast, solid for simple drafts","Llama 3.2 3B Q8 — lightweight, simple drafts"],"note":"Runs one model at a time. Hot-swap in ~10 s via Ollama."},
-          {"label":"16 GB · 1 TB SSD","price":999,"models":["Qwen3.5 9B Q4_K_M — strongest 9B on current benchmarks","Phi-4-mini 3.8B Q8 — fastest, structured tasks","Gemma 4 4B Q8 — Google, excellent instruction-following","DeepSeek-R1 7B Q4_K_M — chain-of-thought reasoning","Qwen3.5 4B Q8 — very fast, solid for simple drafts","Llama 3.2 3B Q8 — lightweight, simple drafts"],"note":"Same RAM as base — extra storage for more models on disk."},
-          {"label":"24 GB · 512 GB SSD","price":999,"models":["Qwen3.5 27B Q4_K_M — big step up, current gen Alibaba","DeepSeek-R1 14B Q4_K_M — shows chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, best for structured docs","Gemma 4 31B Q4_K_M — Google, runs tight in 24 GB","Qwen3.5 9B Q8 — full-precision 9B, noticeably sharper","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"First tier where 14–27B models run at practical speed."},
-          {"label":"24 GB · 1 TB SSD","price":1199,"models":["Qwen3.5 27B Q4_K_M — big step up, current gen Alibaba","DeepSeek-R1 14B Q4_K_M — shows chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, best for structured docs","Gemma 4 31B Q4_K_M — Google, runs tight in 24 GB","Qwen3.5 9B Q8 — full-precision 9B, noticeably sharper","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"More disk space for storing multiple models."}
+          {"label":"16 GB · 256 GB SSD","price":799,"models":["Qwen3.5 9B Q4_K_M — strongest 9B on current benchmarks","Phi-4-mini 3.8B Q8 — fastest, structured tasks","Gemma 4 4B Q8 — Google, excellent instruction-following","DeepSeek-R1 7B Q4_K_M — chain-of-thought reasoning","Qwen3.5 4B Q8 — very fast, solid for simple drafts","Llama 3.2 3B Q8 — lightweight, simple drafts"],"note":"Apple base config. Runs one model at a time — hot-swap in ~10 s via Ollama."},
+          {"label":"16 GB · 512 GB SSD","price":999,"models":["Qwen3.5 9B Q4_K_M — strongest 9B on current benchmarks","Phi-4-mini 3.8B Q8 — fastest, structured tasks","Gemma 4 4B Q8 — Google, excellent instruction-following","DeepSeek-R1 7B Q4_K_M — chain-of-thought reasoning","Qwen3.5 4B Q8 — very fast, solid for simple drafts","Llama 3.2 3B Q8 — lightweight, simple drafts"],"note":"Same RAM as base — extra storage for more models on disk."},
+          {"label":"24 GB · 512 GB SSD","price":1199,"models":["Qwen3.5 27B Q4_K_M — big step up, current gen Alibaba","DeepSeek-R1 14B Q4_K_M — shows chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, best for structured docs","Gemma 4 31B Q4_K_M — Google, runs tight in 24 GB","Qwen3.5 9B Q8 — full-precision 9B, noticeably sharper","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"First tier where 14–27B models run at practical speed."}
         ]'>
-        <option>16 GB · 512 GB SSD — $799</option>
-        <option>16 GB · 1 TB SSD — $999</option>
-        <option>24 GB · 512 GB SSD — $999</option>
-        <option>24 GB · 1 TB SSD — $1,199</option>
+        <option>16 GB · 256 GB SSD — $799</option>
+        <option>16 GB · 512 GB SSD — $999</option>
+        <option>24 GB · 512 GB SSD — $1,199</option>
       </select>
 
       <div class="config-models grid grid-cols-1 md:grid-cols-2 gap-2 mb-4"></div>
@@ -95,22 +93,18 @@ const schema = [
         </div>
         <div class="text-right">
           <p class="font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-1">From</p>
-          <p class="config-price font-display font-semibold text-2xl text-chalk">$1,399</p>
+          <p class="config-price font-display font-semibold text-2xl text-chalk">$1,599</p>
         </div>
       </div>
 
       <label class="block font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-2">Configuration</label>
       <select class="config-select w-full md:w-auto bg-fog border border-wire text-chalk text-sm rounded-lg px-4 py-2.5 mb-6 cursor-pointer focus:outline-none focus:border-glow-purple"
         data-configs='[
-          {"label":"24 GB · 512 GB SSD","price":1399,"models":["Qwen3.5 27B Q4_K_M — current-gen Alibaba, best at tier","DeepSeek-R1 14B Q4_K_M — auditable chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, structured docs","Gemma 4 31B Q4_K_M — Google, excellent instruction-following","Qwen3.5 9B Q8 — full-precision 9B","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"Hot-load one 14–27B model. Swap to a second in ~15 s."},
-          {"label":"24 GB · 1 TB SSD","price":1599,"models":["Qwen3.5 27B Q4_K_M — current-gen Alibaba, best at tier","DeepSeek-R1 14B Q4_K_M — auditable chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, structured docs","Gemma 4 31B Q4_K_M — Google, excellent instruction-following","Qwen3.5 9B Q8 — full-precision 9B","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"More storage — keep 8–10 models on disk, swap freely."},
-          {"label":"48 GB · 512 GB SSD","price":1999,"models":["Qwen3.5 27B Q8 — full-precision, near-frontier quality","DeepSeek-R1 32B Q4_K_M — deep reasoning with CoT","Gemma 4 31B Q4_K_M — Google, fast and capable","Phi-4 14B Q8 — full-precision, best quality at size","Mistral Small 3 22B Q8 — full-precision mid-size","Two 14B models simultaneously (hot-loaded)"],"note":"First tier for 32B models at Q4. Runs two 14B models simultaneously."},
-          {"label":"48 GB · 1 TB SSD","price":2199,"models":["Qwen3.5 27B Q8 — full-precision, near-frontier quality","DeepSeek-R1 32B Q4_K_M — deep reasoning with CoT","Gemma 4 31B Q4_K_M — Google, fast and capable","Phi-4 14B Q8 — full-precision, best quality at size","Mistral Small 3 22B Q8 — full-precision mid-size","Two 14B models simultaneously (hot-loaded)"],"note":"Recommended config for small-team serving (2–4 users)."}
+          {"label":"24 GB · 512 GB · 12-core CPU","price":1599,"models":["Qwen3.5 27B Q4_K_M — current-gen Alibaba, best at tier","DeepSeek-R1 14B Q4_K_M — auditable chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, structured docs","Gemma 4 31B Q4_K_M — Google, excellent instruction-following","Qwen3.5 9B Q8 — full-precision 9B","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"Base M4 Pro — 12-core CPU / 16-core GPU. Hot-load one 14–27B model; swap to a second in ~15 s. (48 GB / 1–8 TB available to order via the Apple configurator.)"},
+          {"label":"24 GB · 512 GB · 14-core CPU","price":1799,"models":["Qwen3.5 27B Q4_K_M — current-gen Alibaba, best at tier","DeepSeek-R1 14B Q4_K_M — auditable chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, structured docs","Gemma 4 31B Q4_K_M — Google, excellent instruction-following","Qwen3.5 9B Q8 — full-precision 9B","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"Faster 14-core CPU / 20-core GPU — quicker prompt processing and token generation."}
         ]'>
-        <option>24 GB · 512 GB SSD — $1,399</option>
-        <option>24 GB · 1 TB SSD — $1,599</option>
-        <option>48 GB · 512 GB SSD — $1,999</option>
-        <option>48 GB · 1 TB SSD — $2,199</option>
+        <option>24 GB · 512 GB · 12-core CPU — $1,599</option>
+        <option>24 GB · 512 GB · 14-core CPU — $1,799</option>
       </select>
 
       <div class="config-models grid grid-cols-1 md:grid-cols-2 gap-2 mb-4"></div>
@@ -118,30 +112,28 @@ const schema = [
     </div>
 
     <!-- MACBOOK PRO M4 MAX -->
-    <div class="config-card glow-card p-7 md:p-8 mb-6" data-card="mbp-m4-max">
+    <div class="config-card glow-card p-7 md:p-8 mb-6" data-card="mbp-m5">
       <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
         <div>
-          <p class="font-mono text-[0.65rem] tracking-widest uppercase text-ash mb-1">High-end · MacBook Pro</p>
-          <h2 class="font-display font-semibold text-2xl text-chalk">MacBook Pro <span style="color:#4cc9f0;">M4 Max</span></h2>
+          <p class="font-mono text-[0.65rem] tracking-widest uppercase text-ash mb-1">Base · MacBook Pro</p>
+          <h2 class="font-display font-semibold text-2xl text-chalk">MacBook Pro <span style="color:#4cc9f0;">M5</span></h2>
         </div>
         <div class="text-right">
           <p class="font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-1">From</p>
-          <p class="config-price font-display font-semibold text-2xl text-chalk">$2,499</p>
+          <p class="config-price font-display font-semibold text-2xl text-chalk">$1,999</p>
         </div>
       </div>
 
       <label class="block font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-2">Configuration</label>
       <select class="config-select w-full md:w-auto bg-fog border border-wire text-chalk text-sm rounded-lg px-4 py-2.5 mb-6 cursor-pointer focus:outline-none focus:border-glow-purple"
         data-configs='[
-          {"label":"36 GB · 1 TB SSD","price":2499,"models":["Qwen3.5 27B Q8 — full-precision current-gen Alibaba","Gemma 4 31B Q4_K_M — Google, near-frontier quality","DeepSeek-R1 32B Q4_K_M — deep reasoning with CoT","Mistral Small 3 22B Q8 — full-precision 22B","Kimi K2.6 32B Q4_K_M — top-tier open-weight, coding"],"note":"Runs 27–32B class models. Strong step up from Mac mini tier."},
-          {"label":"36 GB · 2 TB SSD","price":2699,"models":["Qwen3.5 27B Q8 — full-precision current-gen Alibaba","Gemma 4 31B Q4_K_M — Google, near-frontier quality","DeepSeek-R1 32B Q4_K_M — deep reasoning with CoT","Mistral Small 3 22B Q8 — full-precision 22B","Kimi K2.6 32B Q4_K_M — top-tier open-weight, coding"],"note":"Recommended for primary work machine — extra storage pays off."},
-          {"label":"64 GB · 1 TB SSD","price":3299,"models":["Kimi K2.6 Q4_K_M — top-tier open-weight (54/100)","Llama 3.3 70B Q4_K_M — Meta flagship, ~12 t/s","DeepSeek-R1 70B Q4_K_M — reasoning with full CoT","Gemma 4 31B Q8 — full-precision Google MoE","Qwen3.5 27B Q8 — full-precision current-gen"],"note":"First tier for 70B-class models at practical speed. Recommended for complex legal/clinical work."},
-          {"label":"64 GB · 2 TB SSD","price":3499,"models":["Kimi K2.6 Q4_K_M — top-tier open-weight (54/100)","Llama 3.3 70B Q4_K_M — Meta flagship, ~12 t/s","DeepSeek-R1 70B Q4_K_M — reasoning with full CoT","Gemma 4 31B Q8 — full-precision Google MoE","Qwen3.5 27B Q8 — full-precision current-gen"],"note":"Best M4 Max config. 70B inference with full room for OS and tools."}
+          {"label":"14-inch · 16 GB · 1 TB SSD","price":1999,"models":["Qwen3.5 27B Q4_K_M — current-gen Alibaba, runs tight in 16 GB","DeepSeek-R1 14B Q4_K_M — auditable chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, structured docs","Gemma 4 31B Q4_K_M — Google MoE, instruction-following","Qwen3.5 9B Q8 — full-precision 9B","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"Base 14-inch M5. Active cooling — sustained inference without throttling, unlike the fanless Air."},
+          {"label":"14-inch · 24 GB · 1 TB SSD","price":2199,"models":["Qwen3.5 27B Q4_K_M — current-gen Alibaba, best at tier","DeepSeek-R1 14B Q4_K_M — auditable chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, structured docs","Gemma 4 31B Q4_K_M — Google, excellent instruction-following","Qwen3.5 9B Q8 — full-precision 9B","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"Recommended base-M5 config. 14–27B models with headroom for OS and tools."},
+          {"label":"14-inch · 32 GB · 1 TB SSD","price":2399,"models":["Qwen3.5 27B Q8 — full-precision, near-frontier quality","DeepSeek-R1 32B Q4_K_M — deep reasoning with CoT","Gemma 4 31B Q4_K_M — Google, fast and capable","Phi-4 14B Q8 — full-precision, best quality at size","Mistral Small 3 22B Q8 — full-precision mid-size","Two 14B models simultaneously (hot-loaded)"],"note":"Top base-M5 config. First portable tier for 32B at Q4 and full-precision 27B."}
         ]'>
-        <option>36 GB · 1 TB SSD — $2,499</option>
-        <option>36 GB · 2 TB SSD — $2,699</option>
-        <option>64 GB · 1 TB SSD — $3,299</option>
-        <option>64 GB · 2 TB SSD — $3,499</option>
+        <option>14-inch · 16 GB · 1 TB SSD — $1,999</option>
+        <option>14-inch · 24 GB · 1 TB SSD — $2,199</option>
+        <option>14-inch · 32 GB · 1 TB SSD — $2,399</option>
       </select>
 
       <div class="config-models grid grid-cols-1 md:grid-cols-2 gap-2 mb-4"></div>
@@ -157,26 +149,30 @@ const schema = [
         </div>
         <div class="text-right">
           <p class="font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-1">From</p>
-          <p class="config-price font-display font-semibold text-2xl text-chalk">$1,099</p>
+          <p class="config-price font-display font-semibold text-2xl text-chalk">$1,299</p>
         </div>
       </div>
 
       <label class="block font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-2">Configuration</label>
       <select class="config-select w-full md:w-auto bg-fog border border-wire text-chalk text-sm rounded-lg px-4 py-2.5 mb-6 cursor-pointer focus:outline-none focus:border-glow-purple"
         data-configs='[
-          {"label":"13-inch · 16 GB · 512 GB SSD","price":1099,"models":["Qwen3.5 9B Q4_K_M — strongest 9B on current benchmarks","Phi-4-mini 3.8B Q8 — fastest, structured tasks","Gemma 4 4B Q8 — Google, excellent instruction-following","DeepSeek-R1 7B Q4_K_M — chain-of-thought reasoning","Qwen3.5 4B Q8 — very fast, solid for simple drafts","Llama 3.2 3B Q8 — lightweight, simple drafts"],"note":"Best portable entry point for local inference. Fanless — runs silently anywhere."},
-          {"label":"13-inch · 16 GB · 1 TB SSD","price":1299,"models":["Qwen3.5 9B Q4_K_M — strongest 9B on current benchmarks","Phi-4-mini 3.8B Q8 — fastest, structured tasks","Gemma 4 4B Q8 — Google, excellent instruction-following","DeepSeek-R1 7B Q4_K_M — chain-of-thought reasoning","Qwen3.5 4B Q8 — very fast, solid for simple drafts","Llama 3.2 3B Q8 — lightweight, simple drafts"],"note":"More storage for keeping several models on disk. Same inference RAM."},
-          {"label":"13-inch · 24 GB · 512 GB SSD","price":1299,"models":["Qwen3.5 27B Q4_K_M — current-gen Alibaba, best at tier","DeepSeek-R1 14B Q4_K_M — chain-of-thought reasoning","Phi-4 14B Q4_K_M — Microsoft, best for structured docs","Gemma 4 31B Q4_K_M — Google, excellent instruction-following","Qwen3.5 9B Q8 — full-precision 9B, noticeably sharper","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"Recommended Air config. 14–27B models at practical speed. Silent, portable, capable."},
-          {"label":"13-inch · 24 GB · 1 TB SSD","price":1499,"models":["Qwen3.5 27B Q4_K_M — current-gen Alibaba, best at tier","DeepSeek-R1 14B Q4_K_M — chain-of-thought reasoning","Phi-4 14B Q4_K_M — Microsoft, best for structured docs","Gemma 4 31B Q4_K_M — Google, excellent instruction-following","Qwen3.5 9B Q8 — full-precision 9B, noticeably sharper","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"Best 13-inch config. Room for a full model library on disk."},
-          {"label":"15-inch · 16 GB · 512 GB SSD","price":1299,"models":["Qwen3.5 9B Q4_K_M — strongest 9B on current benchmarks","Phi-4-mini 3.8B Q8 — fastest, structured tasks","Gemma 4 4B Q8 — excellent instruction-following","DeepSeek-R1 7B Q4_K_M — chain-of-thought reasoning","Qwen3.5 4B Q8 — very fast, solid for simple drafts","Llama 3.2 3B Q8 — lightweight, simple drafts"],"note":"Larger display, same inference capability as 13-inch 16 GB."},
-          {"label":"15-inch · 24 GB · 1 TB SSD","price":1699,"models":["Qwen3.5 27B Q4_K_M — current-gen Alibaba, best at tier","DeepSeek-R1 14B Q4_K_M — chain-of-thought reasoning","Phi-4 14B Q4_K_M — Microsoft, best for structured docs","Gemma 4 31B Q4_K_M — Google, excellent instruction-following","Qwen3.5 9B Q8 — full-precision 9B, noticeably sharper","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"Best 15-inch config. Larger screen for reviewing model output alongside source documents."}
+          {"label":"13-inch · 16 GB · 512 GB SSD","price":1299,"models":["Qwen3.5 9B Q4_K_M — strongest 9B on current benchmarks","Phi-4-mini 3.8B Q8 — fastest, structured tasks","Gemma 4 4B Q8 — Google, excellent instruction-following","DeepSeek-R1 7B Q4_K_M — chain-of-thought reasoning","Qwen3.5 4B Q8 — very fast, solid for simple drafts","Llama 3.2 3B Q8 — lightweight, simple drafts"],"note":"Best portable entry point — 10-core CPU / 8-core GPU. Fanless, silent anywhere."},
+          {"label":"13-inch · 24 GB · 512 GB SSD","price":1499,"models":["Qwen3.5 27B Q4_K_M — current-gen Alibaba, best at tier","DeepSeek-R1 14B Q4_K_M — chain-of-thought reasoning","Phi-4 14B Q4_K_M — Microsoft, best for structured docs","Gemma 4 31B Q4_K_M — Google, excellent instruction-following","Qwen3.5 9B Q8 — full-precision 9B, noticeably sharper","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"Recommended 13-inch Air — 10-core GPU. 14–27B models at practical speed."},
+          {"label":"13-inch · 16 GB · 1 TB SSD","price":1599,"models":["Qwen3.5 9B Q4_K_M — strongest 9B on current benchmarks","Phi-4-mini 3.8B Q8 — fastest, structured tasks","Gemma 4 4B Q8 — Google, excellent instruction-following","DeepSeek-R1 7B Q4_K_M — chain-of-thought reasoning","Qwen3.5 4B Q8 — very fast, solid for simple drafts","Llama 3.2 3B Q8 — lightweight, simple drafts"],"note":"More storage for a full model library on disk. 10-core GPU."},
+          {"label":"13-inch · 24 GB · 1 TB SSD","price":1799,"models":["Qwen3.5 27B Q4_K_M — current-gen Alibaba, best at tier","DeepSeek-R1 14B Q4_K_M — chain-of-thought reasoning","Phi-4 14B Q4_K_M — Microsoft, best for structured docs","Gemma 4 31B Q4_K_M — Google, excellent instruction-following","Qwen3.5 9B Q8 — full-precision 9B, noticeably sharper","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"Best 13-inch config. 24 GB + room for many models on disk."},
+          {"label":"15-inch · 16 GB · 512 GB SSD","price":1499,"models":["Qwen3.5 9B Q4_K_M — strongest 9B on current benchmarks","Phi-4-mini 3.8B Q8 — fastest, structured tasks","Gemma 4 4B Q8 — Google, excellent instruction-following","DeepSeek-R1 7B Q4_K_M — chain-of-thought reasoning","Qwen3.5 4B Q8 — very fast, solid for simple drafts","Llama 3.2 3B Q8 — lightweight, simple drafts"],"note":"Larger display, same inference capability as the 13-inch 16 GB."},
+          {"label":"15-inch · 24 GB · 512 GB SSD","price":1699,"models":["Qwen3.5 27B Q4_K_M — current-gen Alibaba, best at tier","DeepSeek-R1 14B Q4_K_M — chain-of-thought reasoning","Phi-4 14B Q4_K_M — Microsoft, best for structured docs","Gemma 4 31B Q4_K_M — Google, excellent instruction-following","Qwen3.5 9B Q8 — full-precision 9B, noticeably sharper","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"15-inch with 24 GB — review long documents alongside model output."},
+          {"label":"15-inch · 16 GB · 1 TB SSD","price":1799,"models":["Qwen3.5 9B Q4_K_M — strongest 9B on current benchmarks","Phi-4-mini 3.8B Q8 — fastest, structured tasks","Gemma 4 4B Q8 — Google, excellent instruction-following","DeepSeek-R1 7B Q4_K_M — chain-of-thought reasoning","Qwen3.5 4B Q8 — very fast, solid for simple drafts","Llama 3.2 3B Q8 — lightweight, simple drafts"],"note":"15-inch, 16 GB, full model library on disk."},
+          {"label":"15-inch · 24 GB · 1 TB SSD","price":1999,"models":["Qwen3.5 27B Q4_K_M — current-gen Alibaba, best at tier","DeepSeek-R1 14B Q4_K_M — chain-of-thought reasoning","Phi-4 14B Q4_K_M — Microsoft, best for structured docs","Gemma 4 31B Q4_K_M — Google, excellent instruction-following","Qwen3.5 9B Q8 — full-precision 9B, noticeably sharper","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"Best 15-inch config. Larger screen for reviewing model output alongside source documents."}
         ]'>
-        <option>13-inch · 16 GB · 512 GB SSD — $1,099</option>
-        <option>13-inch · 16 GB · 1 TB SSD — $1,299</option>
-        <option>13-inch · 24 GB · 512 GB SSD — $1,299</option>
-        <option>13-inch · 24 GB · 1 TB SSD — $1,499</option>
-        <option>15-inch · 16 GB · 512 GB SSD — $1,299</option>
-        <option>15-inch · 24 GB · 1 TB SSD — $1,699</option>
+        <option>13-inch · 16 GB · 512 GB SSD — $1,299</option>
+        <option>13-inch · 24 GB · 512 GB SSD — $1,499</option>
+        <option>13-inch · 16 GB · 1 TB SSD — $1,599</option>
+        <option>13-inch · 24 GB · 1 TB SSD — $1,799</option>
+        <option>15-inch · 16 GB · 512 GB SSD — $1,499</option>
+        <option>15-inch · 24 GB · 512 GB SSD — $1,699</option>
+        <option>15-inch · 16 GB · 1 TB SSD — $1,799</option>
+        <option>15-inch · 24 GB · 1 TB SSD — $1,999</option>
       </select>
 
       <div class="config-models grid grid-cols-1 md:grid-cols-2 gap-2 mb-4"></div>
@@ -192,28 +188,26 @@ const schema = [
         </div>
         <div class="text-right">
           <p class="font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-1">From</p>
-          <p class="config-price font-display font-semibold text-2xl text-chalk">$2,199</p>
+          <p class="config-price font-display font-semibold text-2xl text-chalk">$2,499</p>
         </div>
       </div>
 
       <label class="block font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-2">Configuration</label>
       <select class="config-select w-full md:w-auto bg-fog border border-wire text-chalk text-sm rounded-lg px-4 py-2.5 mb-6 cursor-pointer focus:outline-none focus:border-glow-purple"
         data-configs='[
-          {"label":"14-inch · 24 GB · 1 TB SSD","price":2199,"models":["Qwen3.5 27B Q4_K_M — current-gen Alibaba, best at tier","DeepSeek-R1 14B Q4_K_M — auditable chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, structured docs","Gemma 4 31B Q4_K_M — Google, excellent instruction-following","Qwen3.5 9B Q8 — full-precision 9B","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"Base M5 Pro. Active cooling means sustained inference without throttling — unlike the fanless Air."},
-          {"label":"14-inch · 24 GB · 2 TB SSD","price":2399,"models":["Qwen3.5 27B Q4_K_M — current-gen Alibaba, best at tier","DeepSeek-R1 14B Q4_K_M — auditable chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, structured docs","Gemma 4 31B Q4_K_M — Google, excellent instruction-following","Qwen3.5 9B Q8 — full-precision 9B","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"Extra storage for keeping a full model library on disk. Same RAM as base."},
-          {"label":"14-inch · 48 GB · 1 TB SSD","price":2799,"models":["Qwen3.5 27B Q8 — full-precision, near-frontier quality","DeepSeek-R1 32B Q4_K_M — deep reasoning with CoT","Gemma 4 31B Q4_K_M — Google, fast and capable","Phi-4 14B Q8 — full-precision, best quality at size","Mistral Small 3 22B Q8 — full-precision mid-size","Two 14B models simultaneously (hot-loaded)"],"note":"Recommended M5 Pro config. First portable tier for 32B models and full-precision 27B."},
-          {"label":"14-inch · 48 GB · 2 TB SSD","price":2999,"models":["Qwen3.5 27B Q8 — full-precision, near-frontier quality","DeepSeek-R1 32B Q4_K_M — deep reasoning with CoT","Gemma 4 31B Q4_K_M — Google, fast and capable","Phi-4 14B Q8 — full-precision, best quality at size","Mistral Small 3 22B Q8 — full-precision mid-size","Two 14B models simultaneously (hot-loaded)"],"note":"Best 14-inch portable for serious inference work. Full model library on disk."},
-          {"label":"16-inch · 24 GB · 1 TB SSD","price":2699,"models":["Qwen3.5 27B Q4_K_M — current-gen Alibaba, best at tier","DeepSeek-R1 14B Q4_K_M — auditable chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, structured docs","Gemma 4 31B Q4_K_M — Google, excellent instruction-following","Qwen3.5 9B Q8 — full-precision 9B","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"Larger display, same 24 GB capability. Better for reviewing long documents alongside output."},
-          {"label":"16-inch · 48 GB · 1 TB SSD","price":3299,"models":["Qwen3.5 27B Q8 — full-precision, near-frontier quality","DeepSeek-R1 32B Q4_K_M — deep reasoning with CoT","Gemma 4 31B Q4_K_M — Google, fast and capable","Phi-4 14B Q8 — full-precision, best quality at size","Mistral Small 3 22B Q8 — full-precision mid-size","Two 14B models simultaneously (hot-loaded)"],"note":"Best all-around portable for regulated-industry work. 32B inference + large display."},
-          {"label":"16-inch · 48 GB · 2 TB SSD","price":3499,"models":["Qwen3.5 27B Q8 — full-precision, near-frontier quality","DeepSeek-R1 32B Q4_K_M — deep reasoning with CoT","Gemma 4 31B Q4_K_M — Google, fast and capable","Phi-4 14B Q8 — full-precision, best quality at size","Mistral Small 3 22B Q8 — full-precision mid-size","Two 14B models simultaneously (hot-loaded)"],"note":"Top 16-inch M5 Pro config. Recommended for small-team serving (2–4 users)."}
+          {"label":"14-inch · 24 GB · 1 TB · 15-core CPU","price":2499,"models":["Qwen3.5 27B Q4_K_M — current-gen Alibaba, best at tier","DeepSeek-R1 14B Q4_K_M — auditable chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, structured docs","Gemma 4 31B Q4_K_M — Google, excellent instruction-following","Qwen3.5 9B Q8 — full-precision 9B","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"Base M5 Pro — 15-core CPU / 16-core GPU. Active cooling for sustained inference, unlike the fanless Air."},
+          {"label":"14-inch · 24 GB · 2 TB · 15-core CPU","price":2999,"models":["Qwen3.5 27B Q4_K_M — current-gen Alibaba, best at tier","DeepSeek-R1 14B Q4_K_M — auditable chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, structured docs","Gemma 4 31B Q4_K_M — Google, excellent instruction-following","Qwen3.5 9B Q8 — full-precision 9B","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"More storage for a full model library on disk. Same RAM as base."},
+          {"label":"14-inch · 24 GB · 2 TB · 18-core CPU","price":3199,"models":["Qwen3.5 27B Q4_K_M — current-gen Alibaba, best at tier","DeepSeek-R1 14B Q4_K_M — auditable chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, structured docs","Gemma 4 31B Q4_K_M — Google, excellent instruction-following","Qwen3.5 9B Q8 — full-precision 9B","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"Faster 18-core CPU / 20-core GPU — quicker prompt processing and token generation."},
+          {"label":"16-inch · 24 GB · 1 TB · 18-core CPU","price":2999,"models":["Qwen3.5 27B Q4_K_M — current-gen Alibaba, best at tier","DeepSeek-R1 14B Q4_K_M — auditable chain-of-thought","Phi-4 14B Q4_K_M — Microsoft, structured docs","Gemma 4 31B Q4_K_M — Google, excellent instruction-following","Qwen3.5 9B Q8 — full-precision 9B","Mistral Small 3 22B Q4_K_M — reliable mid-size"],"note":"16-inch display, 18-core M5 Pro. Better for reviewing long documents alongside output."},
+          {"label":"16-inch · 48 GB · 1 TB · 18-core CPU","price":3599,"models":["Qwen3.5 27B Q8 — full-precision, near-frontier quality","DeepSeek-R1 32B Q4_K_M — deep reasoning with CoT","Gemma 4 31B Q4_K_M — Google, fast and capable","Phi-4 14B Q8 — full-precision, best quality at size","Mistral Small 3 22B Q8 — full-precision mid-size","Two 14B models simultaneously (hot-loaded)"],"note":"First M5 Pro tier for 48 GB — 32B at Q8, two 14B models simultaneously."},
+          {"label":"14-inch · 48 GB · 2 TB · nano-texture","price":3949,"models":["Qwen3.5 27B Q8 — full-precision, near-frontier quality","DeepSeek-R1 32B Q4_K_M — deep reasoning with CoT","Gemma 4 31B Q4_K_M — Google, fast and capable","Phi-4 14B Q8 — full-precision, best quality at size","Mistral Small 3 22B Q8 — full-precision mid-size","Two 14B models simultaneously (hot-loaded)"],"note":"Top 14-inch M5 Pro. 48 GB + nano-texture display."}
         ]'>
-        <option>14-inch · 24 GB · 1 TB SSD — $2,199</option>
-        <option>14-inch · 24 GB · 2 TB SSD — $2,399</option>
-        <option>14-inch · 48 GB · 1 TB SSD — $2,799</option>
-        <option>14-inch · 48 GB · 2 TB SSD — $2,999</option>
-        <option>16-inch · 24 GB · 1 TB SSD — $2,699</option>
-        <option>16-inch · 48 GB · 1 TB SSD — $3,299</option>
-        <option>16-inch · 48 GB · 2 TB SSD — $3,499</option>
+        <option>14-inch · 24 GB · 1 TB · 15-core — $2,499</option>
+        <option>14-inch · 24 GB · 2 TB · 15-core — $2,999</option>
+        <option>14-inch · 24 GB · 2 TB · 18-core — $3,199</option>
+        <option>16-inch · 24 GB · 1 TB · 18-core — $2,999</option>
+        <option>16-inch · 48 GB · 1 TB · 18-core — $3,599</option>
+        <option>14-inch · 48 GB · 2 TB · nano-texture — $3,949</option>
       </select>
 
       <div class="config-models grid grid-cols-1 md:grid-cols-2 gap-2 mb-4"></div>
@@ -229,33 +223,23 @@ const schema = [
         </div>
         <div class="text-right">
           <p class="font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-1">From</p>
-          <p class="config-price font-display font-semibold text-2xl text-chalk">$3,899</p>
+          <p class="config-price font-display font-semibold text-2xl text-chalk">$4,099</p>
         </div>
       </div>
-      <p class="text-ash text-xs font-mono mb-6">16-inch · 18-core CPU · All prices are Apple US list price before tax.</p>
+      <p class="text-ash text-xs font-mono mb-6">14-inch from $4,099 · 16-inch from $4,399 · All prices are Apple US list price before tax.</p>
 
       <label class="block font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-2">Configuration</label>
       <select class="config-select w-full md:w-auto bg-fog border border-wire text-chalk text-sm rounded-lg px-4 py-2.5 mb-6 cursor-pointer focus:outline-none focus:border-glow-purple"
         data-configs='[
-          {"label":"36 GB · 2 TB · 32-core GPU","price":3899,"models":["Kimi K2.6 32B Q4_K_M — top-tier open-weight benchmark","Gemma 4 31B Q4_K_M — Google MoE, blazing fast","DeepSeek-R1 32B Q4_K_M — reasoning with chain-of-thought","Qwen3.5 27B Q8 — full-precision current-gen","Mistral Small 3 22B Q8 — reliable full-precision mid-size"],"note":"Base M5 Max. Strong 32B inference. Fast for team serving."},
-          {"label":"48 GB · 2 TB · 40-core GPU","price":4399,"models":["Kimi K2.6 32B Q8 — full-precision, top-tier open-weight","Gemma 4 31B Q8 — full-precision Google MoE","DeepSeek-R1 32B Q8 — full-precision reasoning","Llama 3.3 70B Q4_K_M — 70B at practical speed (~14 t/s)","Two 27B models simultaneously (hot-loaded)"],"note":"40-core GPU baseline. First M5 Max tier for 70B at practical speed."},
-          {"label":"64 GB · 2 TB · 40-core GPU","price":4599,"models":["Kimi K2.6 Q4_K_M — top-tier open-weight (~16 t/s)","Llama 3.3 70B Q4_K_M — ~16 t/s","DeepSeek-R1 70B Q4_K_M — best open reasoning","Gemma 4 31B Q8 — full-precision, very fast","Qwen3.5 27B Q8 — full-precision current-gen"],"note":"Headroom for 70B + OS + tools simultaneously. Good team server."},
-          {"label":"128 GB · 2 TB · 40-core GPU","price":5499,"models":["Kimi K2.6 Q4_K_M — top-tier open-weight (54/100)","Kimi K2.6 Q8 — full-precision, highest quality (~18 t/s)","Llama 3.3 70B Q8 — full-precision Meta flagship","DeepSeek-R1 70B Q8 — full-precision reasoning","Qwen3.5 122B A10B Q4_K_M — 122B MoE, fits in ~61 GB","Two 70B models simultaneously (hot-loaded)"],"note":"128 GB tier, standard display. Three 70B models hot-loaded simultaneously."},
-          {"label":"128 GB · 2 TB · nano-texture","price":5649,"models":["Kimi K2.6 Q4_K_M — top-tier open-weight (54/100)","Kimi K2.6 Q8 — full-precision, highest quality","Llama 3.3 70B Q8 — full-precision Meta flagship","DeepSeek-R1 70B Q8 — full-precision reasoning","Qwen3.5 122B A10B Q4_K_M — 122B MoE, fits in ~61 GB","Two 70B models simultaneously (hot-loaded)"],"note":"128 GB, nano-texture display. Same inference performance."},
-          {"label":"128 GB · 4 TB · 40-core GPU","price":5799,"models":["Kimi K2.6 Q8 — full-precision, top-tier open-weight","Llama 3.3 70B Q8 — full-precision 70B","DeepSeek-R1 70B Q8 — full-precision reasoning","Qwen3.5 122B A10B Q4_K_M — 122B MoE","Gemma 4 31B Q8 + Qwen3.5 27B Q8 (simultaneously)","Three 70B models hot-loaded simultaneously"],"note":"Extra storage for full model library. Same inference speed as 2 TB."},
-          {"label":"128 GB · 4 TB · nano-texture","price":5949,"models":["Kimi K2.6 Q8 — full-precision, top-tier open-weight","Llama 3.3 70B Q8 — full-precision 70B","DeepSeek-R1 70B Q8 — full-precision reasoning","Qwen3.5 122B A10B Q4_K_M — 122B MoE","Gemma 4 31B Q8 + Qwen3.5 27B Q8 (simultaneously)","Three 70B models hot-loaded simultaneously"],"note":"Most popular high-end config. Nano display + full model library storage."},
-          {"label":"128 GB · 8 TB · standard display","price":7199,"models":["Entire open-weight model library fits on disk","Kimi K2.6 Q8 + Llama 3.3 70B Q8 (simultaneously)","DeepSeek-R1 70B Q8","Qwen3.5 122B A10B Q4_K_M — 122B MoE","MiMo-V2.5-Pro Q4_K_M — Xiaomi, 54/100 on benchmark","FP16 models possible via TB5 cluster"],"note":"The Ground Floor lab config. Maximum storage — keep every major open-weight model on disk."},
-          {"label":"128 GB · 8 TB · nano-texture","price":7349,"models":["Entire open-weight model library fits on disk","Kimi K2.6 Q8 + Llama 3.3 70B Q8 (simultaneously)","DeepSeek-R1 70B Q8","Qwen3.5 122B A10B Q4_K_M — 122B MoE","MiMo-V2.5-Pro Q4_K_M — Xiaomi, 54/100 on benchmark","FP16 models possible via TB5 cluster"],"note":"Maxed out. $7,349 list price before tax. Nano display + full model library."}
+          {"label":"14-inch · 36 GB · 2 TB · 32-core GPU","price":4099,"models":["Kimi K2.6 32B Q4_K_M — top-tier open-weight benchmark","Gemma 4 31B Q4_K_M — Google MoE, blazing fast","DeepSeek-R1 32B Q4_K_M — reasoning with chain-of-thought","Qwen3.5 27B Q8 — full-precision current-gen","Mistral Small 3 22B Q8 — reliable full-precision mid-size"],"note":"Base M5 Max — 14-inch, 32-core GPU. Strong 32B inference; fast for team serving."},
+          {"label":"16-inch · 36 GB · 2 TB · 32-core GPU","price":4399,"models":["Kimi K2.6 32B Q4_K_M — top-tier open-weight benchmark","Gemma 4 31B Q4_K_M — Google MoE, blazing fast","DeepSeek-R1 32B Q4_K_M — reasoning with chain-of-thought","Qwen3.5 27B Q8 — full-precision current-gen","Mistral Small 3 22B Q8 — reliable full-precision mid-size"],"note":"16-inch M5 Max base. Larger display, same 32-core GPU."},
+          {"label":"16-inch · 48 GB · 2 TB · 40-core GPU","price":4999,"models":["Kimi K2.6 32B Q8 — full-precision, top-tier open-weight","Gemma 4 31B Q8 — full-precision Google MoE","DeepSeek-R1 32B Q8 — full-precision reasoning","Llama 3.3 70B Q4_K_M — 70B at practical speed (~16 t/s)","Two 27B models simultaneously (hot-loaded)"],"note":"40-core GPU + 48 GB. First M5 Max tier for 70B at practical speed."},
+          {"label":"128 GB · 8 TB · 40-core GPU — Lab config","price":10000,"models":["Entire open-weight model library fits on disk","Kimi K2.6 Q8 + Llama 3.3 70B Q8 (simultaneously)","DeepSeek-R1 70B Q8","Qwen3.5 122B A10B Q4_K_M — 122B MoE","MiMo-V2.5-Pro Q4_K_M — Xiaomi, 54/100 on benchmark","FP16 models possible via TB5 cluster"],"note":"★ The Ground Floor lab config — 128 GB + 8 TB, fully maxed. 128 GB is configurator-only; ≈$10K each at current post-hike Apple pricing."}
         ]'>
-        <option>36 GB · 2 TB · 32-core GPU — $3,899</option>
-        <option>48 GB · 2 TB · 40-core GPU — $4,399</option>
-        <option>64 GB · 2 TB · 40-core GPU — $4,599</option>
-        <option>128 GB · 2 TB · standard display — $5,499</option>
-        <option>128 GB · 2 TB · nano-texture — $5,649</option>
-        <option>128 GB · 4 TB · standard display — $5,799</option>
-        <option>128 GB · 4 TB · nano-texture — $5,949</option>
-        <option>128 GB · 8 TB · standard display — $7,199 ★ Lab config</option>
-        <option>128 GB · 8 TB · nano-texture — $7,349</option>
+        <option>14-inch · 36 GB · 2 TB · 32-core GPU — $4,099</option>
+        <option>16-inch · 36 GB · 2 TB · 32-core GPU — $4,399</option>
+        <option>16-inch · 48 GB · 2 TB · 40-core GPU — $4,999</option>
+        <option>128 GB · 8 TB · 40-core GPU — ~$10,000 ★ Lab config</option>
       </select>
 
       <div class="config-models grid grid-cols-1 md:grid-cols-2 gap-2 mb-4"></div>
@@ -305,9 +289,9 @@ const schema = [
           <tbody>
             {[
               { label: 'Mac mini M4 16 GB', price: '$799',   gpt: '4 months', claude: '8 months' },
-              { label: 'Mac mini M4 24 GB', price: '$999', gpt: '5 months', claude: '10 months' },
-              { label: 'MacBook Air M5 24 GB', price: '$1,299', gpt: '7 months', claude: '13 months' },
-              { label: 'MacBook Pro M5 Pro 48 GB', price: '$2,799', gpt: '14 months', claude: '28 months' },
+              { label: 'Mac mini M4 24 GB', price: '$1,199', gpt: '6 months', claude: '12 months' },
+              { label: 'MacBook Air M5 24 GB', price: '$1,499', gpt: '7 months', claude: '15 months' },
+              { label: 'MacBook Pro M5 Pro 48 GB', price: '$3,599', gpt: '18 months', claude: '36 months' },
             ].map((row, i) => (
               <tr style={`border-bottom:1px solid #2a2a2d;${i % 2 === 0 ? '' : 'background:rgba(255,255,255,0.01);'}`}>
                 <td class="px-5 py-4 text-chalk font-medium">{row.label}</td>
@@ -353,11 +337,11 @@ const schema = [
               <p class="font-display font-semibold text-chalk text-lg mb-0.5">256 GB cluster</p>
               <p class="font-mono text-[0.65rem] text-ash">2× M5 Max 128 GB / 8 TB · TB5 RDMA</p>
             </div>
-            <p class="font-display font-semibold text-xl" style="color:#9b5de5;">~$15,400</p>
+            <p class="font-display font-semibold text-xl" style="color:#9b5de5;">~$21,000</p>
           </div>
           <div class="space-y-1.5 mb-4">
             {[
-              ['2× MBP M5 Max 128 GB / 8 TB', '$14,398'],
+              ['2× MBP M5 Max 128 GB / 8 TB', '$20,000'],
               ['2× AppleCare+ (3-yr)', '$900'],
               ['TB5 cables', '~$100'],
             ].map(([label, price]) => (
