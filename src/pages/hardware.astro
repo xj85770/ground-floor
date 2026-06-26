@@ -312,9 +312,9 @@ const schema = [
     <!-- Scaling roadmap -->
     <section class="border-t border-wire pt-12">
       <p class="font-mono text-[0.65rem] tracking-[0.18em] uppercase mb-3" style="color:#4cc9f0;">Lab roadmap</p>
-      <h2 class="font-display text-2xl font-semibold tracking-tight text-chalk mb-2">Scaling to 2 TB unified memory</h2>
+      <h2 class="font-display text-2xl font-semibold tracking-tight text-chalk mb-2">Scaling to 3 TB unified memory</h2>
       <p class="text-silver text-sm max-w-xl leading-relaxed mb-10">
-        The current two-node setup is a step on a longer path. I'm building toward 2 TB of unified memory, 
+        The current two-node setup is a step on a longer path. I'm building toward 3 TB of unified memory,
         enough to run full-precision inference on the largest open-weight models that exist.
         The goal isn't scale for its own sake. It's running the best possible models without asking a vendor for permission.
       </p>
@@ -377,16 +377,16 @@ const schema = [
           </div>
           <div class="flex items-baseline justify-between mb-4">
             <div>
-              <p class="font-display font-semibold text-chalk text-lg mb-0.5">Two 1 TB nodes</p>
-              <p class="font-mono text-[0.65rem] text-ash">8× M5 Ultra Mac Studio 256 GB</p>
+              <p class="font-display font-semibold text-chalk text-lg mb-0.5">3 TB cluster</p>
+              <p class="font-mono text-[0.65rem] text-ash">4× M5 Ultra Mac Studio 768 GB</p>
             </div>
-            <p class="font-display font-semibold text-xl text-ash">~$56–72K</p>
+            <p class="font-display font-semibold text-xl text-ash">~$54–67K</p>
           </div>
           <div class="space-y-1.5 mb-4">
             {[
-              ['8× M5 Ultra 256 GB Mac Studio', '~$6.5–8K ea.*'],
-              ['8× AppleCare+', '~$2.4K'],
-              ['TB5 cables + hubs', '~$1–2K'],
+              ['4× M5 Ultra 768 GB Mac Studio', '~$13–16K ea.*'],
+              ['4× AppleCare+', '~$1.2K'],
+              ['TB5 cables + hubs', '~$1K'],
             ].map(([label, price]) => (
               <div class="flex items-center justify-between text-xs">
                 <span class="text-ash">{label}</span>
@@ -396,9 +396,9 @@ const schema = [
           </div>
           <div class="border-t pt-3 space-y-1.5" style="border-color:#2a2a2d;">
             {[
-              '4 machines × 256 GB = 1 TB per node',
-              '2 nodes · TB5 RDMA · ~1.97 TB usable',
-              'Full-precision 400B+ dense models',
+              '2 machines × 768 GB = 1.5 TB per node',
+              '2 nodes · TB5 RDMA · ~2.95 TB usable',
+              'FP16 inference on 671B+ models, with headroom',
             ].map(item => (
               <div class="flex items-start gap-2 text-xs text-ash">
                 <span style="color:#4cc9f0;flex-shrink:0;">·</span>
@@ -414,21 +414,21 @@ const schema = [
             <div class="flex items-center gap-2">
               <span class="w-5 h-5 rounded-full flex items-center justify-center text-[0.6rem] font-mono font-bold flex-shrink-0"
                     style="background:rgba(232,121,249,0.08);border:1px solid rgba(232,121,249,0.2);color:#e879f9;">3</span>
-              <span class="font-mono text-[0.6rem] tracking-widest uppercase text-ash">Goal · full 2 TB cluster</span>
+              <span class="font-mono text-[0.6rem] tracking-widest uppercase text-ash">Goal · 3 TB cluster live</span>
             </div>
             <span class="font-mono text-[0.6rem] tracking-widest uppercase text-ash">Est. on release</span>
           </div>
           <div class="flex items-baseline justify-between mb-4">
             <div>
-              <p class="font-display font-semibold text-chalk text-lg mb-0.5">2 TB unified memory</p>
-              <p class="font-mono text-[0.65rem] text-ash">Both 1 TB nodes active · full cluster</p>
+              <p class="font-display font-semibold text-chalk text-lg mb-0.5">3 TB unified memory</p>
+              <p class="font-mono text-[0.65rem] text-ash">4× M5 Ultra 768 GB · fully air-gapped</p>
             </div>
-            <p class="font-display font-semibold text-xl text-ash">~$112–144K</p>
+            <p class="font-display font-semibold text-xl text-ash">~$54–67K</p>
           </div>
           <div class="space-y-1.5 mb-4">
             {[
-              ['2× Step 2 node build-out', '~$56–72K ea.'],
-              ['vs. H100 80 GB × 16 (equiv. VRAM)', '>$400K'],
+              ['4× M5 Ultra 768 GB · the rig', '~$54–67K'],
+              ['vs. H100 80 GB × ~38 (equiv. memory)', '>$950K'],
             ].map(([label, price]) => (
               <div class="flex items-center justify-between text-xs">
                 <span class="text-ash">{label}</span>
@@ -453,9 +453,9 @@ const schema = [
       </div>
 
       <p class="text-xs text-ash leading-relaxed max-w-2xl">
-        * M5 Ultra Mac Studio has not been released as of May 2026, expected mid-to-late 2026.
-        Price estimates are inferred from current M4 Ultra Mac Studio pricing (~$6–8K for 256 GB configs) and Apple's historical Max→Ultra step-up pattern.
-        Actual prices will differ. Apple pulled the 512 GB Mac Studio option in March 2026 due to DRAM supply constraints, so 256 GB per machine is the realistic ceiling for this generation.
+        * M5 Ultra Mac Studio is unannounced. A June 2026 Bloomberg report says Apple has tested support for up to 768 GB of unified memory, with a possible launch around October 2026.
+        Pricing is speculative: there is no Apple price yet. These figures extrapolate from the M3 Ultra 512 GB config (~$9.6–10.9K before Apple pulled it) and the historical Max→Ultra step-up. During the current DRAM shortage the 768 GB option may be supply-limited or arrive after the base configs.
+        Actual prices and availability will differ.
         The H100 comparison is for equivalent unified memory capacity at datacenter GPU list pricing, not a performance comparison.
         Experiments at each tier will be documented here as they run.
       </p>
