@@ -12,7 +12,7 @@ import {
 } from '../lib/artificialanalysis';
 
 function getRamLabel(gb: number | null): { text: string; color: string; bg: string; border: string } {
-  if (gb === null) return { text: '—', color: '#6e6e73', bg: 'transparent', border: 'transparent' };
+  if (gb === null) return { text: ', ', color: '#6e6e73', bg: 'transparent', border: 'transparent' };
   if (gb <= 16)  return { text: `${gb} GB`,  color: '#34d399', bg: 'rgba(52,211,153,0.10)',  border: 'rgba(52,211,153,0.25)' };
   if (gb <= 36)  return { text: `${gb} GB`,  color: '#34d399', bg: 'rgba(52,211,153,0.10)',  border: 'rgba(52,211,153,0.25)' };
   if (gb <= 64)  return { text: `${gb} GB`,  color: '#60a5fa', bg: 'rgba(96,165,250,0.10)',  border: 'rgba(96,165,250,0.25)' };
@@ -64,7 +64,7 @@ const buildDate = new Date().toLocaleDateString('en-US', {
 ---
 
 <Base
-  title="Open-Source vs Closed — Model Rankings by Task"
+  title="Open-Source vs Closed, Model Rankings by Task"
   description="Head-to-head: open-weight vs closed models on SWE, agentic, reasoning, clinical, legal. Which open model competes with GPT-4.1? Rebuilt every 12 hours from artificialanalysis.ai."
   schema={[
     dataset({ site: Astro.site, path: '/models', name: 'Open-weight LLM leaderboard by task', description: 'Open-weight vs closed model rankings across coding, agentic, reasoning, clinical, and legal tasks, with minimum RAM and tokens/sec for Apple Silicon. Refreshed from artificialanalysis.ai.' }),
@@ -81,7 +81,7 @@ const buildDate = new Date().toLocaleDateString('en-US', {
         Open vs closed.<br />Which task. Which model.
       </h1>
       <p class="text-silver mt-5 max-w-xl leading-relaxed reveal">
-        Open-weight models ranked next to their closed-source counterparts — by task.
+        We rank open-weight models next to their closed-source counterparts, by task.
         SWE is not agentic. Agentic is not reasoning. The picks update automatically
         from artificialanalysis.ai every 12 hours.
       </p>
@@ -103,7 +103,7 @@ const buildDate = new Date().toLocaleDateString('en-US', {
     <section class="mb-20">
       <h2 class="font-display text-2xl font-semibold text-chalk mb-2 reveal">Head-to-head by task</h2>
       <p class="text-silver text-sm mb-3 reveal">
-        Open-weight models in purple, closed APIs in grey. The closed scores are here for scale only — using them means your data leaves the building.
+        Purple rows are open-weight, grey are closed APIs. The closed scores are here for scale only. Using them means your data leaves the building.
       </p>
       <p class="text-xs text-ash mb-10 reveal inline-flex items-center gap-2">
         Scores are on a 0–100 scale (Artificial Analysis Intelligence Index).
@@ -111,13 +111,13 @@ const buildDate = new Date().toLocaleDateString('en-US', {
           <span class="info-tip-icon">i</span>
           <span class="info-tip-body">
             <strong style="color:#e5e5ea; display:block; margin-bottom:6px;">Why are scores only 40–60?</strong>
-            The 0–100 scale is based on benchmarks so hard that no AI has scored above 60 yet. The current world record is GPT-5.5 at 60.<br /><br />
+            The 0–100 scale is based on benchmarks so hard that no AI has scored above 60 yet. Today's world record is GPT-5.5 at 60.<br /><br />
             These benchmarks are designed to find failure modes, not measure everyday capability:<br /><br />
-            <span style="color:#e5e5ea;">· Humanity's Last Exam</span> — expert-contributed questions specifically designed to stump AI<br />
-            <span style="color:#e5e5ea;">· GPQA Diamond</span> — PhD-level science problems<br />
-            <span style="color:#e5e5ea;">· SciCode</span> — write research-grade scientific code<br />
-            <span style="color:#e5e5ea;">· Terminal-Bench Hard</span> — shell commands that actually run<br /><br />
-            For everyday tasks — writing, summarizing, drafting docs — models perform far better than these scores suggest. The benchmarks exist to reveal what's still broken, not what already works.
+            <span style="color:#e5e5ea;">· Humanity's Last Exam</span>, expert-contributed questions specifically designed to stump AI<br />
+            <span style="color:#e5e5ea;">· GPQA Diamond</span>, PhD-level science problems<br />
+            <span style="color:#e5e5ea;">· SciCode</span>, write research-grade scientific code<br />
+            <span style="color:#e5e5ea;">· Terminal-Bench Hard</span>, shell commands that actually run<br /><br />
+            For everyday tasks, writing, summarizing, drafting docs, models perform far better than these scores suggest. The benchmarks exist to reveal what's still broken, not what already works.
           </span>
         </span>
       </p>
@@ -177,8 +177,8 @@ const buildDate = new Date().toLocaleDateString('en-US', {
       </div>
 
       <p class="mt-6 text-xs text-ash leading-relaxed reveal">
-        Scores approximate task-specific benchmarks from artificialanalysis.ai (SWEbench, GPQA, MMLU-Pro, and coding evals).
-        Closed-source models shown for scale only — they require API keys and route your data through third-party servers.
+        These scores approximate task-specific benchmarks from artificialanalysis.ai (SWEbench, GPQA, MMLU-Pro, and coding evals).
+        Closed-source models are shown for scale only: they require API keys and route your data through third-party servers.
         Open-weight models run 100% on your hardware.
       </p>
     </section>
@@ -187,7 +187,7 @@ const buildDate = new Date().toLocaleDateString('en-US', {
     <section class="mb-20">
       <h2 class="font-display text-2xl font-semibold text-chalk mb-2 reveal">Best open-weight pick per use case</h2>
       <p class="text-silver text-sm mb-10 reveal">
-        Picked algorithmically from live leaderboard scores — not my opinion, not a static list.
+        Picked algorithmically from live leaderboard scores, not my opinion, not a static list.
       </p>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -256,12 +256,12 @@ const buildDate = new Date().toLocaleDateString('en-US', {
           <span class="info-tip-icon">i</span>
           <span class="info-tip-body">
             <strong style="color:#e5e5ea; display:block; margin-bottom:6px;">Why do scores look so low?</strong>
-            This is a <strong style="color:#9b5de5;">0–100 scale</strong> — but no AI has scored above 60 yet. The benchmarks are intentionally brutal:<br /><br />
-            <span style="color:#e5e5ea;">· Humanity's Last Exam</span> — questions designed to stump AI<br />
-            <span style="color:#e5e5ea;">· GPQA Diamond</span> — PhD-level biology, chemistry, physics<br />
-            <span style="color:#e5e5ea;">· SciCode</span> — research-grade scientific code<br />
-            <span style="color:#e5e5ea;">· Terminal-Bench Hard</span> — shell tasks that actually execute<br /><br />
-            A score of <strong style="color:#9b5de5;">54</strong> means 54% of that extremely hard mix. A poem request would score 99. Expand the tier legend below to see what each score range means in practice.
+            This is a <strong style="color:#9b5de5;">0–100 scale</strong>, but no AI has scored above 60 yet. The benchmarks are intentionally brutal:<br /><br />
+            <span style="color:#e5e5ea;">· Humanity's Last Exam</span>, questions designed to stump AI<br />
+            <span style="color:#e5e5ea;">· GPQA Diamond</span>, PhD-level biology, chemistry, physics<br />
+            <span style="color:#e5e5ea;">· SciCode</span>, research-grade scientific code<br />
+            <span style="color:#e5e5ea;">· Terminal-Bench Hard</span>, shell tasks that actually execute<br /><br />
+            A score of <strong style="color:#9b5de5;">54</strong> means 54% of that extremely hard mix. By contrast, a poem request would score 99. Expand the tier legend below to see what each score range means in practice.
           </span>
         </span>
         All models run locally, no API required.
@@ -311,13 +311,13 @@ const buildDate = new Date().toLocaleDateString('en-US', {
                   </td>
                   <td class="px-5 py-4 text-silver">{m.provider}</td>
                   <td class="px-5 py-4 text-right font-mono font-medium" style="color:#9b5de5;">
-                    {m.intelligenceIndex ?? '—'}
+                    {m.intelligenceIndex ?? ', '}
                   </td>
-                  <td class="px-5 py-4 text-right font-mono text-silver">{m.codingScore ?? '—'}</td>
-                  <td class="px-5 py-4 text-right font-mono text-silver">{m.mathScore ?? '—'}</td>
-                  <td class="px-5 py-4 text-right font-mono text-silver">{m.outputSpeed ?? '—'}</td>
+                  <td class="px-5 py-4 text-right font-mono text-silver">{m.codingScore ?? ', '}</td>
+                  <td class="px-5 py-4 text-right font-mono text-silver">{m.mathScore ?? ', '}</td>
+                  <td class="px-5 py-4 text-right font-mono text-silver">{m.outputSpeed ?? ', '}</td>
                   <td class="px-5 py-4 text-right font-mono text-ash text-xs">
-                    {m.contextWindow ? `${(m.contextWindow / 1000).toFixed(0)}K` : '—'}
+                    {m.contextWindow ? `${(m.contextWindow / 1000).toFixed(0)}K` : ', '}
                   </td>
                   <td class="px-5 py-4 text-right">
                     {m.minRamGb !== null ? (
@@ -326,7 +326,7 @@ const buildDate = new Date().toLocaleDateString('en-US', {
                         {ram.text}
                       </span>
                     ) : (
-                      <span class="font-mono text-xs text-ash">—</span>
+                      <span class="font-mono text-xs text-ash">, </span>
                     )}
                   </td>
                   <td class="px-5 py-4">
@@ -346,25 +346,25 @@ const buildDate = new Date().toLocaleDateString('en-US', {
       <div class="mt-5 mb-3 flex flex-wrap gap-3 items-center reveal">
         <span class="text-[0.65rem] font-mono text-ash uppercase tracking-widest">Min RAM:</span>
         <span class="inline-flex items-center gap-1.5 text-[0.65rem] font-mono" style="color:#34d399;">
-          <span class="w-2 h-2 rounded-full inline-block" style="background:#34d399;"></span> ≤ 36 GB — any M4/M5
+          <span class="w-2 h-2 rounded-full inline-block" style="background:#34d399;"></span> ≤ 36 GB, any M4/M5
         </span>
         <span class="inline-flex items-center gap-1.5 text-[0.65rem] font-mono" style="color:#60a5fa;">
-          <span class="w-2 h-2 rounded-full inline-block" style="background:#60a5fa;"></span> 37–64 GB — M4/M5 Pro 48 GB+
+          <span class="w-2 h-2 rounded-full inline-block" style="background:#60a5fa;"></span> 37–64 GB, M4/M5 Pro 48 GB+
         </span>
         <span class="inline-flex items-center gap-1.5 text-[0.65rem] font-mono" style="color:#a78bfa;">
-          <span class="w-2 h-2 rounded-full inline-block" style="background:#a78bfa;"></span> 65–128 GB — M5 Max 128 GB
+          <span class="w-2 h-2 rounded-full inline-block" style="background:#a78bfa;"></span> 65–128 GB, M5 Max 128 GB
         </span>
         <span class="inline-flex items-center gap-1.5 text-[0.65rem] font-mono" style="color:#4cc9f0;">
-          <span class="w-2 h-2 rounded-full inline-block" style="background:#4cc9f0;"></span> 129–244 GB — RDMA cluster
+          <span class="w-2 h-2 rounded-full inline-block" style="background:#4cc9f0;"></span> 129–244 GB, RDMA cluster
         </span>
         <span class="inline-flex items-center gap-1.5 text-[0.65rem] font-mono" style="color:#fb923c;">
-          <span class="w-2 h-2 rounded-full inline-block" style="background:#fb923c;"></span> &gt; 244 GB — bigger cluster needed
+          <span class="w-2 h-2 rounded-full inline-block" style="background:#fb923c;"></span> &gt; 244 GB, bigger cluster needed
         </span>
       </div>
       <p class="mt-2 text-xs text-ash leading-relaxed reveal">
         Min RAM = minimum unified memory to run at Q3_K_M quantization (large MoE) or Q4_K_M (dense/small).
-        Intelligence Index is artificialanalysis.ai's composite quality score (0–100 scale). Scores look low because the benchmarks are hard: Humanity's Last Exam, GPQA Diamond, SciCode, and 7 other graduate-level evals. The current world ceiling is GPT-5.5 at 60 — no model has cracked 60 yet. A score of 54 means the model correctly handled 54% of that extremely difficult mix.
-        All models have publicly released weights — no API key required to run them.
+        Intelligence Index is artificialanalysis.ai's composite quality score (0–100 scale). Scores look low because the benchmarks are hard: Humanity's Last Exam, GPQA Diamond, SciCode, and 7 other graduate-level evals. The current world ceiling is GPT-5.5 at 60. No model has cracked 60 yet. A score of 54 means the model correctly handled 54% of that extremely difficult mix.
+        All models have publicly released weights, no API key required to run them.
       </p>
     </section>
 
@@ -374,7 +374,7 @@ const buildDate = new Date().toLocaleDateString('en-US', {
         <div>
           <p class="font-mono text-[0.65rem] tracking-widest uppercase text-ash mb-1">Intelligence scale</p>
           <h2 class="font-display text-xl font-semibold text-chalk">What the scores actually mean</h2>
-          <p class="text-silver text-xs mt-1">Each level mapped to real-world tasks — with concrete examples</p>
+          <p class="text-silver text-xs mt-1">Each level mapped to real-world tasks, with concrete examples</p>
         </div>
         <span class="font-mono text-xs text-ash border border-wire rounded px-2 py-1 ml-6 shrink-0
                      group-open:text-chalk transition-colors">
@@ -385,7 +385,7 @@ const buildDate = new Date().toLocaleDateString('en-US', {
 
       <div class="px-6 pb-8">
         <p class="text-silver text-sm mb-6 leading-relaxed">
-          These aren't IQ comparisons — they're a shorthand for the kinds of tasks a model handles reliably.
+          These aren't IQ comparisons: they're a shorthand for the kinds of tasks a model handles reliably.
           Real-world complexity, not exam performance.
         </p>
 
@@ -415,7 +415,7 @@ const buildDate = new Date().toLocaleDateString('en-US', {
         </div>
 
         <p class="mt-6 text-xs text-ash leading-relaxed">
-          Closed-source reference: GPT-5.5 scores 60 (PhD with distinction) — the current world ceiling as of June 2026.
+          Closed-source reference: GPT-5.5 scores 60 (PhD with distinction), the current world ceiling as of June 2026.
           No model, open or closed, has reached the Frontier PhD tier (68+) yet.
         </p>
       </div>
@@ -426,7 +426,7 @@ const buildDate = new Date().toLocaleDateString('en-US', {
       <p class="font-mono text-[0.65rem] tracking-widest uppercase text-ash mb-3">Next step</p>
       <h2 class="font-display text-xl font-semibold text-chalk mb-3">Which hardware runs the top models?</h2>
       <p class="text-silver text-sm leading-relaxed mb-5">
-        The top models need 36–128 GB of unified memory to run. The hardware guide covers what that means in practice — every Apple Silicon config, with prices.
+        The top models need 36–128 GB of unified memory to run. Our hardware guide covers what that means in practice, every Apple Silicon config, with prices.
       </p>
       <a href="/hardware"
          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-chalk transition-all"

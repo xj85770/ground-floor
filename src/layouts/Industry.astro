@@ -16,7 +16,7 @@ const faq = [
   { q: `Why does local, air-gapped AI matter for ${data.name.toLowerCase()}?`, a: data.whyLocal },
   {
     q: `What can Ground Floor not tell me about ${data.shortName.toLowerCase()}?`,
-    a: "The experiments here cover what's technically possible with local hardware. Your specific regulatory obligations — your state's rules, your specialty's requirements, your malpractice carrier's stance, your EHR vendor's terms — are questions this site cannot answer.",
+    a: "The experiments here cover what's technically possible with local hardware. Your specific regulatory obligations, your state's rules, your specialty's requirements, your malpractice carrier's stance, your EHR vendor's terms, are questions this site cannot answer.",
   },
 ];
 const schema = [
@@ -88,7 +88,7 @@ const schema = [
         <div>{experiments.map(exp => <ExperimentCard experiment={exp} />)}</div>
       ) : (
         <p class="text-silver text-sm leading-relaxed py-8 border-t border-wire">
-          No experiments published yet for {data.name}. The first one is in progress — check back soon, or browse{' '}
+          No experiments published yet for {data.name}. The first one is in progress, check back soon, or browse{' '}
           <a href="/experiments" class="underline underline-offset-2 hover:text-chalk transition-colors">all experiments</a>.
         </p>
       )}
@@ -99,8 +99,8 @@ const schema = [
       <h2 class="font-display text-xl font-semibold text-chalk mb-5">What this site can't answer</h2>
       <p class="text-sm text-silver leading-relaxed">
         The experiments here cover what's technically possible with local hardware.
-        Your specific regulatory obligations — your state's rules, your specialty's requirements,
-        your malpractice carrier's stance, your EHR vendor's terms — are questions this site cannot answer.
+        Your specific regulatory obligations, your state's rules, your specialty's requirements,
+        your malpractice carrier's stance, your EHR vendor's terms, are questions this site cannot answer.
       </p>
       <p class="text-sm text-silver leading-relaxed mt-3">
         See the <a href="/scope" class="underline underline-offset-2 hover:text-chalk transition-colors">Scope &amp; Disclaimers</a> page.

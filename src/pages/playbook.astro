@@ -27,7 +27,7 @@ const schema = [
 
       <h2>Why this project exists</h2>
       <p>
-        I kept running into the same moment. A physician, an attorney, a solo RIA — they'd look
+        I kept running into the same moment. A physician, an attorney, a solo RIA, they'd look
         at a good AI tool, see the internet dependency, and quietly step back from the whole
         conversation. Not out of technophobia. Out of a very reasonable calculation about vendor
         agreements, compliance overhead, and what happens when something goes wrong on someone
@@ -36,7 +36,7 @@ const schema = [
       <p>
         Air-gapped AI is the architectural answer. A model running on hardware you own makes no
         network calls. The data stays where you put it. Ground Floor documents whether these
-        models are actually good enough to be worth the hardware investment — and for which tasks,
+        models are actually good enough to be worth the hardware investment, and for which tasks,
         on which hardware.
       </p>
 
@@ -45,7 +45,7 @@ const schema = [
         By 2025, consumer hardware had crossed the threshold I'd been watching for. Apple Silicon's
         unified memory architecture eliminated the VRAM ceiling that had made local inference
         impractical for years. A quantized 8B model runs faster on a $799 Mac mini than most
-        cloud API round-trips — with no data leaving the building. It's 2026. The question is
+        cloud API round-trips, with no data leaving the building. It's 2026. The question is
         answered. What I didn't expect is how much documentation work remains: which models,
         which tasks, which hardware tiers, which failure modes.
       </p>
@@ -56,7 +56,7 @@ const schema = [
       <p>A task qualifies if it meets three criteria:</p>
       <ol>
         <li><strong>High volume in the target industry.</strong> The task must represent a meaningful share of practitioners' non-billable time.</li>
-        <li><strong>Evaluable output.</strong> There must be a clear standard to judge AI output against — a format, a checklist, a rubric a practitioner can apply.</li>
+        <li><strong>Evaluable output.</strong> There must be a clear standard to judge AI output against, a format, a checklist, a rubric a practitioner can apply.</li>
         <li><strong>Human-in-the-loop review.</strong> A qualified human reviews and owns the final output. Ground Floor does not test autonomous AI decision-making.</li>
       </ol>
 
@@ -69,7 +69,7 @@ const schema = [
         <dd>The model helps for a subset of the task or volume. Works well for simple cases, struggles with complex ones. Worth using with awareness of where it breaks down.</dd>
 
         <dt><strong>Not yet</strong></dt>
-        <dd>Current models at this hardware tier don't meet the bar for practical use. The output requires so much correction that it doesn't meaningfully reduce the practitioner's work. Failure modes are documented clearly — this is the most useful verdict for understanding what's missing.</dd>
+        <dd>Current models at this hardware tier don't meet the bar for practical use. The output requires so much correction that it doesn't meaningfully reduce the practitioner's work. Failure modes are documented clearly. This is the most useful verdict for understanding what's missing.</dd>
       </dl>
 
       <h3>Hardware documentation</h3>
@@ -77,7 +77,7 @@ const schema = [
         Every experiment specifies the exact hardware: machine, RAM, chip generation, runtime version.
         Results are not portable across hardware tiers without re-testing. When an experiment is
         documented as "viable at entry level," the configuration was deliberately constrained to match
-        a base Mac mini — even though the lab cluster has significantly more headroom.
+        a base Mac mini, even though the lab cluster has significantly more headroom.
       </p>
 
       <h2>Publication format</h2>
@@ -88,7 +88,7 @@ const schema = [
         <li><strong>Post (LinkedIn):</strong> 3–5 paragraph summary with verdict. Links to writeup for depth.</li>
       </ul>
 
-      <h2>Failure modes — what to watch for</h2>
+      <h2>Failure modes, what to watch for</h2>
       <p>
         Every experiment on this site documents failure modes explicitly. Here's the
         pattern I see across all three regulated industries.
@@ -96,15 +96,15 @@ const schema = [
 
       <h3>False precision</h3>
       <p>
-        The most dangerous failure mode isn't a wrong answer — it's a confidently wrong
+        The most dangerous failure mode isn't a wrong answer: it's a confidently wrong
         answer with no signal that it's wrong. A local 8B model drafting a SOAP note
         will occasionally invent a medication dose, a legal model will cite a clause number
         that doesn't exist, a financial model will produce a figure that's plausible but off.
         These aren't rare edge cases. They happen.
       </p>
       <p>
-        The defense: treat every output as a first draft by a junior colleague who is
-        smart but hasn't verified their work. Your review is not optional — it's the
+        Here's the defense: treat every output as a first draft by a junior colleague who is
+        smart but hasn't verified their work. Your review is not optional. It's the
         point of the architecture. The model handles the drafting friction. You handle
         the accuracy.
       </p>
@@ -112,7 +112,7 @@ const schema = [
       <h3>Complexity degrades quality</h3>
       <p>
         Smaller models (8B–13B) perform well on structured, predictable tasks.
-        They struggle on complex ones — a new patient with a complicated history, a
+        They struggle on complex ones, a new patient with a complicated history, a
         contract with cross-referencing clauses, a financial meeting with emotionally
         complicated family dynamics. The output becomes more generic, misses nuance,
         or confidently omits relevant detail.
@@ -136,7 +136,7 @@ const schema = [
       <h3>Red flags by industry</h3>
       <dl>
         <dt><strong>Medical</strong></dt>
-        <dd>Watch for invented clinical specifics — dosages, lab values, procedure names that weren't in the transcript. The model will fill gaps with plausible-sounding detail rather than flagging uncertainty.</dd>
+        <dd>Watch for invented clinical specifics, dosages, lab values, procedure names that weren't in the transcript. The model will fill gaps with plausible-sounding detail rather than flagging uncertainty.</dd>
 
         <dt><strong>Legal</strong></dt>
         <dd>Watch for invented case citations, clause numbers that don't match the document, and jurisdiction-specific analysis that's generic rather than accurate. The model lacks depth on state-level variations.</dd>

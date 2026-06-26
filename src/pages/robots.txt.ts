@@ -1,9 +1,9 @@
 import type { APIRoute } from 'astro';
 
 /**
- * robots.txt — explicitly welcome AI/search crawlers (the retrieval-eligibility gate).
+ * robots.txt, explicitly welcome AI/search crawlers (the retrieval-eligibility gate).
  * AI answer engines only cite pages they can fetch; this removes any ambiguity.
- * (We intentionally do NOT ship llms.txt — independent crawl logs show AI systems ignore it.)
+ * (We intentionally do NOT ship llms.txt, independent crawl logs show AI systems ignore it.)
  */
 export const GET: APIRoute = ({ site }) => {
   const origin = (site ?? new URL('https://gflocal.netlify.app')).origin;

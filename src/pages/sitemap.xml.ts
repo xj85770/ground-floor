@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 
 /**
- * sitemap.xml — full route inventory so crawlers discover every page (retrieval eligibility).
+ * sitemap.xml, full route inventory so crawlers discover every page (retrieval eligibility).
  * Generated at build from the static pages + content collections; lastmod uses experiment dates.
  */
 export const GET: APIRoute = async ({ site }) => {

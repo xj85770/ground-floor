@@ -1,5 +1,5 @@
 /**
- * seo.ts — Schema.org / JSON-LD builders for agent-SEO (GEO).
+ * seo.ts, Schema.org / JSON-LD builders for agent-SEO (GEO).
  *
  * Goal: make Ground Floor content easy for AI agents to retrieve, select, cite, and trust.
  * Every builder emits ONLY verified facts already present on the public site (footer links,
@@ -11,8 +11,8 @@ export const SITE = {
   /** Short, entity-restated description used as the canonical definition atom. */
   tagline: 'Air-gapped, open-weight AI for regulated practices.',
   description:
-    'Ground Floor is an independent project documenting air-gapped, open-weight AI for regulated practices (legal, medical, financial, accounting) — models that run on hardware you own, with no API calls and no data leaving the building. Weekly experiments, honest verdicts.',
-  /** Public profiles already linked in the site footer — used for sameAs (entity disambiguation). */
+    'Ground Floor is an independent project documenting air-gapped, open-weight AI for regulated practices (legal, medical, financial, accounting), models that run on hardware you own, with no API calls and no data leaving the building. Weekly experiments, honest verdicts.',
+  /** Public profiles already linked in the site footer, used for sameAs (entity disambiguation). */
   sameAs: [
     'https://www.linkedin.com/in/xavier-jones-xajo/',
     'https://x.com/xavierlocalai',
@@ -28,7 +28,7 @@ export function abs(site: URL | string | undefined, path: string): string {
   return new URL(path, origin).href;
 }
 
-/** The Organization entity — the trust anchor every page binds citations to. */
+/** The Organization entity, the trust anchor every page binds citations to. */
 export function organization(site: URL | string | undefined): JsonLd {
   return {
     '@type': 'Organization',
@@ -83,7 +83,7 @@ export function article(opts: {
   return o;
 }
 
-/** A FAQ block — pairs with the visible <Faq> component to cover decomposed sub-queries. */
+/** A FAQ block, pairs with the visible <Faq> component to cover decomposed sub-queries. */
 export function faqPage(items: { q: string; a: string }[]): JsonLd {
   return {
     '@type': 'FAQPage',
@@ -111,13 +111,13 @@ export function page(
   };
 }
 
-/** A canonical definition for an entity/term (ambient layer — own the definition). */
+/** A canonical definition for an entity/term (ambient layer, own the definition). */
 export function definedTerm(name: string, description: string, site?: URL | string): JsonLd {
   return {
     '@type': 'DefinedTerm',
     name,
     description,
-    inDefinedTermSet: { '@type': 'DefinedTermSet', name: 'Ground Floor — local AI for regulated work', url: abs(site, '/concepts') },
+    inDefinedTermSet: { '@type': 'DefinedTermSet', name: 'Ground Floor, local AI for regulated work', url: abs(site, '/concepts') },
   };
 }
 

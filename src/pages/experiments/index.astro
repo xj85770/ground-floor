@@ -17,14 +17,14 @@ const sorted = all.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
 const industries = [...new Set(all.map(e => e.data.industry))].sort();
 const verdicts   = ['viable', 'partial', 'not-yet'] as const;
 const schema = [
-  page('CollectionPage', { site: Astro.site, path: '/experiments', name: 'Ground Floor experiments', description: "Weekly experiments testing open-source LLMs on local Apple Silicon — for regulated practices that can't use cloud AI." }),
+  page('CollectionPage', { site: Astro.site, path: '/experiments', name: 'Ground Floor experiments', description: "Weekly experiments testing open-source LLMs on local Apple Silicon, for regulated practices that can't use cloud AI." }),
   breadcrumb(Astro.site, [{ name: 'Experiments', path: '/experiments' }]),
 ];
 ---
 
 <Base
   title="Experiments"
-  description="Weekly experiments testing open-source LLMs on local Apple Silicon — for regulated practices that can't use cloud AI."
+  description="Weekly experiments testing open-source LLMs on local Apple Silicon, for regulated practices that can't use cloud AI."
   schema={schema}
 >
 
@@ -41,7 +41,7 @@ const schema = [
       </h1>
       <p class="text-silver text-lg max-w-xl leading-relaxed">
         Weekly experiments on Apple Silicon. Each one targets a specific task
-        for a specific regulated industry and returns a verdict you can actually act on —
+        for a specific regulated industry and returns a verdict you can actually act on, 
         not "promising" or "has potential," but viable, partial, or not yet.
       </p>
     </div>

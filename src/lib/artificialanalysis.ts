@@ -83,7 +83,7 @@ export async function fetchOpenSourceModels(): Promise<AAModel[]> {
       headers: { 'x-api-key': apiKey },
     });
     if (!res.ok) {
-      console.warn(`artificialanalysis.ai responded ${res.status} — using static data`);
+      console.warn(`artificialanalysis.ai responded ${res.status}, using static data`);
       return [];
     }
     const json = await res.json() as { data?: RawAAModel[] } | RawAAModel[];
@@ -104,17 +104,17 @@ export async function fetchOpenSourceModels(): Promise<AAModel[]> {
       .sort((a, b) => (b.intelligenceIndex ?? 0) - (a.intelligenceIndex ?? 0))
       .slice(0, 24);
   } catch (err) {
-    console.warn('artificialanalysis.ai fetch failed — using static data:', err);
+    console.warn('artificialanalysis.ai fetch failed, using static data:', err);
     return [];
   }
 }
 
-// Use-case recommendation logic — driven by live scores
+// Use-case recommendation logic, driven by live scores
 export const USE_CASE_RECS: UseCaseRec[] = [
   {
     useCase: 'swe',
     label: 'Software engineering',
-    description: 'Code generation, bug fixes, refactoring, test writing — single-shot tasks on a specific file or function',
+    description: 'Code generation, bug fixes, refactoring, test writing, single-shot tasks on a specific file or function',
     icon: '⌨',
     pickFn: (models) =>
       [...models].sort((a, b) => (b.codingScore ?? b.intelligenceIndex ?? 0) - (a.codingScore ?? a.intelligenceIndex ?? 0))[0],
@@ -135,12 +135,12 @@ export const USE_CASE_RECS: UseCaseRec[] = [
           return scoreB - scoreA;
         })[0] ?? models[0],
     why: (m) =>
-      `Best composite for long-horizon work: intelligence ${m.intelligenceIndex ?? '—'}, ${m.contextWindow ? `${(m.contextWindow / 1000).toFixed(0)}K` : 'large'} context. Agentic loops need a model that tracks state, calls tools reliably, and recovers across many steps — not just writes code.`,
+      `Best composite for long-horizon work: intelligence ${m.intelligenceIndex ?? ', '}, ${m.contextWindow ? `${(m.contextWindow / 1000).toFixed(0)}K` : 'large'} context. Agentic loops need a model that tracks state, calls tools reliably, and recovers across many steps, not just writes code.`,
   },
   {
     useCase: 'reasoning',
     label: 'Reasoning / Chain-of-thought',
-    description: 'Explicit step-by-step logic — audits, diagnostics, structured analysis',
+    description: 'Explicit step-by-step logic, audits, diagnostics, structured analysis',
     icon: '◎',
     pickFn: (models) => {
       const reasoning = models.find(m =>
@@ -151,29 +151,29 @@ export const USE_CASE_RECS: UseCaseRec[] = [
       return reasoning ?? [...models].sort((a, b) => (b.mathScore ?? b.intelligenceIndex ?? 0) - (a.mathScore ?? a.intelligenceIndex ?? 0))[0];
     },
     why: (m) =>
-      `Top reasoning model in current open-weight rankings (intelligence ${m.intelligenceIndex ?? '—'}). Reasoning-mode models expose their chain-of-thought — every conclusion is auditable, which matters for regulated workflows.`,
+      `Top reasoning model in current open-weight rankings (intelligence ${m.intelligenceIndex ?? ', '}). Reasoning-mode models expose their chain-of-thought, every conclusion is auditable, which matters for regulated workflows.`,
   },
   {
     useCase: 'clinical_documentation',
     label: 'Clinical documentation',
-    description: 'SOAP notes, visit summaries, referral letters — must stay on-device',
+    description: 'SOAP notes, visit summaries, referral letters, must stay on-device',
     icon: '♥',
     pickFn: (models) =>
       models.filter(m => (m.contextWindow ?? 0) >= 65536)[0] ?? models[0],
     why: (m) =>
-      `Top intelligence (${m.intelligenceIndex ?? '—'}) with ${m.contextWindow ? `${(m.contextWindow / 1000).toFixed(0)}K` : 'large'} context — handles full visit transcripts without truncation. No data leaves the device.`,
+      `Top intelligence (${m.intelligenceIndex ?? ', '}) with ${m.contextWindow ? `${(m.contextWindow / 1000).toFixed(0)}K` : 'large'} context, handles full visit transcripts without truncation. No data leaves the device.`,
   },
   {
     useCase: 'legal_analysis',
     label: 'Legal analysis',
-    description: 'Contract review, clause extraction, red-lining — precision matters',
+    description: 'Contract review, clause extraction, red-lining, precision matters',
     icon: '⚖',
     pickFn: (models) =>
       [...models]
         .filter(m => (m.contextWindow ?? 0) >= 32768)
         .sort((a, b) => (b.intelligenceIndex ?? 0) - (a.intelligenceIndex ?? 0))[0] ?? models[0],
     why: (m) =>
-      `Highest reasoning quality (${m.intelligenceIndex ?? '—'}) among models with sufficient context for full contracts. Hallucination rate at Q4/Q8 is low enough for attorney review loops.`,
+      `Highest reasoning quality (${m.intelligenceIndex ?? ', '}) among models with sufficient context for full contracts. Hallucination rate at Q4/Q8 is low enough for attorney review loops.`,
   },
   {
     useCase: 'financial_analysis',
@@ -186,7 +186,7 @@ export const USE_CASE_RECS: UseCaseRec[] = [
         ((a.mathScore ?? a.intelligenceIndex ?? 0) + (a.outputSpeed ?? 0) * 0.05)
       )[0],
     why: (m) =>
-      `Strong math benchmarks + ${m.outputSpeed ?? '—'} t/s output. Fast enough for live meeting capture; accurate enough for numbers-heavy summaries.`,
+      `Strong math benchmarks + ${m.outputSpeed ?? ', '} t/s output. Fast enough for live meeting capture; accurate enough for numbers-heavy summaries.`,
   },
   {
     useCase: 'fast_turnaround',
@@ -196,7 +196,7 @@ export const USE_CASE_RECS: UseCaseRec[] = [
     pickFn: (models) =>
       [...models].sort((a, b) => (b.outputSpeed ?? 0) - (a.outputSpeed ?? 0))[0],
     why: (m) =>
-      `${m.outputSpeed ?? '—'} t/s — fastest open-weight model in current rankings. Sufficient intelligence (${m.intelligenceIndex ?? '—'}) for structured short-form output.`,
+      `${m.outputSpeed ?? ', '} t/s, fastest open-weight model in current rankings. Sufficient intelligence (${m.intelligenceIndex ?? ', '}) for structured short-form output.`,
   },
   {
     useCase: 'general_purpose',
@@ -205,11 +205,11 @@ export const USE_CASE_RECS: UseCaseRec[] = [
     icon: '◆',
     pickFn: (models) => models[0],
     why: (m) =>
-      `Highest overall intelligence index (${m.intelligenceIndex ?? '—'}/100) in the open-weight leaderboard. The go-to when you want one model that handles most tasks well.`,
+      `Highest overall intelligence index (${m.intelligenceIndex ?? ', '}/100) in the open-weight leaderboard. The go-to when you want one model that handles most tasks well.`,
   },
 ];
 
-// Closed-source reference — scores from artificialanalysis.ai, June 2026
+// Closed-source reference, scores from artificialanalysis.ai, June 2026
 // Same 0–100 scale. Shown for context only.
 export interface ClosedModel {
   name: string;
@@ -227,10 +227,10 @@ export const CLOSED_SOURCE_REFERENCE: ClosedModel[] = [
   { name: 'Claude Opus 4.7',        provider: 'Anthropic', intelligenceIndex: 52, outputSpeed: 44,  note: 'API only.' },
   { name: 'GPT-5.5 (low)',          provider: 'OpenAI',    intelligenceIndex: 51, outputSpeed: 84,  note: 'API only.' },
   { name: 'Gemini 3.1 Flash',       provider: 'Google',    intelligenceIndex: 46, outputSpeed: 183, note: 'API only, fast tier.' },
-  { name: 'Claude Sonnet 4.6',      provider: 'Anthropic', intelligenceIndex: 44, outputSpeed: 51,  note: 'Powers Claude Code. Strong agentic performance — reliable everyday benchmark. API only.' },
+  { name: 'Claude Sonnet 4.6',      provider: 'Anthropic', intelligenceIndex: 44, outputSpeed: 51,  note: 'Powers Claude Code. Strong agentic performance, reliable everyday benchmark. API only.' },
 ];
 
-// Per-task scores — derived from benchmark data, May–June 2026 (0–100 scale, current ceiling ~60)
+// Per-task scores, derived from benchmark data, May–June 2026 (0–100 scale, current ceiling ~60)
 export const TASK_SCORES: Record<string, Record<string, number>> = {
   // Open-weight
   'MiniMax M3':              { swe: 55, agentic: 53, reasoning: 49, general: 55 },  // derived: leads SWE-Bench Pro, strong agentic browsing, weak abstract reasoning (ARC-AGI-2 <12%)
@@ -292,7 +292,7 @@ export const TIERS: Tier[] = [
       'Proposes and tests original research hypotheses not in the training corpus',
       'Identifies unsolved problems at the edge of a scientific field',
       'Writes grant proposals reviewers cannot distinguish from expert submissions',
-      'Writes poetry with genuine stylistic innovation — not imitation of any existing poet',
+      'Writes poetry with genuine stylistic innovation, not imitation of any existing poet',
     ],
   },
   {
@@ -300,7 +300,7 @@ export const TIERS: Tier[] = [
     shortLabel: 'PhD+',
     min: 60, max: 67,
     accent: '#c084fc', bg: 'rgba(192,132,252,0.12)', border: 'rgba(192,132,252,0.3)',
-    description: 'Systematic expert-level analysis across multiple disciplines. Current world ceiling — GPT-5.5 scores 60.',
+    description: 'Systematic expert-level analysis across multiple disciplines. Current world ceiling, GPT-5.5 scores 60.',
     skills: [
       'Identifies factual errors and methodological flaws in published papers',
       'Synthesizes across unrelated disciplines to surface non-obvious connections',
@@ -326,7 +326,7 @@ export const TIERS: Tier[] = [
     shortLabel: 'Grad Specialist',
     min: 45, max: 52,
     accent: '#60a5fa', bg: 'rgba(96,165,250,0.10)', border: 'rgba(96,165,250,0.25)',
-    description: 'Domain expertise applied to messy, real-world inputs — the ambiguity professionals encounter daily.',
+    description: 'Domain expertise applied to messy, real-world inputs, the ambiguity professionals encounter daily.',
     skills: [
       'Identifies subtle contradictions spread across a 50-page contract',
       'Writes a technically accurate oncology referral letter directly from raw visit notes',
@@ -396,7 +396,7 @@ export const TIERS: Tier[] = [
     description: 'Handles simple factual questions and basic instructions; limited on multi-step or abstract tasks.',
     skills: [
       'Answers simple factual questions ("What is the capital of France?")',
-      'Follows basic instructions — translate a phrase, fill in a blank',
+      'Follows basic instructions, translate a phrase, fill in a blank',
       'Writes a few sentences about a familiar topic',
       'Writes a simple rhyming couplet',
     ],
@@ -411,25 +411,25 @@ export function getTier(score: number | null): Tier {
   return TIERS[TIERS.length - 1];
 }
 
-// Static fallback — source: artificialanalysis.ai, June 2026
+// Static fallback, source: artificialanalysis.ai, June 2026
 // Intelligence index: 0–100 scale. No model has scored above 60 yet (June 2026).
 // Output speeds are API inference speeds; local Apple Silicon speeds are lower for large models
 export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
-  // ── New #1 open-weight (Jun 2026) — large MoE that DOES fit the 2-node cluster at low quant ──
+  // ── New #1 open-weight (Jun 2026), large MoE that DOES fit the 2-node cluster at low quant ──
   {
     name: 'MiniMax M3',
     provider: 'MiniMax',
     intelligenceIndex: 55,
     codingScore: null,      // AA reports the composite Index for M3; no separate coding sub-score published yet
-    mathScore: null,        //   (M3 leads SWE-Bench Pro but is weak on abstract reasoning — see task scores)
+    mathScore: null,        //   (M3 leads SWE-Bench Pro but is weak on abstract reasoning, see task scores)
     outputSpeed: 58,        // notably slow + very verbose (took 91M tokens to run the Intelligence Index eval)
     contextWindow: 1000000, // 1M-token context via MiniMax Sparse Attention
     isOpenSource: true,
-    minRamGb: 160,          // 428B total / 23B active MoE — Q2_K ~160 GB
+    minRamGb: 160,          // 428B total / 23B active MoE, Q2_K ~160 GB
     requiresCluster: true,
-    clusterNote: 'First multimodal M-series (text + image + video in), 1M context. 428B total / 23B active MoE — Q2_K (~160 GB) fits inside the 244 GB 2-node window; needs both nodes. Top open-weight Intelligence Index (55, AA v4.0), but slow and very verbose in practice — a marginal local pick despite the score. Self-hostable open weights, which suits air-gapped deployment.',
+    clusterNote: 'First multimodal M-series (text + image + video in), 1M context. 428B total / 23B active MoE, Q2_K (~160 GB) fits inside the 244 GB 2-node window; needs both nodes. Top open-weight Intelligence Index (55, AA v4.0), but slow and very verbose in practice, a marginal local pick despite the score. Self-hostable open weights, which suits air-gapped deployment.',
   },
-  // ── Frontier open-weight (1T+ MoE — need 3–4 node cluster or future 512 GB hardware) ──
+  // ── Frontier open-weight (1T+ MoE, need 3–4 node cluster or future 512 GB hardware) ──
   // minRamGb = Q2_K quantization minimum. These do NOT fit the current 2-node 244 GB cluster.
   { name: 'Kimi K2.6',              provider: 'Moonshot AI', intelligenceIndex: 54, codingScore: 54, mathScore: 50, outputSpeed: 34,  contextWindow: 262144,  isOpenSource: true, minRamGb: 360 },  // 1T total / 32B active
   { name: 'MiMo-V2.5-Pro',          provider: 'Xiaomi',      intelligenceIndex: 54, codingScore: 51, mathScore: 53, outputSpeed: 68,  contextWindow: 1000000, isOpenSource: true, minRamGb: 360 },  // 1T total / 42B active
@@ -438,14 +438,14 @@ export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
   { name: 'GLM-5.1 Reasoning',      provider: 'Z AI',        intelligenceIndex: 51, codingScore: 48, mathScore: 52, outputSpeed: 60,  contextWindow: 200000,  isOpenSource: true, minRamGb: null }, // Z AI has not published param count
   { name: 'GLM-5 Reasoning',        provider: 'Z AI',        intelligenceIndex: 50, codingScore: 47, mathScore: 51, outputSpeed: 65,  contextWindow: 200000,  isOpenSource: true, minRamGb: null }, // Z AI has not published param count
   { name: 'Qwen3.6 Plus',           provider: 'Alibaba',     intelligenceIndex: 50, codingScore: 48, mathScore: 50, outputSpeed: 53,  contextWindow: 1000000, isOpenSource: true, minRamGb: null }, // Alibaba has not disclosed param count
-  { name: 'MiniMax-M2.7',           provider: 'MiniMax',     intelligenceIndex: 50, codingScore: 46, mathScore: 49, outputSpeed: 55,  contextWindow: 205000,  isOpenSource: true, minRamGb: 110 },  // 230B total / 10B active — Q3 ~110 GB
+  { name: 'MiniMax-M2.7',           provider: 'MiniMax',     intelligenceIndex: 50, codingScore: 46, mathScore: 49, outputSpeed: 55,  contextWindow: 205000,  isOpenSource: true, minRamGb: 110 },  // 230B total / 10B active, Q3 ~110 GB
   // ── Strong mid-tier ──────────────────────────────────────────────────────
-  { name: 'DeepSeek V4 Flash',   provider: 'DeepSeek',    intelligenceIndex: 47, codingScore: 44, mathScore: 46, outputSpeed: 82,  contextWindow: 1000000, isOpenSource: true, minRamGb: 135 },  // 284B total / 13B active — Q3 ~135 GB
+  { name: 'DeepSeek V4 Flash',   provider: 'DeepSeek',    intelligenceIndex: 47, codingScore: 44, mathScore: 46, outputSpeed: 82,  contextWindow: 1000000, isOpenSource: true, minRamGb: 135 },  // 284B total / 13B active, Q3 ~135 GB
   { name: 'Qwen3.6 27B',         provider: 'Alibaba',     intelligenceIndex: 46, codingScore: 43, mathScore: 44, outputSpeed: 66,  contextWindow: 262144,  isOpenSource: true, minRamGb: 17 },
-  { name: 'Qwen3.5 397B A17B',   provider: 'Alibaba',     intelligenceIndex: 45, codingScore: 42, mathScore: 44, outputSpeed: 53,  contextWindow: 262144,  isOpenSource: true, minRamGb: 150 },  // 397B total — Q2_K ~150 GB
+  { name: 'Qwen3.5 397B A17B',   provider: 'Alibaba',     intelligenceIndex: 45, codingScore: 42, mathScore: 44, outputSpeed: 53,  contextWindow: 262144,  isOpenSource: true, minRamGb: 150 },  // 397B total, Q2_K ~150 GB
   { name: 'Qwen3.6 35B A3B',     provider: 'Alibaba',     intelligenceIndex: 43, codingScore: 41, mathScore: 42, outputSpeed: 200, contextWindow: 262144,  isOpenSource: true, minRamGb: 23 },
   { name: 'Qwen3.5 27B',         provider: 'Alibaba',     intelligenceIndex: 42, codingScore: 40, mathScore: 41, outputSpeed: 87,  contextWindow: 262144,  isOpenSource: true, minRamGb: 17 },
-  { name: 'Mistral Medium 3.5',  provider: 'Mistral',     intelligenceIndex: 39, codingScore: 37, mathScore: 37, outputSpeed: 173, contextWindow: 131072,  isOpenSource: true, minRamGb: 79 },   // 128B dense — Q4_K_M ~79 GB
+  { name: 'Mistral Medium 3.5',  provider: 'Mistral',     intelligenceIndex: 39, codingScore: 37, mathScore: 37, outputSpeed: 173, contextWindow: 131072,  isOpenSource: true, minRamGb: 79 },   // 128B dense, Q4_K_M ~79 GB
   { name: 'Gemma 4 31B',         provider: 'Google',      intelligenceIndex: 39, codingScore: 36, mathScore: 37, outputSpeed: 35,  contextWindow: 131072,  isOpenSource: true, minRamGb: 20 },
   { name: 'Kimi K2.5',           provider: 'Moonshot AI', intelligenceIndex: 37, codingScore: 36, mathScore: 36, outputSpeed: 50,  contextWindow: 262144,  isOpenSource: true, minRamGb: 360 },  // 1T MoE like K2.6
   // ── TB5 RDMA cluster (244 GB usable, current 2-node setup) ───────────────
@@ -460,7 +460,7 @@ export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
     isOpenSource: true,
     minRamGb: 190,
     requiresCluster: true,
-    clusterNote: 'Q2_K ~190 GB — fits in 244 GB usable across both nodes. The full 671B reasoning model, not a distilled version.',
+    clusterNote: 'Q2_K ~190 GB, fits in 244 GB usable across both nodes. The full 671B reasoning model, not a distilled version.',
   },
   {
     name: 'Qwen3.5 235B A22B Q8',
@@ -473,7 +473,7 @@ export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
     isOpenSource: true,
     minRamGb: 235,
     requiresCluster: true,
-    clusterNote: 'Q8 full precision ~235 GB — exactly fills the 244 GB cluster window. Highest quality Qwen3.5 MoE run.',
+    clusterNote: 'Q8 full precision ~235 GB, exactly fills the 244 GB cluster window. Highest quality Qwen3.5 MoE run.',
   },
   // ── Needs 3–4 node cluster or 512 GB hardware (future) ───────────────────
   {
@@ -487,16 +487,16 @@ export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
     isOpenSource: true,
     minRamGb: 375,
     requiresCluster: true,
-    clusterNote: 'Q3_K_M ~375 GB — beyond the current 2-node setup (244 GB). Needs 3-node cluster (~366 GB usable) or a future 512 GB Mac. At Q4: ~500 GB (4 nodes). 1T total / 50B active params, MIT license.',
+    clusterNote: 'Q3_K_M ~375 GB, beyond the current 2-node setup (244 GB). Needs 3-node cluster (~366 GB usable) or a future 512 GB Mac. At Q4: ~500 GB (4 nodes). 1T total / 50B active params, MIT license.',
   },
   // ── Small / edge models ──────────────────────────────────────────────────
   { name: 'Qwen3.5 9B',          provider: 'Alibaba',      intelligenceIndex: 32, codingScore: 30, mathScore: 31, outputSpeed: 120, contextWindow: 131072,  isOpenSource: true, minRamGb: 6 },
   { name: 'Phi-4 14B',           provider: 'Microsoft',    intelligenceIndex: 30, codingScore: 31, mathScore: 33, outputSpeed: 95,  contextWindow: 16384,   isOpenSource: true, minRamGb: 10 },
   { name: 'Mistral Small 4',     provider: 'Mistral',      intelligenceIndex: 28, codingScore: null, mathScore: null, outputSpeed: 172, contextWindow: 262144, isOpenSource: true, minRamGb: 55 },  // 119B total / 6.5B active MoE
   { name: 'Qwen3.5 4B',          provider: 'Alibaba',      intelligenceIndex: 27, codingScore: 26, mathScore: 26, outputSpeed: 182, contextWindow: 131072,  isOpenSource: true, minRamGb: 3 },
-  { name: 'Ling 2.6 Flash',      provider: 'InclusionAI',  intelligenceIndex: 26, codingScore: null, mathScore: null, outputSpeed: 206, contextWindow: 262144, isOpenSource: true, minRamGb: 49 },   // 107B total / 7.4B active MoE — Q3_K_M ~49 GB
+  { name: 'Ling 2.6 Flash',      provider: 'InclusionAI',  intelligenceIndex: 26, codingScore: null, mathScore: null, outputSpeed: 206, contextWindow: 262144, isOpenSource: true, minRamGb: 49 },   // 107B total / 7.4B active MoE, Q3_K_M ~49 GB
   { name: 'Gemma 4 4B',          provider: 'Google',       intelligenceIndex: 24, codingScore: 22, mathScore: 22, outputSpeed: 290, contextWindow: 131072,  isOpenSource: true, minRamGb: 3 },
   { name: 'Phi-4-mini 3.8B',     provider: 'Microsoft',    intelligenceIndex: 22, codingScore: 24, mathScore: 26, outputSpeed: 310, contextWindow: 16384,   isOpenSource: true, minRamGb: 3 },
   { name: 'Llama 3.2 3B',        provider: 'Meta',         intelligenceIndex: 18, codingScore: 16, mathScore: 15, outputSpeed: 340, contextWindow: 131072,  isOpenSource: true, minRamGb: 2 },
-  { name: 'Granite 4.0 H Small', provider: 'IBM',          intelligenceIndex: 11, codingScore: null, mathScore: null, outputSpeed: 364, contextWindow: 128000, isOpenSource: true, minRamGb: 20 }, // 32B total / 9B active MoE — speed leader
+  { name: 'Granite 4.0 H Small', provider: 'IBM',          intelligenceIndex: 11, codingScore: null, mathScore: null, outputSpeed: 364, contextWindow: 128000, isOpenSource: true, minRamGb: 20 }, // 32B total / 9B active MoE, speed leader
 ];

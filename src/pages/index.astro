@@ -5,12 +5,12 @@ import IndustryCard from '../components/IndustryCard.astro';
 import Faq from '../components/Faq.astro';
 import { getCollection } from 'astro:content';
 
-// FAQ — self-contained citable atoms (verified facts only), drafted via the xavier-script
+// FAQ, self-contained citable atoms (verified facts only), drafted via the xavier-script
 // skill and passed through slop-scan (grade A) + agent-seo (94.5/100). Doubles as FAQPage schema.
 const faq = [
   { q: 'What is Ground Floor?', a: "Ground Floor is an independent project documenting air-gapped, open-weight AI for regulated practices: legal, medical, financial, and accounting. The models run on hardware you own. There are no API calls and no vendor agreements, so the data that goes in stays in. Every week I run a real experiment and publish the honest verdict, including the ones that are not ready yet." },
   { q: 'Can you run a large language model locally without sending data to the cloud?', a: "Yes. Ground Floor runs open-weight models entirely on your own machine, so there is no API call and no copy of your data on a vendor's server. For a clinic or a law firm, that is the point: patient records and privileged files never leave the building. The trade is that you run your own hardware instead of renting someone else's." },
-  { q: 'What hardware do you need to run a capable local model?', a: "Less than most people expect. Small open-weight models run on any modern Mac, and mid-size ones want roughly 32 to 128 GB of memory. The Ground Floor lab uses two M5 Max MacBook Pros with 256 GB of combined memory, but that is deliberately overbuilt so I can test the ceiling. The Will-It-Run tool gives you the honest answer for your specific Mac." },
+  { q: 'What hardware do you need to run a capable local model?', a: "Less than most people expect. Small open-weight models run on any modern Mac, and mid-size ones want roughly 32 to 128 GB of memory. The Ground Floor lab uses two M5 Max MacBook Pros with 256 GB of combined memory, but that is deliberately overbuilt so I can test the ceiling. Use the Will-It-Run tool to get the honest answer for your specific Mac." },
   { q: 'Is a local model actually fast enough to be useful?', a: "In my Ground Floor testing, yes, for the work regulated practices actually do: drafting notes, summarizing documents, checking a contract clause. An M5 Max runs a 70B-parameter model faster than most cloud API round-trips, on hardware you own. It will not beat a frontier cloud model on the hardest reasoning, and I say so on each experiment. For everyday drafting, the gap that matters has closed." },
   { q: 'Open-weight local model or a cloud API for regulated data?', a: "For data that cannot leave the building, such as PHI, privileged legal files, or financial records, a local open-weight model like Ground Floor avoids the thing a cloud API cannot: your data leaving your control and sitting with a third party. A cloud API is often more capable on raw reasoning, so the real question is whether the data is allowed to leave at all. If it is not, local is the honest answer. And running locally does not make you HIPAA-compliant by itself; it removes one large exposure, not all of them." },
 ];
@@ -47,10 +47,10 @@ const industriesForStage = allIndustries.map(ind => ({
 
 <Base title="Ground Floor">
 
-  <!-- ═══ HERO — split: copy left, leaderboard card right ═══ -->
+  <!-- ═══ HERO, split: copy left, leaderboard card right ═══ -->
   <section class="relative overflow-hidden" style="min-height:92vh;display:flex;align-items:center;">
 
-    <!-- Aurora glow — right-biased -->
+    <!-- Aurora glow, right-biased -->
     <div aria-hidden="true" style="
       position:absolute;top:-100px;right:-10%;
       width:70%;height:700px;
@@ -71,7 +71,7 @@ const industriesForStage = allIndustries.map(ind => ({
         </h1>
 
         <p class="hero-line text-lg text-silver leading-relaxed mb-10" style="--d:0.28s;max-width:440px;">
-          Open-weight models running on hardware you own. No API calls. No vendor agreements. The data that goes in stays in.
+          Open-weight models running on hardware you own. No API calls. Zero vendor agreements. The data that goes in stays in.
         </p>
 
         <div class="hero-line flex flex-wrap gap-3 mb-10" style="--d:0.42s;">
@@ -190,7 +190,7 @@ const industriesForStage = allIndustries.map(ind => ({
           The cloud API is the weakest link.
         </h2>
         <p class="text-silver text-lg mt-5 max-w-xl mx-auto leading-relaxed">
-          Something I kept noticing: the practitioners who most need good AI tools are often the ones most exposed by cloud architecture. Every API call routes data somewhere else. For patient records, client files, and financial accounts — that's not a quirk. That's the whole problem. Air-gapped removes it from the equation entirely.
+          Something I kept noticing: the practitioners who most need good AI tools are often the ones most exposed by cloud architecture. Every API call routes data somewhere else. For patient records, client files, and financial accounts, that's not a quirk. That's the whole problem. Air-gapped removes it from the equation entirely.
         </p>
       </div>
 
@@ -199,19 +199,19 @@ const industriesForStage = allIndustries.map(ind => ({
           {
             num: '01',
             title: 'No API calls',
-            body: 'The model runs on the machine in front of you. No network call leaves, no vendor handles the data, no API logs it. Inference happens locally — that\'s the whole point.',
+            body: 'The model runs on the machine in front of you. No network call leaves, no vendor handles the data, no API logs it. Inference happens locally, that\'s the whole point.',
             color: '#9b5de5',
           },
           {
             num: '02',
             title: 'No breach surface',
-            body: "Patient transcripts, client documents, financial records — none of it appears in a vendor's incident report. It never left your building.",
+            body: "Patient transcripts, client documents, financial records, none of it appears in a vendor's incident report. It never left your building.",
             color: '#4361ee',
           },
           {
             num: '03',
             title: 'No lock-in',
-            body: 'Open weights on open hardware. Swap the model, change the runtime, upgrade the machine — without renegotiating anything.',
+            body: 'Open weights on open hardware. Swap the model, change the runtime, upgrade the machine, without renegotiating anything.',
             color: '#4cc9f0',
           },
         ].map(({ num, title, body, color }) => (
@@ -235,7 +235,7 @@ const industriesForStage = allIndustries.map(ind => ({
         <h2 class="font-display font-semibold tracking-tight text-chalk"
             style="font-size:clamp(1.75rem,4vw,2.75rem);">The Lab</h2>
         <p class="text-silver mt-3 max-w-xl">
-          I have two M5 Max MacBook Pros connected over Thunderbolt 5 RDMA — 256 GB combined memory, 16 TB of storage, ~3 µs between nodes. It's an unreasonably powerful home office setup. But it means every experiment documented here has a specific, real hardware answer.
+          I have two M5 Max MacBook Pros connected over Thunderbolt 5 RDMA, 256 GB combined memory, 16 TB of storage, ~3 µs between nodes. It's an unreasonably powerful home office setup. But it means every experiment documented here has a specific, real hardware answer.
         </p>
       </div>
 
@@ -505,7 +505,7 @@ const industriesForStage = allIndustries.map(ind => ({
   </section>
 
 
-  <!-- ═══ INDUSTRIES — Stage Manager ═══ -->
+  <!-- ═══ INDUSTRIES, Stage Manager ═══ -->
   <section style="border-top:1px solid #424245;background:#000;">
     <div class="max-w-wide mx-auto px-5 md:px-10 py-24 md:py-32">
 
@@ -620,7 +620,7 @@ const industriesForStage = allIndustries.map(ind => ({
   </script>
 
 
-  <!-- ═══ FAQ — decomposition coverage + FAQPage schema ═══ -->
+  <!-- ═══ FAQ, decomposition coverage + FAQPage schema ═══ -->
   <section style="border-top:1px solid #424245;background:#000;">
     <Faq items={faq} heading="Common questions" eyebrow="FAQ" />
   </section>
