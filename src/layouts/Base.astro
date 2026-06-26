@@ -7,6 +7,8 @@ interface Props {
   title: string;
   description?: string;
   ogType?: string;
+  /** Social-share card image; absolute URL is derived from Astro.site. Defaults to the site card. */
+  image?: string;
   /** Page-specific JSON-LD nodes; Organization + WebSite are always added automatically. */
   schema?: Record<string, unknown>[];
 }
@@ -15,12 +17,15 @@ const {
   title,
   description = "Prove it yourself: air-gapped, open-weight AI, now good enough for the daily work of regulated practices, running on hardware you own, no data leaves the building. A new experiment every week, with honest verdicts. Free.",
   ogType = 'website',
+  image = '/og-image.jpg',
   schema = [],
 } = Astro.props;
 
 const siteName  = 'Ground Floor';
 const pageTitle = title === siteName ? siteName : `${title}, ${siteName}`;
-const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://gflocal.netlify.app');
+const siteBase  = Astro.site ?? 'https://gflocal.netlify.app';
+const canonical = new URL(Astro.url.pathname, siteBase);
+const ogImage   = new URL(image, siteBase).href;
 const jsonLd    = graph(Astro.site, schema);
 ---
 
@@ -38,9 +43,17 @@ const jsonLd    = graph(Astro.site, schema);
   <meta property="og:description" content={description} />
   <meta property="og:type"        content={ogType} />
   <meta property="og:url"         content={canonical} />
-  <meta name="twitter:card"       content="summary" />
+  <meta property="og:image"       content={ogImage} />
+  <meta property="og:image:secure_url" content={ogImage} />
+  <meta property="og:image:width"  content="1200" />
+  <meta property="og:image:height" content="675" />
+  <meta property="og:image:type"  content="image/jpeg" />
+  <meta property="og:image:alt"   content="Ground Floor, air-gapped AI for regulated practices." />
+  <meta name="twitter:card"       content="summary_large_image" />
   <meta name="twitter:title"      content={pageTitle} />
   <meta name="twitter:description" content={description} />
+  <meta name="twitter:image"      content={ogImage} />
+  <meta name="twitter:image:alt"  content="Ground Floor, air-gapped AI for regulated practices." />
   <meta name="theme-color"        content="#000000" />
 
   <title>{pageTitle}</title>
