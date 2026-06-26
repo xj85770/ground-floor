@@ -23,11 +23,11 @@ The FTC Safeguards Rule doesn't get the same attention as HIPAA, but for solo CP
 
 That last part is the problem. When you use a cloud AI to help draft a tax memo, your client's adjusted gross income, Social Security number, and account details are now in the hands of a third-party processor. The vendor has their own security posture, their own breach notification timeline, and their own terms of service that you probably didn't run past your professional liability carrier.
 
-A local model changes the analysis. If the data never leaves your machine, the third-party processor question doesn't arise. Your written information security program only needs to describe your own environment — which you control.
+A local model changes the analysis. If the data never leaves your machine, the third-party-processor question never gets asked — there's no vendor to risk-assess, because there's no vendor. Your written information security program only needs to describe your own environment, which you control.
 
-## What experiments cover here
+## What experiments will cover here
 
-My accounting experiments focus on documentation-heavy workflows where the output is a first draft, not a final professional work product. Tax memo scaffolding, engagement letter drafting, and meeting-notes-to-CRM are the natural starting points: structured tasks, clear output formats, and the CPA is always the reviewer.
+My accounting experiments will focus on documentation-heavy workflows where the output is a first draft, not a final professional work product. Tax memo scaffolding, engagement letter drafting, and meeting-notes-to-CRM are the natural starting points: structured tasks, clear output formats, and the CPA is always the reviewer.
 
 The secondary question — which hardware tier handles the volume of a 200-client solo practice during tax season — is where it gets interesting. An 8B model handles simple correspondence well. Tax memos for complex situations need more.
 

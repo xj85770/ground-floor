@@ -26,7 +26,7 @@ The practices that benefit most are doing high-volume, structured tasks — draf
 
 ## What experiments cover here
 
-My medical experiments focus on tasks with high documentation volume, clear quality standards, and a human-in-the-loop review step. SOAP notes are the natural starting point: the format is well-defined, a bad first draft just gets edited, and the time savings compound quickly.
+My medical experiments focus on tasks with high documentation volume, clear quality standards, and a human-in-the-loop review step. SOAP notes are the natural starting point: the format is well-defined, a bad first draft just gets edited, and every note you don't retype by hand is time back at the end of the day.
 
 Future experiments will cover intake summarization, referral drafting, and the practical tradeoffs between model size and output quality for clinical text.
 

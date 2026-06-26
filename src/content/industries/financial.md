@@ -27,9 +27,9 @@ A local model changes the calculus. If the model runs on hardware you own and co
 
 ## What experiments will cover here
 
-My financial experiments focus on documentation-heavy workflows: meeting notes from voice memos, IPS drafting, client communication templates. The throughput question — can a local model handle the volume a solo advisor processes? — is the starting point.
+My financial experiments focus on documentation-heavy workflows: meeting notes from voice memos, IPS drafting, client communication templates. The throughput question — can a local model handle the volume a solo advisor processes — is the starting point, and the first run is already up: meeting notes drafted entirely on local hardware, with the model and machine named on the page.
 
-A secondary question: which tasks require model quality that only a larger (and more hardware-intensive) model can provide, versus which tasks work well on entry-level hardware.
+A secondary question: which tasks need a larger, more hardware-intensive model, versus which run well on entry-level hardware — and that is exactly what the experiments are built to answer, with output you can read and judge for yourself rather than a verdict I hand you.
 
 ## Before you apply any of this
 

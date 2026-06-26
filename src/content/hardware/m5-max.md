@@ -41,7 +41,7 @@ More importantly: **Q8 quantization of 70B models becomes practical.** Q8 is ful
 
 **DeepSeek-R1 70B** is the reasoning model of choice when your task requires explainable chain-of-thought. For clinical documentation that needs to show its reasoning, or legal analysis where the logic chain matters, R1 shows its work in a way other models don't.
 
-**Qwen3.5 122B A10B** (Alibaba) is the most efficient large model: 122B total parameters but only ~10B active per forward pass. It loads in ~61 GB at Q4 and performs at a level that previously required much larger dense models.
+**Qwen3.5 122B A10B** (Alibaba) is the most efficient large model: 122B total parameters but only ~10B active per forward pass. It loads in ~61 GB at Q4, and at ~10B active params it competes with dense models several times its active size.
 
 ## Hot-loading strategy at 128 GB
 

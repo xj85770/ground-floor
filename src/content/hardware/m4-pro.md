@@ -24,13 +24,13 @@ notSuitableFor:
   - "Models requiring more than ~20 GB of weights"
 ---
 
-The M4 Pro Mac mini is the first tier where the quality step-up from entry stops being something you have to argue for — it's visible in the output. At 24 GB base or 48 GB expanded, you can run 13–14B models at Q4 or push 8B models to Q8, and the 273 GB/s memory bandwidth means you feel the difference on the first response.
+The M4 Pro Mac mini is the first tier where the quality step-up from entry stops being something you have to argue for — it's visible in the output. At 24 GB base or 48 GB expanded, you can run 13–14B models at Q4 or push 8B models to Q8, and the 273 GB/s memory bandwidth, more than double the base mini's 120, is what you feel on the first response.
 
 ## The quality difference
 
 Going from Qwen3 7B at Q4 to Qwen3 14B at Q4 is a noticeable step. The 14B model handles more complex sentence structures, better maintains context across long documents, and produces fewer non-sequiturs in dense clinical or legal text. For a solo attorney reviewing complex contracts or a financial planner drafting a detailed IPS, the upgrade is worth it.
 
-**DeepSeek-R1 14B** is worth calling out specifically. The R1 reasoning architecture shows its chain-of-thought explicitly — you can see why the model reached a conclusion, which matters for auditable workflows in regulated environments.
+**DeepSeek-R1 14B** is worth calling out specifically. The R1 reasoning architecture shows its chain-of-thought explicitly — you can see why the model reached a conclusion, and because it runs air-gapped, that reasoning trail never leaves the machine. That is what makes it usable for auditable work in regulated environments.
 
 ## Hot-loading strategy at this tier
 

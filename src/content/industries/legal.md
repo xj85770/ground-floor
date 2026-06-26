@@ -26,9 +26,9 @@ A local model sidesteps most of these questions. Client documents that never lea
 
 ## What experiments will cover here
 
-My legal experiments start with high-volume, format-intensive tasks: contract drafting, research memo scaffolding, and discovery review. These are tasks where the model handles structure and volume, and the attorney handles judgment and certification.
+My legal experiments start with high-volume, format-intensive tasks: contract drafting, research memo scaffolding, and discovery review. These are tasks where the model handles structure and volume, and the attorney handles judgment and certification. The first one is already published: a contract first-draft run, showing the model used and the hardware it ran on.
 
-The key test is not whether the model can replace an attorney — it cannot. The test is whether it can eliminate the formatting and organizational work that consumes a significant share of a solo attorney's non-billable hours.
+The key test is not whether the model can replace an attorney — it cannot. The test is whether it can eliminate the formatting and organizing that eats the non-billable hours between leaving the office and actually getting paid.
 
 ## Before you apply any of this
 
