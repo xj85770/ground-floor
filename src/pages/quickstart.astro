@@ -1,10 +1,16 @@
 ---
 import Base from '../layouts/Base.astro';
+import { article, breadcrumb } from '../lib/seo';
+const schema = [
+  article({ site: Astro.site, path: '/quickstart', headline: 'Quickstart: run local AI in 30 minutes', description: "A Mac, Ollama, and 30 minutes. Here's the exact sequence to run your first local AI model with no cloud dependency.", techArticle: true }),
+  breadcrumb(Astro.site, [{ name: 'Quickstart', path: '/quickstart' }]),
+];
 ---
 
 <Base
-  title="Quickstart — Run Local AI in 30 Minutes"
+  title="Quickstart, Run Local AI in 30 Minutes"
   description="A Mac, Ollama, and 30 minutes. Here's the exact sequence to run your first local AI model with no cloud dependency."
+  schema={schema}
 >
 
   <div class="page-aurora">
@@ -16,7 +22,7 @@ import Base from '../layouts/Base.astro';
         Running in 30 minutes.
       </h1>
       <p class="text-silver text-lg max-w-xl leading-relaxed">
-        You have a Mac. Here's the exact sequence to run a local AI model —
+        You have a Mac. Here's the exact sequence to run a local AI model, 
         no API key, no cloud dependency, no vendor agreement.
       </p>
     </div>
@@ -32,8 +38,8 @@ import Base from '../layouts/Base.astro';
 
       <h2>Before you start</h2>
       <p>
-        You need an Apple Silicon Mac — M1 or newer. That's any Mac bought after late 2020.
-        If you're not sure: Apple menu → About This Mac. If it says "Apple M" anything, you're good.
+        You need an Apple Silicon Mac, M1 or newer. That's any Mac bought after late 2020.
+        If you're not sure: Apple menu → About This Mac. When it says "Apple M" anything, you're good.
       </p>
       <p>
         16 GB of unified memory is the minimum that's worth your time. You can run small models
@@ -41,7 +47,7 @@ import Base from '../layouts/Base.astro';
         everything here works better.
       </p>
 
-      <h2>Step 1 — Install Ollama</h2>
+      <h2>Step 1, Install Ollama</h2>
       <p>
         Ollama is the tool that downloads and runs open-weight models locally. It takes about
         two minutes to install and handles everything: model storage, the inference server,
@@ -57,35 +63,35 @@ import Base from '../layouts/Base.astro';
       </p>
       <pre><code>ollama serve</code></pre>
 
-      <h2>Step 2 — Pull a model</h2>
+      <h2>Step 2, Pull a model</h2>
       <p>
-        Pick the command that matches your RAM. These are the models I'd reach for first —
+        Pick the command that matches your RAM. These are the models I'd reach for first:
         strong benchmarks, practical speed, and they pull cleanly in one command.
       </p>
 
-      <p class="font-mono text-[0.7rem] tracking-[0.15em] uppercase" style="color:#34d399;">16 GB — start here</p>
+      <p class="font-mono text-[0.7rem] tracking-[0.15em] uppercase" style="color:#34d399;">16 GB, start here</p>
       <pre><code>ollama pull qwen3.5:9b-q4_K_M</code></pre>
       <p>
         Qwen 3.5 9B is currently the strongest model at this size tier. Download is ~5.5 GB.
-        It'll take a few minutes on a decent connection — runs fully offline after that.
+        It'll take a few minutes on a decent connection, runs fully offline after that.
       </p>
 
-      <p class="font-mono text-[0.7rem] tracking-[0.15em] uppercase" style="color:#4361ee;">24 GB — step up</p>
+      <p class="font-mono text-[0.7rem] tracking-[0.15em] uppercase" style="color:#4361ee;">24 GB, step up</p>
       <pre><code>ollama pull qwen3.5:27b-q4_K_M</code></pre>
       <p>
         A real step up in quality. ~16 GB download. If you're going to use this for
-        actual work — drafting documents, reviewing text, structured analysis — this
+        actual work like drafting documents, reviewing text, or structured analysis, this
         is the tier where it starts feeling professional.
       </p>
 
-      <p class="font-mono text-[0.7rem] tracking-[0.15em] uppercase" style="color:#9b5de5;">64 GB+ — serious work</p>
+      <p class="font-mono text-[0.7rem] tracking-[0.15em] uppercase" style="color:#9b5de5;">64 GB+, serious work</p>
       <pre><code>ollama pull llama3.3:70b-instruct-q4_K_M</code></pre>
       <p>
         70B at Q4. ~40 GB download. This is where the output quality becomes hard to
-        distinguish from a cloud API — on hardware you own.
+        distinguish from a cloud API, on hardware you own.
       </p>
 
-      <h2>Step 3 — Run it</h2>
+      <h2>Step 3, Run it</h2>
       <p>
         Once the model finishes downloading, one command starts an interactive session:
       </p>
@@ -95,12 +101,12 @@ import Base from '../layouts/Base.astro';
         calls, no API keys, no tokens being consumed somewhere.
       </p>
       <p>
-        The first response will feel slow — the model is loading into memory. After that,
+        The first response will feel slow: the model is loading into memory. After that,
         it stays loaded and responds faster. On a 16 GB Mac, expect 20–30 tokens per second
-        on a 9B model. On a 64 GB machine, 70B runs at 12–16 t/s. Fast enough for real use.
+        on a 9B model. Step up to a 64 GB machine and 70B runs at 12–16 t/s. Fast enough for real use.
       </p>
 
-      <h2>Step 4 — A better interface (optional)</h2>
+      <h2>Step 4, A better interface (optional)</h2>
       <p>
         The terminal works. But if you want a chat interface that looks like what you're
         used to, Open WebUI runs locally on top of Ollama and gives you a browser-based UI:
@@ -124,25 +130,25 @@ import Base from '../layouts/Base.astro';
       </p>
       <ol>
         <li>
-          <strong>Try your actual work.</strong> Give it a real document from your practice —
+          <strong>Try your actual work.</strong> Give it a real document from your practice, 
           a meeting transcript, a client email, a report you'd normally draft. See what it
           produces without any fine-tuning. The output will surprise you in both directions.
         </li>
         <li>
           <strong>Read the experiments relevant to your industry.</strong>
           The <a href="/experiments">experiments</a> document exactly what works, at what hardware tier,
-          with what prompting. Don't start from scratch — start from a result.
+          with what prompting. Don't start from scratch: start from a result.
         </li>
         <li>
           <strong>Understand the failure modes</strong> before you build any workflow around
-          local AI. The <a href="/playbook">Playbook</a> covers this. The short version:
+          local AI. The <a href="/playbook">Playbook</a> covers this. Here's the short version:
           these models are confident even when wrong. Human review is not optional.
         </li>
       </ol>
 
       <h2>Honest caveats</h2>
       <p>
-        Running the model is the easy part — honestly, getting here took me about 20 minutes
+        Running the model is the easy part. Honestly, getting here took me about 20 minutes
         the first time. The harder part is building a workflow where you're actually saving
         time, not just producing text that needs heavy editing. That takes iteration.
         The experiments document what that iteration looked like for specific tasks.
@@ -154,7 +160,7 @@ import Base from '../layouts/Base.astro';
         who knows the subject.
       </p>
       <p>
-        That's not a reason to avoid local AI. It's the reason to use it correctly —
+        That's not a reason to avoid local AI. It's the reason to use it correctly, 
         as a drafting tool, not a decision-making tool.
       </p>
 

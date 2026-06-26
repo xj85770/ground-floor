@@ -8,12 +8,12 @@ task: "document-review"
 model: "Llama-3.1-13B-Instruct-Q4_K_M"
 verdict: "partial"
 hypothesis: "A quantized 13B model running locally can identify non-standard or potentially unfavorable clauses in a standard commercial contract at a rate that reduces, but does not eliminate, the attorney's review burden."
-description: "A local Llama 3.1 13B model reviewed five commercial vendor contracts and flagged clauses for attorney attention. It caught most obvious red flags but missed nuanced jurisdiction-specific risks — making it useful as a first-pass triage tool, not a replacement for legal review."
+description: "A local Llama 3.1 13B model reviewed five commercial vendor contracts and flagged clauses for attorney attention. It caught most obvious red flags but missed nuanced jurisdiction-specific risks, making it useful as a first-pass triage tool, not a replacement for legal review."
 ---
 
 ## Background
 
-Contract review is one of the highest-volume, lowest-leverage tasks in a solo attorney's week. A standard vendor services agreement might have 30–40 clauses; a careful first read to flag issues takes 45–90 minutes. The attorney's judgment is needed for the flagged items — not usually for the first pass.
+Contract review is one of the highest-volume, lowest-leverage tasks in a solo attorney's week. A standard vendor services agreement might have 30–40 clauses; a careful first read to flag issues takes 45–90 minutes. The attorney's judgment is needed for the flagged items, not usually for the first pass.
 
 The question here is narrow: can a local model reliably identify clauses that warrant attorney attention, well enough that the attorney can start at the flagged items rather than reading front-to-back?
 
@@ -21,7 +21,7 @@ This experiment does not test whether the model gives good legal advice. It test
 
 ## Setup
 
-**Hardware:** M4 Pro Mac mini — 24 GB unified memory, 12-core CPU/GPU. $1,399.
+**Hardware:** M4 Pro Mac mini, 24 GB unified memory, 12-core CPU/GPU. $1,599.
 
 **Model:** `Llama-3.1-13B-Instruct-Q4_K_M` via Ollama. ~8.1 GB loaded into unified memory.
 
@@ -49,13 +49,13 @@ This experiment does not test whether the model gives good legal advice. It test
 
 The model was consistently good at catching obvious risk signals: unilateral amendment clauses, uncapped liability language, auto-renewal terms with short notice windows, one-sided IP assignment, and missing limitation-of-liability provisions. These are the items a first-year associate would flag on a standard review checklist.
 
-The structured output was clean and actionable. The attorney's feedback was that the flagged items were well-organized and the severity ratings were roughly calibrated.
+Its structured output was clean and actionable. The attorney's feedback was that the flagged items were well-organized and the severity ratings were roughly calibrated.
 
 ## Where it struggled
 
 **Jurisdiction-specific provisions.** Several state-specific requirements (California-specific data privacy clauses, Texas venue requirements) were either missed or flagged with generic language that didn't reflect the specific risk. This is the 13B model's core limitation: it lacks depth on jurisdiction-specific legal nuance.
 
-**Nuanced DPA analysis.** The data processing agreement produced the weakest results. GDPR Article 28 requirements are specific and the model's flagging was superficial — it noted "data processing terms present" rather than identifying specific gaps in the processor obligations.
+**Nuanced DPA analysis.** The data processing agreement produced the weakest results. GDPR Article 28 requirements are specific and the model's flagging was superficial: it noted "data processing terms present" rather than identifying specific gaps in the processor obligations.
 
 **False negatives in complex clauses.** Multi-clause interdependencies (where Clause 12.3 modifies the liability cap in Clause 8.1, for example) were occasionally missed. The model reads sequentially and doesn't always build the cross-reference model a human attorney does.
 
@@ -64,10 +64,10 @@ The structured output was clean and actionable. The attorney's feedback was that
 ```
 ollama pull llama3.1:13b-instruct-q4_K_M
 
-# Stage 1 — clause extraction
+# Stage 1, clause extraction
 ollama run llama3.1:13b-instruct-q4_K_M "$(cat stage1-prompt.txt)"
 
-# Stage 2 — risk assessment  
+# Stage 2, risk assessment  
 ollama run llama3.1:13b-instruct-q4_K_M "$(cat stage2-prompt.txt)"
 ```
 
@@ -75,7 +75,7 @@ The prompt templates are available in the experiment repository. Temperature 0.1
 
 ## Honest caveats
 
-76% recall means the model misses roughly 1 in 4 risky clauses. For a triage tool — where the attorney still reads the flagged items carefully — that's a meaningful reduction in first-pass work. For autonomous review, it's not close to good enough.
+76% recall means the model misses roughly 1 in 4 risky clauses. For a triage tool, where the attorney still reads the flagged items carefully, that's a meaningful reduction in first-pass work. Used autonomously, it's not close to good enough.
 
 A 70B model would likely improve recall significantly, particularly on jurisdiction-specific and cross-reference issues. That's a future experiment.
 
@@ -83,6 +83,6 @@ A 70B model would likely improve recall significantly, particularly on jurisdict
 
 ## Verdict: Partial
 
-Viable as a triage first pass for standard commercial contracts in straightforward jurisdictions. The time savings on first-pass review are real — the attorney starts with a prioritized list rather than a blank page.
+Viable as a triage first pass for standard commercial contracts in straightforward jurisdictions. The time savings on first-pass review are real: the attorney starts with a prioritized list rather than a blank page.
 
 Not viable as a substitute for careful attorney review, particularly for DPAs, jurisdiction-specific documents, or contracts with complex cross-references. A 70B model closes some of these gaps; that experiment is next.

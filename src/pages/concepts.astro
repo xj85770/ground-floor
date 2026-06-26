@@ -1,8 +1,13 @@
 ---
 import Base from '../layouts/Base.astro';
+import { article, breadcrumb } from '../lib/seo';
+const schema = [
+  article({ site: Astro.site, path: '/concepts', headline: 'Local LLM concepts: parameters, tokenizers, context windows, and Apple Silicon', description: 'The mechanics behind local LLMs, how parameters, tokenizers, context windows, and Apple Silicon fit together.' }),
+  breadcrumb(Astro.site, [{ name: 'Concepts', path: '/concepts' }]),
+];
 ---
 
-<Base title="Concepts" description="The mechanics behind local LLMs — how parameters, tokenizers, context windows, and Apple Silicon fit together.">
+<Base title="Concepts" description="The mechanics behind local LLMs, how parameters, tokenizers, context windows, and Apple Silicon fit together." schema={schema}>
 
   <div class="page-aurora">
     <div class="page-aurora-glow" style="background:radial-gradient(ellipse 70% 60% at 50% -10%,rgba(155,93,229,0.22) 0%,transparent 70%);"></div>
@@ -11,8 +16,8 @@ import Base from '../layouts/Base.astro';
       <h1 class="font-display font-semibold tracking-tight text-chalk mb-4"
           style="font-size:clamp(2.4rem,5vw,3.75rem);line-height:1.06;">How LLMs actually work</h1>
       <p class="text-silver text-lg max-w-xl leading-relaxed">
-        You don't need to train a model to deploy one. But understanding four mechanics —
-        parameters, tokenizers, context windows, and Apple Silicon's architecture — made
+        You don't need to train a model to deploy one. But understanding four mechanics, 
+        parameters, tokenizers, context windows, and Apple Silicon's architecture, made
         every hardware and model decision on this site legible to me. I keep coming back
         to these when a result surprises me.
       </p>
@@ -24,7 +29,7 @@ import Base from '../layouts/Base.astro';
 
       <h2>Parameters are weights, weights are math, math costs RAM</h2>
       <p>
-        A language model is a very large collection of numbers — its parameters. During training
+        A language model is a very large collection of numbers, its parameters. During training
         those numbers are nudged billions of times until the model gets good at predicting the
         next token in a sequence. After training, the numbers are frozen. Inference is just
         loading those numbers into memory and doing matrix multiplication fast enough to generate
@@ -32,8 +37,8 @@ import Base from '../layouts/Base.astro';
       </p>
       <p>
         This is why the parameter count maps almost directly to RAM requirement. A 7B model
-        at 4-bit quantization needs roughly 4–5 GB. A 70B model at the same quantization
-        needs 35–40 GB. There's no trick — you need enough RAM to hold the weights, and the
+        at 4-bit quantization needs roughly 4–5 GB. Scale up to 70B at the same quantization
+        and you need 35–40 GB. There's no trick: you need enough RAM to hold the weights, and the
         weights are the model.
       </p>
       <p>
@@ -64,40 +69,40 @@ import Base from '../layouts/Base.astro';
 
       <h2>Context window is the model's working memory</h2>
       <p>
-        Every transformer has a maximum sequence length — the context window. It's the total
+        Every transformer has a maximum sequence length, the context window. It's the total
         number of tokens the model can hold in attention at once: your system prompt, the
         conversation history, the document you pasted in, and the response it's generating,
         all counted together.
       </p>
       <p>
         Increasing context length isn't free. Attention scales quadratically with sequence
-        length in the naive implementation — doubling the context window roughly quadruples
+        length in the naive implementation: doubling the context window roughly quadruples
         the computation. Modern architectures (sliding window attention, grouped-query
         attention, RoPE scaling) reduce this, but there's no architectural free lunch.
         A 128K context model is genuinely harder to run than a 4K context model at the same
         parameter count.
       </p>
       <p>
-        For regulated-industry use cases — a patient encounter note, a contract, a meeting
-        transcript — 8K to 32K context covers the vast majority of real documents. The
+        For regulated-industry use cases, a patient encounter note, a contract, a meeting
+        transcript, 8K to 32K context covers the vast majority of real documents. The
         experiments on this site are all run within those bounds.
       </p>
 
       <h2>Why Apple Silicon changes the local AI equation</h2>
       <p>
         Conventional AI accelerators (NVIDIA GPUs) have a fixed pool of VRAM separate from
-        system RAM. A 24 GB GPU can only load models that fit in 24 GB of VRAM — anything
+        system RAM. A 24 GB GPU can only load models that fit in 24 GB of VRAM. Anything
         larger requires expensive multi-GPU setups. Apple Silicon uses a unified memory
         architecture: the CPU, GPU, and Neural Engine all share the same physical memory pool.
       </p>
       <p>
         A MacBook Pro with 128 GB of unified memory can load a model that would require
         four high-end data center GPUs on conventional hardware. The bandwidth is also
-        exceptional — Apple's memory fabric runs at 400+ GB/s on M3 Max and above, which
+        exceptional: Apple's memory fabric runs at 400+ GB/s on M3 Max and above, which
         is the actual bottleneck for inference throughput at large model sizes.
       </p>
       <p>
-        This is why Ground Floor is Apple Silicon-first — not brand loyalty. I looked at
+        This is why Ground Floor is Apple Silicon-first, not brand loyalty. I looked at
         every option. It's the only consumer hardware where running a 70B model is a
         reasonable target without building out specialized infrastructure.
       </p>
@@ -108,38 +113,38 @@ import Base from '../layouts/Base.astro';
         self-attention (which figures out which tokens should pay attention to which other tokens)
         and a feed-forward network (which processes those relationships into a representation
         the next layer can use). More layers means more computation per token and more
-        parameters — but it also means the model can build more abstract representations
+        parameters, but it also means the model can build more abstract representations
         of what it's reading.
       </p>
       <p>
-        Attention heads within each layer each learn to attend to different features — one
+        Attention heads within each layer each learn to attend to different features: one
         might track subject-verb agreement, another might track pronouns back to their
         referents. More heads, more capacity to track relationships simultaneously.
       </p>
       <p>
         In practice: you rarely need to tune these numbers. They're baked into the model
         architecture the lab shipped. What you control is which model you run, at what
-        quantization, on what hardware — and that's exactly what the <a href="/models">models
-        table</a> and <a href="/experiments">experiments</a> are designed to help you navigate.
+        quantization, on what hardware. That's the whole game, and it's exactly what the <a href="/models">models
+        table</a> and <a href="/experiments">experiments</a> let you play yourself.
       </p>
 
       <h2>Further reading</h2>
       <p>
-        If you want to go deeper — actually implement a transformer in PyTorch and watch
+        If you want to go deeper, actually implement a transformer in PyTorch and watch
         a small model learn to write Shakespeare from scratch:
       </p>
       <ul>
         <li>
           <a href="https://github.com/angelos-p/llm-from-scratch" target="_blank" rel="noopener">
             LLM from Scratch
-          </a> — hands-on workshop by Angelos Papageorgiou (ElevenLabs speech-to-text team).
+          </a>, hands-on workshop by Angelos Papageorgiou (ElevenLabs speech-to-text team).
           Trains a 10M parameter GPT-2-style model in under an hour on a laptop. Pure PyTorch, no
           pretrained weights.
         </li>
         <li>
           <a href="https://github.com/karpathy/nanoGPT" target="_blank" rel="noopener">
             nanoGPT
-          </a> — Andrej Karpathy's minimal GPT implementation. The canonical starting point for
+          </a>, Andrej Karpathy's minimal GPT implementation. The canonical starting point for
           understanding transformer internals without production-system complexity.
         </li>
       </ul>

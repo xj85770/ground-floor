@@ -1,18 +1,31 @@
 ---
 import Base from '../../layouts/Base.astro';
 import ExperimentCard from '../../components/ExperimentCard.astro';
+import Faq from '../../components/Faq.astro';
 import { getCollection } from 'astro:content';
+import { page, breadcrumb } from '../../lib/seo';
+
+const faq = [
+  { q: 'What does Ground Floor test each week?', a: 'Each Ground Floor experiment runs one real task for a regulated practice on a local, open-weight model: a SOAP note, a contract clause, a set of meeting minutes. It runs on Apple Silicon with the air-gap held. I publish what it did, the model and hardware used, and a plain verdict of viable, partial, or not yet.' },
+  { q: 'Are the failures published too?', a: 'Yes. An experiment gets a "not yet" verdict when the local model could not do the task well enough to trust, and that verdict stays up. The point is an honest record of what local AI can and cannot do for regulated work right now, not a highlight reel.' },
+  { q: 'What hardware and models do the experiments use?', a: 'The experiments run open-weight models on Apple Silicon Macs, from an M4 mini up to the two-M5-Max lab. Each write-up lists the exact model, the Mac, and the task, so you can judge whether it maps to your own setup.' },
+];
 
 const all    = await getCollection('experiments');
 const sorted = all.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
 const industries = [...new Set(all.map(e => e.data.industry))].sort();
 const verdicts   = ['viable', 'partial', 'not-yet'] as const;
+const schema = [
+  page('CollectionPage', { site: Astro.site, path: '/experiments', name: 'Ground Floor experiments', description: "Weekly experiments testing open-source LLMs on local Apple Silicon, for regulated practices that can't use cloud AI." }),
+  breadcrumb(Astro.site, [{ name: 'Experiments', path: '/experiments' }]),
+];
 ---
 
 <Base
   title="Experiments"
-  description="Weekly experiments testing open-source LLMs on local Apple Silicon — for regulated practices that can't use cloud AI."
+  description="Weekly experiments testing open-source LLMs on local Apple Silicon, for regulated practices that can't use cloud AI."
+  schema={schema}
 >
 
   <!-- Page hero -->
@@ -28,7 +41,7 @@ const verdicts   = ['viable', 'partial', 'not-yet'] as const;
       </h1>
       <p class="text-silver text-lg max-w-xl leading-relaxed">
         Weekly experiments on Apple Silicon. Each one targets a specific task
-        for a specific regulated industry and returns a verdict you can actually act on —
+        for a specific regulated industry and returns a verdict you can actually act on, 
         not "promising" or "has potential," but viable, partial, or not yet.
       </p>
     </div>
@@ -75,6 +88,8 @@ const verdicts   = ['viable', 'partial', 'not-yet'] as const;
       <a href="#" id="clear-filter" class="underline underline-offset-2 hover:text-chalk transition-colors">Clear.</a>
     </p>
   </div>
+
+  <Faq items={faq} heading="About the experiments" eyebrow="FAQ" />
 </Base>
 
 <style>

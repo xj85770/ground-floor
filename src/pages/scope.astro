@@ -1,10 +1,16 @@
 ---
 import Base from '../layouts/Base.astro';
+import { page, breadcrumb } from '../lib/seo';
+const schema = [
+  page('WebPage', { site: Astro.site, path: '/scope', name: 'Scope & Disclaimers', description: "What Ground Floor covers, what it doesn't, and why that distinction matters." }),
+  breadcrumb(Astro.site, [{ name: 'Scope & Disclaimers', path: '/scope' }]),
+];
 ---
 
 <Base
   title="Scope & Disclaimers"
   description="What Ground Floor covers, what it doesn't, and why that distinction matters."
+  schema={schema}
 >
   <div class="max-w-prose mx-auto px-5 md:px-0 py-20 md:py-28">
 
@@ -24,7 +30,7 @@ import Base from '../layouts/Base.astro';
       <h2>What Ground Floor is</h2>
       <p>
         Ground Floor documents experiments with open-weight large language models running
-        on local Apple Silicon hardware. It's an education project — not a product, not
+        on local Apple Silicon hardware. It's an education project, not a product, not
         a consulting firm. The site covers: which models run on which hardware, at what
         speed, with what output quality, for specific tasks in regulated industries.
       </p>
@@ -42,9 +48,9 @@ import Base from '../layouts/Base.astro';
         consult your state bar's ethics counsel before deployment.
       </p>
       <p>
-        <strong>Not compliance advice.</strong> Ground Floor tells you what the technology
-        can do. Whether it should be part of your workflow — given your jurisdiction,
-        your specialty, your client agreements, your licensing requirements — is a
+        <strong>No compliance advice.</strong> Ground Floor tells you what the technology
+        can do. Whether it should be part of your workflow, given your jurisdiction,
+        your specialty, your client agreements, your licensing requirements, is a
         different question. One with many variables this site isn't equipped to answer.
       </p>
       <p>
@@ -54,7 +60,7 @@ import Base from '../layouts/Base.astro';
         clinical setting requires review and accountability by a licensed clinician.
       </p>
       <p>
-        <strong>Not financial advice.</strong> Nothing here constitutes investment advice,
+        <strong>No financial advice.</strong> Nothing here constitutes investment advice,
         financial planning guidance, or recommendations about products or services for
         your clients.
       </p>
@@ -62,8 +68,8 @@ import Base from '../layouts/Base.astro';
       <h2>The key distinction</h2>
       <blockquote>
         What Ground Floor does is document the technical foundation.
-        Your specific compliance situation — your state, your county, your specialty,
-        your licensing body, your malpractice carrier, your contracts — is a conversation
+        Your specific compliance situation, your state, your county, your specialty,
+        your licensing body, your malpractice carrier, your contracts, is a conversation
         with someone who knows your jurisdiction. That person is not this website.
       </blockquote>
       <p>
@@ -116,10 +122,10 @@ import Base from '../layouts/Base.astro';
 
       <h2>Who I am in relation to this work</h2>
       <p>
-        I am a fellow experimenter — not a credentialed professional in any of the
-        industries this site covers. I do not have a law license, a medical license,
-        a financial advisory registration, or any other professional certification
-        relevant to the regulated industries documented here.
+        I am a fellow experimenter, not a credentialed professional in any of the
+        industries this site covers. There is no law license, no medical license,
+        no financial advisory registration, or any other professional certification
+        behind me relevant to the regulated industries documented here.
       </p>
       <p>
         What I have is technical fluency: I understand how these models work,
@@ -130,10 +136,10 @@ import Base from '../layouts/Base.astro';
       <p>
         <strong>You experiment at your own risk.</strong> Every result on this site
         is a technical finding from a private lab. Before applying any finding to a
-        real practice workflow — clinical, legal, financial, or otherwise — you are
+        real practice workflow, clinical, legal, financial, or otherwise, you are
         responsible for evaluating whether it is appropriate for your specific situation,
         your jurisdiction, and your professional obligations. I am not a substitute
-        for that judgment. I am a starting point for it.
+        for that judgment. Treat me as a starting point for it.
       </p>
 
       <h2>Contacting me</h2>
@@ -146,7 +152,7 @@ import Base from '../layouts/Base.astro';
       <p>
         I cannot evaluate your specific compliance situation, review your existing
         procedures, or tell you whether a given setup satisfies your regulatory obligations.
-        That's not a hedge — it's a genuine limitation. Compliance in regulated industries
+        That's not a hedge. It's a genuine limitation. Compliance in regulated industries
         is jurisdiction-specific, practice-specific, and changes over time. It requires
         a professional who knows your situation.
       </p>

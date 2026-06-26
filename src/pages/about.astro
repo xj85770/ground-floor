@@ -1,8 +1,13 @@
 ---
 import Base from '../layouts/Base.astro';
+import { page, breadcrumb } from '../lib/seo';
+const schema = [
+  page('AboutPage', { site: Astro.site, path: '/about', name: 'About Ground Floor', description: 'Who is behind Ground Floor and why this project exists.' }),
+  breadcrumb(Astro.site, [{ name: 'About', path: '/about' }]),
+];
 ---
 
-<Base title="About" description="Who is behind Ground Floor and why this project exists.">
+<Base title="About" description="Who is behind Ground Floor and why this project exists." schema={schema}>
 
   <div class="page-aurora">
     <div class="page-aurora-glow"></div>
@@ -17,30 +22,30 @@ import Base from '../layouts/Base.astro';
     <div class="prose-editorial">
 
       <p>
-        I run this project from a home office. The gear doing the work is two M5 Max
-        MacBook Pros connected over Thunderbolt 5 RDMA — 256 GB of unified memory,
-        16 TB of storage, ~3 µs latency between nodes. The same hardware I write about
-        on this site. None of it is theoretical. The results live or die on this specific setup.
+        I run this project from a home office. None of it is theoretical. The results live or die on this specific setup: two M5 Max
+        MacBook Pros connected over Thunderbolt 5 RDMA, 256 GB of unified memory,
+        16 TB of storage, ~3 µs latency between nodes. That's the same hardware I write about
+        on this site.
       </p>
 
       <h2>Why this work</h2>
       <p>
-        I kept seeing the same conversation repeat. A solo physician asks about AI
-        documentation tools. The products people recommend — all of them excellent —
+        For a while I kept seeing the same conversation repeat. A solo physician asks about AI
+        documentation tools. The products people recommend, all of them excellent, 
         require an internet connection, a vendor agreement, and some number of calls
-        with a compliance consultant. The physician, who runs a single-provider
+        with a compliance consultant. That physician, who runs a single-provider
         practice with two staff and no IT department, quietly closes the browser tab.
       </p>
       <p>
         The tools that exist for large health systems don't translate well to small
-        practices. The tools built for small practices often handle the compliance
+        practices. Tools built for small practices often handle the compliance
         question with a checkbox and a promise. There's a third option that almost
-        nobody is covering in a systematic way: air-gapped AI — run the model locally, on
+        nobody is covering in a systematic way: air-gapped AI. Run the model locally, on
         hardware you already understand, and don't create a third-party data flow in the first place.
       </p>
       <p>
-        That's the gap Ground Floor is trying to close. Not with a product — this is
-        an education project, not a company — but with clear documentation of what
+        That's the gap Ground Floor is trying to close. Not with a product. This is
+        an education project, not a company, and the way it closes the gap is with clear documentation of what
         actually works.
       </p>
 
@@ -51,27 +56,27 @@ import Base from '../layouts/Base.astro';
         The verdict answers the question most people actually have: <em>is this worth my time?</em>
       </p>
       <p>
-        The writeups live here. The discussion happens on LinkedIn.
+        The writeups live here. Discussion happens on LinkedIn.
         This site is the reference layer.
       </p>
 
       <h2>What I'm not</h2>
       <p>
         I'm not a lawyer, a compliance consultant, a physician, a financial advisor,
-        or a licensed professional in any of the industries I write about — and I want
-        to be clear about that because I think it matters. I'm someone who understands
+        or a licensed professional in any of the industries I write about, and I want
+        to be clear about that because I think it matters. What I am is someone who understands
         air-gapped AI infrastructure and wants to make that knowledge accessible to people
         who don't have time to piece it together from technical papers and Discord servers.
       </p>
       <p>
         Every experiment result is a technical finding. The compliance implications
         for your practice are a separate question that requires someone who knows your
-        specific situation. The <a href="/scope">Scope &amp; Disclaimers</a> page says this more carefully.
+        specific situation. My <a href="/scope">Scope &amp; Disclaimers</a> page says this more carefully.
       </p>
 
       <h2>The lab setup</h2>
       <p>
-        Two M5 Max MacBook Pros on a Thunderbolt 5 RDMA cluster — 256 GB unified memory,
+        Two M5 Max MacBook Pros on a Thunderbolt 5 RDMA cluster, 256 GB unified memory,
         16 TB, ~800 GB/s peak bandwidth. It's more hardware than most people will buy.
         But it lets me test the full spectrum: throttle the config down to match a $799
         Mac mini, or open it up for 70B context workloads. When I say something works
@@ -79,11 +84,11 @@ import Base from '../layouts/Base.astro';
       </p>
 
       <h2>Contact</h2>
-      {/* TODO: add Gmail contact once the address exists — e.g. " or by email at <a href="mailto:ADDRESS">ADDRESS</a>" appended to the line below. */}
+      {/* TODO: add Gmail contact once the address exists, e.g. " or by email at <a href="mailto:ADDRESS">ADDRESS</a>" appended to the line below. */}
       <p>
         Best way to reach me is on <a href="https://www.linkedin.com/in/xavier-jones-xajo/" target="_blank" rel="noopener noreferrer">LinkedIn</a> or <a href="https://x.com/xavierlocalai" target="_blank" rel="noopener noreferrer">X</a>.
         I read everything. If you're a practitioner in a regulated industry and want to share
-        a use case, challenge a finding, or suggest an experiment — I want to hear it.
+        a use case, challenge a finding, or suggest an experiment, I want to hear it.
         The experiments get better when they're grounded in real workflows.
       </p>
 
