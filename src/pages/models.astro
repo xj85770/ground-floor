@@ -22,7 +22,11 @@ function getRamLabel(gb: number | null): { text: string; color: string; bg: stri
 }
 
 const liveModels = await fetchOpenSourceModels();
-const openModels = liveModels.length > 0 ? liveModels : STATIC_OPEN_SOURCE_MODELS;
+// Always display in descending Intelligence Index order — slice(0,6) and the table render in
+// array order, so sort here rather than relying on the static array being hand-ordered.
+const openModels = (liveModels.length > 0 ? liveModels : STATIC_OPEN_SOURCE_MODELS)
+  .slice()
+  .sort((a, b) => (b.intelligenceIndex ?? 0) - (a.intelligenceIndex ?? 0));
 const isLive = liveModels.length > 0;
 
 // Use-case picks
@@ -111,7 +115,7 @@ const buildDate = new Date().toLocaleDateString('en-US', {
           <span class="info-tip-icon">i</span>
           <span class="info-tip-body">
             <strong style="color:#e5e5ea; display:block; margin-bottom:6px;">Why are scores only 40–60?</strong>
-            The 0–100 scale is based on benchmarks so hard that no AI has scored above 60 yet. Today's world record is GPT-5.5 at 60.<br /><br />
+            The 0–100 scale is based on benchmarks so hard that no AI has scored above 60 yet. Today's world record is Claude Fable 5 at 60 (currently unavailable); the top available model is Claude Opus 4.8 at 56.<br /><br />
             These benchmarks are designed to find failure modes, not measure everyday capability:<br /><br />
             <span style="color:#e5e5ea;">· Humanity's Last Exam</span>, expert-contributed questions specifically designed to stump AI<br />
             <span style="color:#e5e5ea;">· GPQA Diamond</span>, PhD-level science problems<br />
@@ -363,7 +367,7 @@ const buildDate = new Date().toLocaleDateString('en-US', {
       </div>
       <p class="mt-2 text-xs text-ash leading-relaxed reveal">
         Min RAM = minimum unified memory to run at Q3_K_M quantization (large MoE) or Q4_K_M (dense/small).
-        Intelligence Index is artificialanalysis.ai's composite quality score (0–100 scale). Scores look low because the benchmarks are hard: Humanity's Last Exam, GPQA Diamond, SciCode, and 7 other graduate-level evals. The current world ceiling is GPT-5.5 at 60. No model has cracked 60 yet. A score of 54 means the model correctly handled 54% of that extremely difficult mix.
+        Intelligence Index is artificialanalysis.ai's composite quality score (0–100 scale, AA Intelligence Index v4.1). Scores look low because the benchmarks are hard: Humanity's Last Exam, GPQA Diamond, SciCode, and 6 other graduate-level evals. The current world ceiling is Claude Fable 5 at 60 (currently unavailable; Claude Opus 4.8 at 56 is the top available model). A score of 51 means the model correctly handled 51% of that extremely difficult mix.
         All models have publicly released weights, no API key required to run them.
       </p>
     </section>
@@ -415,7 +419,7 @@ const buildDate = new Date().toLocaleDateString('en-US', {
         </div>
 
         <p class="mt-6 text-xs text-ash leading-relaxed">
-          Closed-source reference: GPT-5.5 scores 60 (PhD with distinction), the current world ceiling as of June 2026.
+          Closed-source reference: Claude Fable 5 scores 60 (PhD with distinction), the current world ceiling as of June 2026 (currently unavailable; Claude Opus 4.8 at 56 is the top available model).
           No model, open or closed, has reached the Frontier PhD tier (68+) yet.
         </p>
       </div>
