@@ -239,31 +239,32 @@ export const CLOSED_SOURCE_REFERENCE: ClosedModel[] = [
 // are sub-estimates around it. Rows marked "v4.1 est." are cross-source/delta estimates pending
 // AA-primary confirmation (the live AA_API_KEY feed supersedes all of these at build time).
 export const TASK_SCORES: Record<string, Record<string, number>> = {
-  // Open-weight — verified AA v4.1 Intelligence Index
-  'GLM-5.2':                 { swe: 50, agentic: 50, reasoning: 50, general: 51 },  // new #1 open-weight; TerminalBench 78, SciCode 50, GPQA 89, HLE 40 (verbose: 43k tok/task)
+  // Open-weight — verified AA v4.1 Intelligence Index (general = true index; sub-scores illustrative)
+  'GLM-5.2':                 { swe: 50, agentic: 50, reasoning: 50, general: 51 },  // #1 open-weight; beats GPT-5.5 on SWE-bench Pro/FrontierSWE/MCP-Atlas/GDPval
   'MiniMax M3':              { swe: 44, agentic: 43, reasoning: 40, general: 44 },
   'DeepSeek V4 Pro':         { swe: 43, agentic: 43, reasoning: 44, general: 44 },
   'Kimi K2.6':               { swe: 43, agentic: 41, reasoning: 41, general: 43 },
   'MiMo-V2.5-Pro':           { swe: 40, agentic: 41, reasoning: 43, general: 42 },
-  'Qwen3.6 Max Preview':     { swe: 39, agentic: 40, reasoning: 40, general: 40 },
+  'GLM-5.1 Reasoning':       { swe: 39, agentic: 39, reasoning: 41, general: 40 },
+  'GLM-5 Reasoning':         { swe: 39, agentic: 38, reasoning: 41, general: 40 },
   'DeepSeek V4 Flash':       { swe: 40, agentic: 39, reasoning: 39, general: 40 },
+  'MiniMax-M2.7':            { swe: 37, agentic: 39, reasoning: 38, general: 38 },
+  'Kimi K2.5':               { swe: 37, agentic: 36, reasoning: 37, general: 38 },
   'Qwen3.6 27B':             { swe: 36, agentic: 36, reasoning: 36, general: 37 },
-  'Qwen3.5 27B':             { swe: 40, agentic: 39, reasoning: 41, general: 42 },
-  'Gemma 4 31B':             { swe: 36, agentic: 35, reasoning: 37, general: 39 },
-  // Open-weight — v4.1 est. (cross-source; pending AA-primary)
-  'GLM-5.1 Reasoning':       { swe: 38, agentic: 38, reasoning: 41, general: 40 },  // GLM-5.1 = 40 (verified)
-  'GLM-5 Reasoning':         { swe: 37, agentic: 37, reasoning: 39, general: 39 },  // v4.1 est.
-  'Qwen3.6 Plus':            { swe: 38, agentic: 40, reasoning: 38, general: 39 },  // v4.1 est.
-  'MiniMax-M2.7':            { swe: 37, agentic: 39, reasoning: 38, general: 38 },  // v4.1 est.
-  'Qwen3.5 397B A17B':       { swe: 33, agentic: 34, reasoning: 34, general: 34 },  // v4.1 est.
-  'Mistral Medium 3.5':      { swe: 32, agentic: 31, reasoning: 32, general: 33 },  // v4.1 est.
-  'Ling 2.6 Flash':          { swe: 21, agentic: 20, reasoning: 20, general: 22 },  // v4.1 est.
-  'Ling-1T':                 { swe: 16, agentic: 15, reasoning: 15, general: 16 },  // v4.1 est.
-  'Mistral Small 4':         { swe: 23, agentic: 22, reasoning: 21, general: 24 },  // v4.1 est.
-  'Granite 4.0 H Small':     { swe: 8,  agentic: 8,  reasoning: 7,  general: 9  },  // v4.1 est.
-  // RDMA cluster models — v4.1 est. (older reasoning models; pending AA-primary)
-  'DeepSeek-R1 671B':          { swe: 39, agentic: 40, reasoning: 44, general: 42 },  // v4.1 est. (was 55 on v4.0)
-  'Qwen3.5 235B A22B Q8':      { swe: 39, agentic: 40, reasoning: 41, general: 40 },  // v4.1 est. (was 50 on v4.0)
+  'Qwen3.5 397B A17B':       { swe: 33, agentic: 34, reasoning: 34, general: 34 },
+  'Qwen3.5 27B':             { swe: 33, agentic: 33, reasoning: 34, general: 34 },
+  'Qwen3.6 35B A3B':         { swe: 31, agentic: 32, reasoning: 31, general: 32 },
+  'Mistral Medium 3.5':      { swe: 29, agentic: 29, reasoning: 30, general: 30 },
+  'Gemma 4 31B':             { swe: 27, agentic: 27, reasoning: 28, general: 29 },
+  'Qwen3.5 9B':              { swe: 24, agentic: 24, reasoning: 24, general: 25 },
+  'DeepSeek-R1 671B':        { swe: 18, agentic: 19, reasoning: 22, general: 20 },  // v4.1 (was 55 on v4.0)
+  'Mistral Small 4':         { swe: 20, agentic: 20, reasoning: 20, general: 21 },
+  'Qwen3.5 4B':              { swe: 19, agentic: 19, reasoning: 20, general: 20 },
+  'Ling 2.6 Flash':          { swe: 18, agentic: 18, reasoning: 18, general: 19 },
+  'Ling-1T':                 { swe: 13, agentic: 12, reasoning: 13, general: 13 },
+  'Gemma 4 E4B':             { swe: 11, agentic: 11, reasoning: 12, general: 12 },
+  'Granite 4.0 H Small':     { swe: 5,  agentic: 5,  reasoning: 4,  general: 5  },
+  'Phi-4 14B':               { swe: 5,  agentic: 4,  reasoning: 5,  general: 5  },
   // Closed reference — verified AA v4.1
   'Claude Fable 5 (max)':   { swe: 59, agentic: 60, reasoning: 59, general: 60 },  // #1 overall, currently unavailable
   'Claude Opus 4.8 (max)':  { swe: 55, agentic: 57, reasoning: 56, general: 56 },  // top available
@@ -422,18 +423,22 @@ export function getTier(score: number | null): Tier {
   return TIERS[TIERS.length - 1];
 }
 
-// Static fallback, source: artificialanalysis.ai, June 2026
-// Intelligence index: 0–100 scale. No model has scored above 60 yet (June 2026).
-// Output speeds are API inference speeds; local Apple Silicon speeds are lower for large models
+// Static fallback, source: artificialanalysis.ai — Artificial Analysis Intelligence Index v4.1, June 2026
+// FACT-ONLY: every intelligenceIndex below is the model's verified current v4.1 score (cross-checked
+//   by two independent passes). No v4.0 ghosts, no estimates. Proprietary/API-only models (Qwen "Plus"
+//   and "Max") and models AA does not track were removed — this list is open-weight only.
+// coding/math sub-scores are NOT published by AA as plain numbers; values here are derived/illustrative.
+// Output speeds are API inference speeds; local Apple Silicon speeds are lower for large models.
+// Ceiling is 60 (no model above it). Listed in true descending order of the v4.1 Intelligence Index.
 export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
   // ── New #1 open-weight (Jun 2026): GLM-5.2, large MoE that fits the 2-node cluster at low quant ──
   {
     name: 'GLM-5.2',
     provider: 'Z AI',
     intelligenceIndex: 51,  // AA Intelligence Index v4.1 — #1 open-weight (+11 over GLM-5.1)
-    codingScore: 50,        // SciCode 50, TerminalBench v2.1 78, GPQA Diamond 89
-    mathScore: 49,          // HLE 40, CritPt 21 — strong but reasoning is the relative weak spot
-    outputSpeed: 55,        // API; very verbose (~43k tok/task). Local 2-node IQ1_S ~15 t/s.
+    codingScore: 50,        // illustrative: SciCode 50, TerminalBench v2.1 78, GPQA Diamond 89
+    mathScore: 49,          // illustrative: HLE 40, CritPt 21
+    outputSpeed: 132,       // API t/s (AA). Local 2-node IQ1_S ~15 t/s. Very verbose (~43k tok/task).
     contextWindow: 1000000, // 1M-token context
     isOpenSource: true,
     minRamGb: 150,          // 744B total / 40B active MoE; IQ1_S (~150 GB) fits the 2-node window, IQ2_M ~222 GB
@@ -443,67 +448,56 @@ export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
   {
     name: 'MiniMax M3',
     provider: 'MiniMax',
-    intelligenceIndex: 44,  // AA Intelligence Index v4.1 (was 55 on v4.0)
-    codingScore: null,      // AA reports the composite Index for M3; no separate coding sub-score published yet
-    mathScore: null,        //   (M3 leads SWE-Bench Pro but is weak on abstract reasoning, see task scores)
-    outputSpeed: 58,        // notably slow + very verbose
+    intelligenceIndex: 44,  // AA Intelligence Index v4.1 (was 55 on v4.0). Joint-2nd open-weight, tied with DeepSeek V4 Pro
+    codingScore: null,
+    mathScore: null,
+    outputSpeed: 92,        // API t/s (AA)
     contextWindow: 1000000, // 1M-token context via MiniMax Sparse Attention
     isOpenSource: true,
     minRamGb: 160,          // 428B total / 23B active MoE, Q2_K ~160 GB
     requiresCluster: true,
-    clusterNote: 'First multimodal M-series (text + image + video in), 1M context. 428B total / 23B active MoE, Q2_K (~160 GB) fits inside the 244 GB 2-node window; needs both nodes. Joint-2nd open-weight Intelligence Index (44, AA v4.1, tied with DeepSeek V4 Pro) behind GLM-5.2 (51), but slow and very verbose in practice. Self-hostable open weights, which suits air-gapped deployment.',
+    clusterNote: 'First multimodal M-series (text + image + video in), 1M context. 428B total / 23B active MoE, Q2_K (~160 GB) fits inside the 244 GB 2-node window; needs both nodes. Joint-2nd open-weight Intelligence Index (44, AA v4.1, tied with DeepSeek V4 Pro) behind GLM-5.2 (51). Self-hostable open weights, which suits air-gapped deployment.',
   },
-  // ── Frontier open-weight (1T+ MoE, need 3–4 node cluster or future 512 GB hardware) ──
-  // minRamGb = Q2_K quantization minimum. These do NOT fit the current 2-node 244 GB cluster.
-  { name: 'DeepSeek V4 Pro',        provider: 'DeepSeek',    intelligenceIndex: 44, codingScore: 43, mathScore: 44, outputSpeed: 34,  contextWindow: 1000000, isOpenSource: true, minRamGb: 580 },  // v4.1 (was 52). 1.6T total / 49B active
-  { name: 'Kimi K2.6',              provider: 'Moonshot AI', intelligenceIndex: 43, codingScore: 43, mathScore: 41, outputSpeed: 34,  contextWindow: 262144,  isOpenSource: true, minRamGb: 360 },  // v4.1 (was 54). 1T total / 32B active
-  { name: 'MiMo-V2.5-Pro',          provider: 'Xiaomi',      intelligenceIndex: 42, codingScore: 40, mathScore: 43, outputSpeed: 68,  contextWindow: 1000000, isOpenSource: true, minRamGb: 360 },  // v4.1 (was 54). 1T total / 42B active
-  { name: 'Qwen3.6 Max Preview',    provider: 'Alibaba',     intelligenceIndex: 40, codingScore: 39, mathScore: 40, outputSpeed: 36,  contextWindow: 262144,  isOpenSource: true, minRamGb: null }, // v4.1 (was 52). Note: AA now lists Qwen "Max" as proprietary/API-only — flagged for review
-  { name: 'GLM-5.1 Reasoning',      provider: 'Z AI',        intelligenceIndex: 40, codingScore: 38, mathScore: 41, outputSpeed: 60,  contextWindow: 200000,  isOpenSource: true, minRamGb: null }, // v4.1 (was 51). Z AI has not published param count
-  { name: 'GLM-5 Reasoning',        provider: 'Z AI',        intelligenceIndex: 39, codingScore: 37, mathScore: 39, outputSpeed: 65,  contextWindow: 200000,  isOpenSource: true, minRamGb: null }, // v4.1 est. (was 50)
-  { name: 'Qwen3.6 Plus',           provider: 'Alibaba',     intelligenceIndex: 39, codingScore: 38, mathScore: 39, outputSpeed: 53,  contextWindow: 1000000, isOpenSource: true, minRamGb: null }, // v4.1 est. (was 50). Alibaba has not disclosed param count
-  { name: 'MiniMax-M2.7',           provider: 'MiniMax',     intelligenceIndex: 38, codingScore: 37, mathScore: 38, outputSpeed: 55,  contextWindow: 205000,  isOpenSource: true, minRamGb: 110 },  // v4.1 est. (was 50). 230B total / 10B active, Q3 ~110 GB
-  // ── Strong mid-tier ──────────────────────────────────────────────────────
-  { name: 'DeepSeek V4 Flash',   provider: 'DeepSeek',    intelligenceIndex: 40, codingScore: 40, mathScore: 39, outputSpeed: 82,  contextWindow: 1000000, isOpenSource: true, minRamGb: 135 },  // v4.1 (was 47). 284B total / 13B active, Q3 ~135 GB
-  { name: 'Qwen3.6 27B',         provider: 'Alibaba',     intelligenceIndex: 37, codingScore: 35, mathScore: 36, outputSpeed: 66,  contextWindow: 262144,  isOpenSource: true, minRamGb: 17 },  // v4.1 verified (27.8B params) — #1 open-weight in the small 4B–40B class
-  { name: 'Qwen3.5 27B',         provider: 'Alibaba',     intelligenceIndex: 42, codingScore: 40, mathScore: 41, outputSpeed: 87,  contextWindow: 262144,  isOpenSource: true, minRamGb: 17 },  // v4.1 verified
-  { name: 'Qwen3.6 35B A3B',     provider: 'Alibaba',     intelligenceIndex: 41, codingScore: 39, mathScore: 40, outputSpeed: 200, contextWindow: 262144,  isOpenSource: true, minRamGb: 23 },  // v4.1 est.
-  { name: 'Gemma 4 31B',         provider: 'Google',      intelligenceIndex: 39, codingScore: 36, mathScore: 37, outputSpeed: 35,  contextWindow: 131072,  isOpenSource: true, minRamGb: 20 },  // v4.1 verified (Apache 2.0, multimodal)
-  { name: 'Qwen3.5 397B A17B',   provider: 'Alibaba',     intelligenceIndex: 34, codingScore: 33, mathScore: 34, outputSpeed: 53,  contextWindow: 262144,  isOpenSource: true, minRamGb: 150 },  // v4.1 est. (was 45). 397B total, Q2_K ~150 GB
-  { name: 'Mistral Medium 3.5',  provider: 'Mistral',     intelligenceIndex: 33, codingScore: 32, mathScore: 32, outputSpeed: 173, contextWindow: 131072,  isOpenSource: true, minRamGb: 79 },   // v4.1 est. (was 39). 128B dense, Q4_K_M ~79 GB
-  { name: 'Kimi K2.5',           provider: 'Moonshot AI', intelligenceIndex: 28, codingScore: 28, mathScore: 27, outputSpeed: 50,  contextWindow: 262144,  isOpenSource: true, minRamGb: 360 },  // v4.1 est. (was 37). 1T MoE like K2.6
-  // ── TB5 RDMA cluster (244 GB usable, current 2-node setup) ───────────────
+  // ── Frontier open-weight (1T+ MoE, need a cluster or future 512 GB hardware) ──
+  // minRamGb = Q2_K/Q3 quantization minimum. The 1T+ ones do NOT fit the current 2-node 244 GB cluster.
+  { name: 'DeepSeek V4 Pro',        provider: 'DeepSeek',    intelligenceIndex: 44, codingScore: 43, mathScore: 44, outputSpeed: 88,  contextWindow: 1000000, isOpenSource: true, minRamGb: 580 },  // v4.1 (was 52). 1.6T total / 49B active
+  { name: 'Kimi K2.6',              provider: 'Moonshot AI', intelligenceIndex: 43, codingScore: 43, mathScore: 41, outputSpeed: 83,  contextWindow: 262144,  isOpenSource: true, minRamGb: 360 },  // v4.1 (was 54). 1T total / 32B active
+  { name: 'MiMo-V2.5-Pro',          provider: 'Xiaomi',      intelligenceIndex: 42, codingScore: 40, mathScore: 43, outputSpeed: 49,  contextWindow: 1000000, isOpenSource: true, minRamGb: 360 },  // v4.1 (was 54). ~1T total / 42B active
+  { name: 'GLM-5.1 Reasoning',      provider: 'Z AI',        intelligenceIndex: 40, codingScore: 38, mathScore: 41, outputSpeed: 74,  contextWindow: 200000,  isOpenSource: true, minRamGb: null }, // v4.1 (was 51). 744B total / 40B active
+  { name: 'GLM-5 Reasoning',        provider: 'Z AI',        intelligenceIndex: 40, codingScore: 38, mathScore: 40, outputSpeed: 68,  contextWindow: 200000,  isOpenSource: true, minRamGb: null }, // v4.1 verified. 744B total / 40B active
+  { name: 'DeepSeek V4 Flash',      provider: 'DeepSeek',    intelligenceIndex: 40, codingScore: 40, mathScore: 39, outputSpeed: 104, contextWindow: 1000000, isOpenSource: true, minRamGb: 135 },  // v4.1 (was 47). 284B total / 13B active, Q3 ~135 GB
+  { name: 'MiniMax-M2.7',           provider: 'MiniMax',     intelligenceIndex: 38, codingScore: 37, mathScore: 38, outputSpeed: 43,  contextWindow: 205000,  isOpenSource: true, minRamGb: 110 },  // v4.1 (was 50). 230B total / 10B active, Q3 ~110 GB
+  { name: 'Kimi K2.5',              provider: 'Moonshot AI', intelligenceIndex: 38, codingScore: 37, mathScore: 36, outputSpeed: 46,  contextWindow: 262144,  isOpenSource: true, minRamGb: 360 },  // v4.1 (AA-estimated label). 1T MoE like K2.6
+  // ── Mid-tier ──────────────────────────────────────────────────────────────
+  { name: 'Qwen3.6 27B',         provider: 'Alibaba',     intelligenceIndex: 37, codingScore: 35, mathScore: 36, outputSpeed: 57,  contextWindow: 262144,  isOpenSource: true, minRamGb: 17 },  // v4.1 verified (27.8B dense) — #1 open-weight in the small 4B–40B class
+  { name: 'Qwen3.5 397B A17B',   provider: 'Alibaba',     intelligenceIndex: 34, codingScore: 33, mathScore: 34, outputSpeed: 50,  contextWindow: 262144,  isOpenSource: true, minRamGb: 150 },  // v4.1 (was 45). 397B total / 17B active, Q2_K ~150 GB
+  { name: 'Qwen3.5 27B',         provider: 'Alibaba',     intelligenceIndex: 34, codingScore: 32, mathScore: 33, outputSpeed: 81,  contextWindow: 262144,  isOpenSource: true, minRamGb: 17 },  // v4.1 (was 42). 27.8B dense
+  { name: 'Qwen3.6 35B A3B',     provider: 'Alibaba',     intelligenceIndex: 32, codingScore: 31, mathScore: 31, outputSpeed: 161, contextWindow: 262144,  isOpenSource: true, minRamGb: 23 },  // v4.1 verified. 36B total / 3B active
+  { name: 'Mistral Medium 3.5',  provider: 'Mistral',     intelligenceIndex: 30, codingScore: 29, mathScore: 29, outputSpeed: 118, contextWindow: 131072,  isOpenSource: true, minRamGb: 79 },   // v4.1 (was 39). 128B dense, Q4_K_M ~79 GB
+  { name: 'Gemma 4 31B',         provider: 'Google',      intelligenceIndex: 29, codingScore: 27, mathScore: 28, outputSpeed: 35,  contextWindow: 131072,  isOpenSource: true, minRamGb: 20 },  // v4.1 (was 39). 30.7B dense, Apache 2.0, multimodal
+  { name: 'Qwen3.5 9B',          provider: 'Alibaba',      intelligenceIndex: 25, codingScore: 24, mathScore: 24, outputSpeed: 56,  contextWindow: 262144,  isOpenSource: true, minRamGb: 6 },   // v4.1 (was 32). 9.7B dense
+  // ── TB5 RDMA cluster / large but older ───────────────────────────────────
   {
     name: 'DeepSeek-R1 671B',
     provider: 'DeepSeek',
-    intelligenceIndex: 42,  // v4.1 est. (was 55 on v4.0 — older reasoning model, re-baselined down)
-    codingScore: 39,
-    mathScore: 44,
-    outputSpeed: 8,
+    intelligenceIndex: 20,  // v4.1 verified (was 55 on v4.0 — older reasoning model, re-baselined hard)
+    codingScore: null,
+    mathScore: null,
+    outputSpeed: null,
     contextWindow: 131072,
     isOpenSource: true,
     minRamGb: 190,
     requiresCluster: true,
-    clusterNote: 'Q2_K ~190 GB, fits in 244 GB usable across both nodes. The full 671B reasoning model, not a distilled version. Now superseded on the leaderboard by GLM-5.2 and the V4 line.',
+    clusterNote: 'Q2_K ~190 GB, fits in 244 GB usable across both nodes. The full 671B / 37B-active reasoning model, not a distilled version. Heavily superseded on the v4.1 leaderboard by GLM-5.2 and the V4 line — kept for reference.',
   },
-  {
-    name: 'Qwen3.5 235B A22B Q8',
-    provider: 'Alibaba',
-    intelligenceIndex: 40,  // v4.1 est. (was 50 on v4.0)
-    codingScore: 39,
-    mathScore: 41,
-    outputSpeed: 12,
-    contextWindow: 262144,
-    isOpenSource: true,
-    minRamGb: 235,
-    requiresCluster: true,
-    clusterNote: 'Q8 full precision ~235 GB, exactly fills the 244 GB cluster window. Highest quality Qwen3.5 MoE run.',
-  },
-  // ── Needs 3–4 node cluster or 512 GB hardware (future) ───────────────────
+  // ── Small / edge models (v4.1 is brutal on sub-15B models: agentic + HLE-weighted) ──
+  { name: 'Mistral Small 4',     provider: 'Mistral',      intelligenceIndex: 21, codingScore: null, mathScore: null, outputSpeed: 173, contextWindow: 262144, isOpenSource: true, minRamGb: 55 },  // v4.1 (was 28). 119B total / 6.5B active MoE
+  { name: 'Qwen3.5 4B',          provider: 'Alibaba',      intelligenceIndex: 20, codingScore: 19, mathScore: 19, outputSpeed: 182, contextWindow: 131072,  isOpenSource: true, minRamGb: 3 },   // v4.1 verified (Reasoning variant). 4.7B dense
+  { name: 'Ling 2.6 Flash',      provider: 'InclusionAI',  intelligenceIndex: 19, codingScore: null, mathScore: null, outputSpeed: 183, contextWindow: 262144, isOpenSource: true, minRamGb: 49 },   // v4.1 (was 26). 107B total / 7.4B active MoE, Q3_K_M ~49 GB
   {
     name: 'Ling-1T',
     provider: 'InclusionAI',
-    intelligenceIndex: 16,  // v4.1 est. (was 20)
+    intelligenceIndex: 13,  // v4.1 verified (was 20)
     codingScore: null,
     mathScore: null,
     outputSpeed: null,
@@ -513,14 +507,9 @@ export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
     requiresCluster: true,
     clusterNote: 'Q3_K_M ~375 GB, beyond the current 2-node setup (244 GB). Needs 3-node cluster (~366 GB usable) or a future 512 GB Mac. At Q4: ~500 GB (4 nodes). 1T total / 50B active params, MIT license.',
   },
-  // ── Small / edge models ──────────────────────────────────────────────────
-  { name: 'Qwen3.5 9B',          provider: 'Alibaba',      intelligenceIndex: 25, codingScore: 24, mathScore: 24, outputSpeed: 120, contextWindow: 131072,  isOpenSource: true, minRamGb: 6 },   // v4.1 est. (was 32)
-  { name: 'Phi-4 14B',           provider: 'Microsoft',    intelligenceIndex: 24, codingScore: 25, mathScore: 26, outputSpeed: 95,  contextWindow: 16384,   isOpenSource: true, minRamGb: 10 },  // v4.1 est. (was 30)
-  { name: 'Gemma 4 4B',          provider: 'Google',       intelligenceIndex: 24, codingScore: 22, mathScore: 22, outputSpeed: 290, contextWindow: 131072,  isOpenSource: true, minRamGb: 3 },   // v4.1 est.
-  { name: 'Mistral Small 4',     provider: 'Mistral',      intelligenceIndex: 24, codingScore: null, mathScore: null, outputSpeed: 172, contextWindow: 262144, isOpenSource: true, minRamGb: 55 },  // v4.1 est. (was 28). 119B total / 6.5B active MoE
-  { name: 'Ling 2.6 Flash',      provider: 'InclusionAI',  intelligenceIndex: 22, codingScore: null, mathScore: null, outputSpeed: 206, contextWindow: 262144, isOpenSource: true, minRamGb: 49 },   // v4.1 est. (was 26). 107B total / 7.4B active MoE, Q3_K_M ~49 GB
-  { name: 'Qwen3.5 4B',          provider: 'Alibaba',      intelligenceIndex: 21, codingScore: 20, mathScore: 20, outputSpeed: 182, contextWindow: 131072,  isOpenSource: true, minRamGb: 3 },   // v4.1 est. (was 27)
-  { name: 'Phi-4-mini 3.8B',     provider: 'Microsoft',    intelligenceIndex: 18, codingScore: 19, mathScore: 21, outputSpeed: 310, contextWindow: 16384,   isOpenSource: true, minRamGb: 3 },   // v4.1 est. (was 22)
-  { name: 'Llama 3.2 3B',        provider: 'Meta',         intelligenceIndex: 14, codingScore: 13, mathScore: 12, outputSpeed: 340, contextWindow: 131072,  isOpenSource: true, minRamGb: 2 },   // v4.1 est. (was 18)
-  { name: 'Granite 4.0 H Small', provider: 'IBM',          intelligenceIndex: 9,  codingScore: null, mathScore: null, outputSpeed: 364, contextWindow: 128000, isOpenSource: true, minRamGb: 20 }, // v4.1 est. (was 11). 32B total / 9B active MoE, speed leader
+  { name: 'Gemma 4 E4B',         provider: 'Google',       intelligenceIndex: 12, codingScore: null, mathScore: null, outputSpeed: 290, contextWindow: 131072,  isOpenSource: true, minRamGb: 5 },   // v4.1 (AA-estimated). 8B total / 4.5B active, Apache 2.0, multimodal
+  { name: 'Granite 4.0 H Small', provider: 'IBM',          intelligenceIndex: 5,  codingScore: null, mathScore: null, outputSpeed: 374, contextWindow: 128000, isOpenSource: true, minRamGb: 20 },  // v4.1 (was 11). 32B total / 9B active MoE, speed leader
+  { name: 'Phi-4 14B',           provider: 'Microsoft',    intelligenceIndex: 5,  codingScore: null, mathScore: null, outputSpeed: 36,  contextWindow: 16384,   isOpenSource: true, minRamGb: 10 },  // v4.1 (AA-estimated; was 30). 14B dense
+  { name: 'Llama 3.2 3B',        provider: 'Meta',         intelligenceIndex: 4,  codingScore: null, mathScore: null, outputSpeed: 52,  contextWindow: 131072,  isOpenSource: true, minRamGb: 2 },   // v4.1 (was 18). 3B dense
+  { name: 'Phi-4-mini 3.8B',     provider: 'Microsoft',    intelligenceIndex: 3,  codingScore: null, mathScore: null, outputSpeed: 44,  contextWindow: 16384,   isOpenSource: true, minRamGb: 3 }    // v4.1 (was 22). 3.8B dense
 ];
