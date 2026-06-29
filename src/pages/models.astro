@@ -107,7 +107,7 @@ const buildDate = new Date().toLocaleDateString('en-US', {
     <section class="mb-20">
       <h2 class="font-display text-2xl font-semibold text-chalk mb-2 reveal">Head-to-head by task</h2>
       <p class="text-silver text-sm mb-3 reveal">
-        Purple rows are open-weight, grey are closed APIs. The closed scores are here for scale only. Using them means your data leaves the building.
+        Purple rows are open-weight, grey are closed APIs. The closed scores are here for scale only. Using them means your data leaves the building. The General column is the verified AA Intelligence Index; the SWE, Agentic and Reasoning splits are estimates anchored to it, since AA does not publish per-task sub-scores.
       </p>
       <p class="text-xs text-ash mb-10 reveal inline-flex items-center gap-2">
         Scores are on a 0–100 scale (Artificial Analysis Intelligence Index).
@@ -265,7 +265,7 @@ const buildDate = new Date().toLocaleDateString('en-US', {
             <span style="color:#e5e5ea;">· GPQA Diamond</span>, PhD-level biology, chemistry, physics<br />
             <span style="color:#e5e5ea;">· SciCode</span>, research-grade scientific code<br />
             <span style="color:#e5e5ea;">· Terminal-Bench Hard</span>, shell tasks that actually execute<br /><br />
-            A score of <strong style="color:#9b5de5;">54</strong> means 54% of that extremely hard mix. By contrast, a poem request would score 99. Expand the tier legend below to see what each score range means in practice.
+            A score of <strong style="color:#9b5de5;">51</strong> means 51% of that extremely hard mix. By contrast, a poem request would score 99. Expand the tier legend below to see what each score range means in practice.
           </span>
         </span>
         All models run locally, no API required.
@@ -279,8 +279,8 @@ const buildDate = new Date().toLocaleDateString('en-US', {
               <th class="text-left px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Model</th>
               <th class="text-left px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Provider</th>
               <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Intelligence</th>
-              <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Coding</th>
-              <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Math</th>
+              <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Coding <span style="text-transform:none;opacity:0.6;">(est)</span></th>
+              <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Math <span style="text-transform:none;opacity:0.6;">(est)</span></th>
               <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Speed (t/s)</th>
               <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Context</th>
               <th class="text-right px-5 py-4 font-mono text-[0.65rem] tracking-widest uppercase text-ash">Min RAM</th>

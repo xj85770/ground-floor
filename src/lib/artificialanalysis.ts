@@ -449,8 +449,8 @@ export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
     name: 'MiniMax M3',
     provider: 'MiniMax',
     intelligenceIndex: 44,  // AA Intelligence Index v4.1 (was 55 on v4.0). Joint-2nd open-weight, tied with DeepSeek V4 Pro
-    codingScore: null,
-    mathScore: null,
+    codingScore: 43,        // est. (AA does not publish sub-indices)
+    mathScore: 42,          // est.
     outputSpeed: 92,        // API t/s (AA)
     contextWindow: 1000000, // 1M-token context via MiniMax Sparse Attention
     isOpenSource: true,
@@ -463,8 +463,8 @@ export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
   { name: 'DeepSeek V4 Pro',        provider: 'DeepSeek',    intelligenceIndex: 44, codingScore: 43, mathScore: 44, outputSpeed: 88,  contextWindow: 1000000, isOpenSource: true, minRamGb: 580 },  // v4.1 (was 52). 1.6T total / 49B active
   { name: 'Kimi K2.6',              provider: 'Moonshot AI', intelligenceIndex: 43, codingScore: 43, mathScore: 41, outputSpeed: 83,  contextWindow: 262144,  isOpenSource: true, minRamGb: 360 },  // v4.1 (was 54). 1T total / 32B active
   { name: 'MiMo-V2.5-Pro',          provider: 'Xiaomi',      intelligenceIndex: 42, codingScore: 40, mathScore: 43, outputSpeed: 49,  contextWindow: 1000000, isOpenSource: true, minRamGb: 360 },  // v4.1 (was 54). ~1T total / 42B active
-  { name: 'GLM-5.1 Reasoning',      provider: 'Z AI',        intelligenceIndex: 40, codingScore: 38, mathScore: 41, outputSpeed: 74,  contextWindow: 200000,  isOpenSource: true, minRamGb: null }, // v4.1 (was 51). 744B total / 40B active
-  { name: 'GLM-5 Reasoning',        provider: 'Z AI',        intelligenceIndex: 40, codingScore: 38, mathScore: 40, outputSpeed: 68,  contextWindow: 200000,  isOpenSource: true, minRamGb: null }, // v4.1 verified. 744B total / 40B active
+  { name: 'GLM-5.1 Reasoning',      provider: 'Z AI',        intelligenceIndex: 40, codingScore: 38, mathScore: 41, outputSpeed: 74,  contextWindow: 200000,  isOpenSource: true, minRamGb: 150, requiresCluster: true, clusterNote: '744B total / 40B active MoE; IQ1_S (~150 GB) needs the 2-node cluster. Superseded by GLM-5.2.' }, // v4.1 (was 51)
+  { name: 'GLM-5 Reasoning',        provider: 'Z AI',        intelligenceIndex: 40, codingScore: 38, mathScore: 40, outputSpeed: 68,  contextWindow: 200000,  isOpenSource: true, minRamGb: 150, requiresCluster: true, clusterNote: '744B total / 40B active MoE; IQ1_S (~150 GB) needs the 2-node cluster. Superseded by GLM-5.1 and GLM-5.2.' }, // v4.1 verified
   { name: 'DeepSeek V4 Flash',      provider: 'DeepSeek',    intelligenceIndex: 40, codingScore: 40, mathScore: 39, outputSpeed: 104, contextWindow: 1000000, isOpenSource: true, minRamGb: 135 },  // v4.1 (was 47). 284B total / 13B active, Q3 ~135 GB
   { name: 'MiniMax-M2.7',           provider: 'MiniMax',     intelligenceIndex: 38, codingScore: 37, mathScore: 38, outputSpeed: 43,  contextWindow: 205000,  isOpenSource: true, minRamGb: 110 },  // v4.1 (was 50). 230B total / 10B active, Q3 ~110 GB
   { name: 'Kimi K2.5',              provider: 'Moonshot AI', intelligenceIndex: 38, codingScore: 37, mathScore: 36, outputSpeed: 46,  contextWindow: 262144,  isOpenSource: true, minRamGb: 360 },  // v4.1 (AA-estimated label). 1T MoE like K2.6
@@ -481,9 +481,9 @@ export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
     name: 'DeepSeek-R1 671B',
     provider: 'DeepSeek',
     intelligenceIndex: 20,  // v4.1 verified (was 55 on v4.0 — older reasoning model, re-baselined hard)
-    codingScore: null,
-    mathScore: null,
-    outputSpeed: null,
+    codingScore: 18,        // est.
+    mathScore: 22,          // est. (R1 is reasoning/math-leaning)
+    outputSpeed: 8,         // est. (slow across cluster)
     contextWindow: 131072,
     isOpenSource: true,
     minRamGb: 190,
@@ -491,25 +491,25 @@ export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
     clusterNote: 'Q2_K ~190 GB, fits in 244 GB usable across both nodes. The full 671B / 37B-active reasoning model, not a distilled version. Heavily superseded on the v4.1 leaderboard by GLM-5.2 and the V4 line — kept for reference.',
   },
   // ── Small / edge models (v4.1 is brutal on sub-15B models: agentic + HLE-weighted) ──
-  { name: 'Mistral Small 4',     provider: 'Mistral',      intelligenceIndex: 21, codingScore: null, mathScore: null, outputSpeed: 173, contextWindow: 262144, isOpenSource: true, minRamGb: 55 },  // v4.1 (was 28). 119B total / 6.5B active MoE
+  { name: 'Mistral Small 4',     provider: 'Mistral',      intelligenceIndex: 21, codingScore: 20, mathScore: 20, outputSpeed: 173, contextWindow: 262144, isOpenSource: true, minRamGb: 55 },  // v4.1 (was 28). 119B total / 6.5B active MoE
   { name: 'Qwen3.5 4B',          provider: 'Alibaba',      intelligenceIndex: 20, codingScore: 19, mathScore: 19, outputSpeed: 182, contextWindow: 131072,  isOpenSource: true, minRamGb: 3 },   // v4.1 verified (Reasoning variant). 4.7B dense
-  { name: 'Ling 2.6 Flash',      provider: 'InclusionAI',  intelligenceIndex: 19, codingScore: null, mathScore: null, outputSpeed: 183, contextWindow: 262144, isOpenSource: true, minRamGb: 49 },   // v4.1 (was 26). 107B total / 7.4B active MoE, Q3_K_M ~49 GB
+  { name: 'Ling 2.6 Flash',      provider: 'InclusionAI',  intelligenceIndex: 19, codingScore: 18, mathScore: 18, outputSpeed: 183, contextWindow: 262144, isOpenSource: true, minRamGb: 49 },   // v4.1 (was 26). 107B total / 7.4B active MoE, Q3_K_M ~49 GB
   {
     name: 'Ling-1T',
     provider: 'InclusionAI',
     intelligenceIndex: 13,  // v4.1 verified (was 20)
-    codingScore: null,
-    mathScore: null,
-    outputSpeed: null,
+    codingScore: 12,        // est.
+    mathScore: 12,          // est.
+    outputSpeed: 6,         // est. (large, slow across cluster)
     contextWindow: 128000,
     isOpenSource: true,
     minRamGb: 375,
     requiresCluster: true,
     clusterNote: 'Q3_K_M ~375 GB, beyond the current 2-node setup (244 GB). Needs 3-node cluster (~366 GB usable) or a future 512 GB Mac. At Q4: ~500 GB (4 nodes). 1T total / 50B active params, MIT license.',
   },
-  { name: 'Gemma 4 E4B',         provider: 'Google',       intelligenceIndex: 12, codingScore: null, mathScore: null, outputSpeed: 290, contextWindow: 131072,  isOpenSource: true, minRamGb: 5 },   // v4.1 (AA-estimated). 8B total / 4.5B active, Apache 2.0, multimodal
-  { name: 'Granite 4.0 H Small', provider: 'IBM',          intelligenceIndex: 5,  codingScore: null, mathScore: null, outputSpeed: 374, contextWindow: 128000, isOpenSource: true, minRamGb: 20 },  // v4.1 (was 11). 32B total / 9B active MoE, speed leader
-  { name: 'Phi-4 14B',           provider: 'Microsoft',    intelligenceIndex: 5,  codingScore: null, mathScore: null, outputSpeed: 36,  contextWindow: 16384,   isOpenSource: true, minRamGb: 10 },  // v4.1 (AA-estimated; was 30). 14B dense
-  { name: 'Llama 3.2 3B',        provider: 'Meta',         intelligenceIndex: 4,  codingScore: null, mathScore: null, outputSpeed: 52,  contextWindow: 131072,  isOpenSource: true, minRamGb: 2 },   // v4.1 (was 18). 3B dense
-  { name: 'Phi-4-mini 3.8B',     provider: 'Microsoft',    intelligenceIndex: 3,  codingScore: null, mathScore: null, outputSpeed: 44,  contextWindow: 16384,   isOpenSource: true, minRamGb: 3 }    // v4.1 (was 22). 3.8B dense
+  { name: 'Gemma 4 E4B',         provider: 'Google',       intelligenceIndex: 12, codingScore: 11, mathScore: 11, outputSpeed: 290, contextWindow: 131072,  isOpenSource: true, minRamGb: 5 },   // v4.1 (AA-estimated). 8B total / 4.5B active, Apache 2.0, multimodal
+  { name: 'Granite 4.0 H Small', provider: 'IBM',          intelligenceIndex: 5,  codingScore: 5,  mathScore: 4,  outputSpeed: 374, contextWindow: 128000, isOpenSource: true, minRamGb: 20 },  // v4.1 (was 11). 32B total / 9B active MoE, speed leader
+  { name: 'Phi-4 14B',           provider: 'Microsoft',    intelligenceIndex: 5,  codingScore: 5,  mathScore: 6,  outputSpeed: 36,  contextWindow: 16384,   isOpenSource: true, minRamGb: 10 },  // v4.1 (AA-estimated; was 30). 14B dense
+  { name: 'Llama 3.2 3B',        provider: 'Meta',         intelligenceIndex: 4,  codingScore: 3,  mathScore: 3,  outputSpeed: 52,  contextWindow: 131072,  isOpenSource: true, minRamGb: 2 },   // v4.1 (was 18). 3B dense
+  { name: 'Phi-4-mini 3.8B',     provider: 'Microsoft',    intelligenceIndex: 3,  codingScore: 3,  mathScore: 4,  outputSpeed: 44,  contextWindow: 16384,   isOpenSource: true, minRamGb: 3 }    // v4.1 (was 22). 3.8B dense
 ];
