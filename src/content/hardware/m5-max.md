@@ -1,6 +1,6 @@
 ---
 name: "MacBook Pro (M5 Max, 128 GB)"
-priceUsd: 5499
+priceUsd: 6599
 ramGb: 128
 chip: "Apple M5 Max"
 tier: "workstation"
