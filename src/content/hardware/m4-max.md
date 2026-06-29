@@ -1,6 +1,6 @@
 ---
 name: "MacBook Pro / Mac Studio (M4 Max, 36–64 GB)"
-priceUsd: 1999
+priceUsd: 2499
 ramGb: 36
 chip: "Apple M4 Max"
 tier: "high"

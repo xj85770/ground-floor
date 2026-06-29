@@ -1,6 +1,6 @@
 ---
 name: "Mac mini (M4 Pro, 24–48 GB)"
-priceUsd: 1399
+priceUsd: 1599
 ramGb: 24
 chip: "Apple M4 Pro"
 tier: "mid"
