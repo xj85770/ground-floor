@@ -1,9 +1,12 @@
 // Build-time fetch from artificialanalysis.ai API
 // Returns only open-weight/open-source models, sorted by intelligence index
-// Intelligence Index is 0–100 scale. Current world ceiling is GPT-5.5 at 60 (June 2026).
-// Top open-weight model is now MiniMax M3 at 55 (AA Intelligence Index v4.0).
+// Intelligence Index is 0–100 scale (AA Intelligence Index v4.1, June 2026).
+// Current world ceiling is Claude Fable 5 at 60 — but Fable 5 is currently unavailable,
+//   so Claude Opus 4.8 at 56 is the top *available* model. (GPT-5.5 xhigh is 55.)
+// Top open-weight model is now GLM-5.2 at 51 (AA Intelligence Index v4.1).
+// v4.1 re-baselined the scale downward (~10–12 pts vs v4.0) and re-weighted toward agentic work.
 // Scores are low because benchmarks are hard: Humanity's Last Exam, GPQA Diamond, SciCode, etc.
-// A score of 54 means the model answered 54% of an extremely difficult multi-domain eval mix.
+// A score of 51 means the model answered 51% of an extremely difficult multi-domain eval mix.
 
 export interface AAModel {
   name: string;
@@ -209,8 +212,8 @@ export const USE_CASE_RECS: UseCaseRec[] = [
   },
 ];
 
-// Closed-source reference, scores from artificialanalysis.ai, June 2026
-// Same 0–100 scale. Shown for context only.
+// Closed-source reference, scores from artificialanalysis.ai (AA Intelligence Index v4.1), June 2026
+// Same 0–100 scale. Shown for context only. outputSpeed is approximate API speed (t/s).
 export interface ClosedModel {
   name: string;
   provider: string;
@@ -220,49 +223,57 @@ export interface ClosedModel {
 }
 
 export const CLOSED_SOURCE_REFERENCE: ClosedModel[] = [
-  { name: 'GPT-5.5 (xhigh)',       provider: 'OpenAI',    intelligenceIndex: 60, outputSpeed: 85,  note: 'Top model, June 2026. API only.' },
-  { name: 'GPT-5.5 (high)',         provider: 'OpenAI',    intelligenceIndex: 59, outputSpeed: 83,  note: 'API only.' },
-  { name: 'Claude Opus 4.7 (max)',  provider: 'Anthropic', intelligenceIndex: 57, outputSpeed: 56,  note: 'API only.' },
-  { name: 'Gemini 3.1 Pro Preview', provider: 'Google',    intelligenceIndex: 57, outputSpeed: 141, note: 'API only.' },
-  { name: 'Claude Opus 4.7',        provider: 'Anthropic', intelligenceIndex: 52, outputSpeed: 44,  note: 'API only.' },
-  { name: 'GPT-5.5 (low)',          provider: 'OpenAI',    intelligenceIndex: 51, outputSpeed: 84,  note: 'API only.' },
-  { name: 'Gemini 3.1 Flash',       provider: 'Google',    intelligenceIndex: 46, outputSpeed: 183, note: 'API only, fast tier.' },
-  { name: 'Claude Sonnet 4.6',      provider: 'Anthropic', intelligenceIndex: 44, outputSpeed: 51,  note: 'Powers Claude Code. Strong agentic performance, reliable everyday benchmark. API only.' },
+  { name: 'Claude Fable 5 (max)',   provider: 'Anthropic', intelligenceIndex: 60, outputSpeed: 50,  note: '#1 overall, June 2026 (Opus 4.8 fallback). Currently UNAVAILABLE. API only.' },
+  { name: 'Claude Opus 4.8 (max)',  provider: 'Anthropic', intelligenceIndex: 56, outputSpeed: 50,  note: 'Top *available* model, June 2026. API only.' },
+  { name: 'GPT-5.5 (xhigh)',        provider: 'OpenAI',    intelligenceIndex: 55, outputSpeed: 85,  note: 'API only.' },
+  { name: 'Gemini 3.5 Flash (high)',provider: 'Google',    intelligenceIndex: 55, outputSpeed: 180, note: 'API only, fast tier.' },
+  { name: 'Claude Opus 4.7 (max)',  provider: 'Anthropic', intelligenceIndex: 54, outputSpeed: 56,  note: 'API only.' },
+  { name: 'GPT-5.5 (high)',         provider: 'OpenAI',    intelligenceIndex: 53, outputSpeed: 83,  note: 'API only.' },
+  { name: 'Grok 4.3 (high)',        provider: 'xAI',       intelligenceIndex: 53, outputSpeed: 90,  note: 'API only.' },
+  { name: 'Claude Sonnet 4.6 (max)',provider: 'Anthropic', intelligenceIndex: 52, outputSpeed: 51,  note: 'Powers Claude Code. Strong agentic performance, reliable everyday benchmark. API only.' },
+  { name: 'Gemini 3.1 Pro Preview', provider: 'Google',    intelligenceIndex: 46, outputSpeed: 141, note: 'API only.' },
 ];
 
-// Per-task scores, derived from benchmark data, May–June 2026 (0–100 scale, current ceiling ~60)
+// Per-task scores on the AA Intelligence Index v4.1 scale, June 2026 (0–100, current ceiling 60).
+// `general` is anchored to each model's verified v4.1 Intelligence Index; swe/agentic/reasoning
+// are sub-estimates around it. Rows marked "v4.1 est." are cross-source/delta estimates pending
+// AA-primary confirmation (the live AA_API_KEY feed supersedes all of these at build time).
 export const TASK_SCORES: Record<string, Record<string, number>> = {
-  // Open-weight
-  'MiniMax M3':              { swe: 55, agentic: 53, reasoning: 49, general: 55 },  // derived: leads SWE-Bench Pro, strong agentic browsing, weak abstract reasoning (ARC-AGI-2 <12%)
-  'Kimi K2.6':               { swe: 54, agentic: 51, reasoning: 50, general: 54 },
-  'MiMo-V2.5-Pro':           { swe: 51, agentic: 50, reasoning: 53, general: 54 },
-  'Qwen3.6 Max Preview':     { swe: 51, agentic: 50, reasoning: 52, general: 52 },
-  'DeepSeek V4 Pro':         { swe: 50, agentic: 49, reasoning: 55, general: 52 },
-  'GLM-5.1 Reasoning':       { swe: 48, agentic: 47, reasoning: 52, general: 51 },
-  'GLM-5 Reasoning':         { swe: 47, agentic: 46, reasoning: 51, general: 50 },
-  'MiniMax-M2.7':            { swe: 46, agentic: 48, reasoning: 49, general: 50 },
-  'Qwen3.6 Plus':            { swe: 47, agentic: 51, reasoning: 49, general: 50 },
-  'DeepSeek V4 Flash':       { swe: 44, agentic: 43, reasoning: 46, general: 47 },
-  'Qwen3.6 27B':             { swe: 43, agentic: 44, reasoning: 44, general: 46 },
-  'Qwen3.5 397B A17B':       { swe: 42, agentic: 43, reasoning: 44, general: 45 },
+  // Open-weight — verified AA v4.1 Intelligence Index
+  'GLM-5.2':                 { swe: 50, agentic: 50, reasoning: 50, general: 51 },  // new #1 open-weight; TerminalBench 78, SciCode 50, GPQA 89, HLE 40 (verbose: 43k tok/task)
+  'MiniMax M3':              { swe: 44, agentic: 43, reasoning: 40, general: 44 },
+  'DeepSeek V4 Pro':         { swe: 43, agentic: 43, reasoning: 44, general: 44 },
+  'Kimi K2.6':               { swe: 43, agentic: 41, reasoning: 41, general: 43 },
+  'MiMo-V2.5-Pro':           { swe: 40, agentic: 41, reasoning: 43, general: 42 },
+  'Qwen3.6 Max Preview':     { swe: 39, agentic: 40, reasoning: 40, general: 40 },
+  'DeepSeek V4 Flash':       { swe: 40, agentic: 39, reasoning: 39, general: 40 },
+  'Qwen3.6 27B':             { swe: 36, agentic: 36, reasoning: 36, general: 37 },
   'Qwen3.5 27B':             { swe: 40, agentic: 39, reasoning: 41, general: 42 },
-  'Ling 2.6 Flash':          { swe: 24, agentic: 23, reasoning: 23, general: 26 },
-  'Ling-1T':                 { swe: 19, agentic: 18, reasoning: 18, general: 20 },
-  'Mistral Small 4':         { swe: 27, agentic: 26, reasoning: 25, general: 28 },
-  'Granite 4.0 H Small':     { swe: 10, agentic: 10, reasoning: 9,  general: 11 },
   'Gemma 4 31B':             { swe: 36, agentic: 35, reasoning: 37, general: 39 },
-  'Mistral Medium 3.5':      { swe: 37, agentic: 36, reasoning: 37, general: 39 },
-  // RDMA cluster models
-  'DeepSeek-R1 671B':          { swe: 52, agentic: 53, reasoning: 58, general: 55 },
-  'Qwen3.5 235B A22B Q8':      { swe: 49, agentic: 50, reasoning: 51, general: 50 },
-  // Closed reference (same scale)
-  'GPT-5.5 (xhigh)':        { swe: 59, agentic: 58, reasoning: 57, general: 60 },
-  'GPT-5.5 (high)':         { swe: 57, agentic: 57, reasoning: 56, general: 59 },
-  'Claude Opus 4.7 (max)':  { swe: 56, agentic: 58, reasoning: 58, general: 57 },
-  'Gemini 3.1 Pro Preview': { swe: 55, agentic: 54, reasoning: 57, general: 57 },
-  'Claude Opus 4.7':        { swe: 52, agentic: 54, reasoning: 51, general: 52 },
-  'Claude Sonnet 4.6':      { swe: 43, agentic: 46, reasoning: 42, general: 44 },
-  'Gemini 3.1 Flash':       { swe: 43, agentic: 42, reasoning: 44, general: 46 },
+  // Open-weight — v4.1 est. (cross-source; pending AA-primary)
+  'GLM-5.1 Reasoning':       { swe: 38, agentic: 38, reasoning: 41, general: 40 },  // GLM-5.1 = 40 (verified)
+  'GLM-5 Reasoning':         { swe: 37, agentic: 37, reasoning: 39, general: 39 },  // v4.1 est.
+  'Qwen3.6 Plus':            { swe: 38, agentic: 40, reasoning: 38, general: 39 },  // v4.1 est.
+  'MiniMax-M2.7':            { swe: 37, agentic: 39, reasoning: 38, general: 38 },  // v4.1 est.
+  'Qwen3.5 397B A17B':       { swe: 33, agentic: 34, reasoning: 34, general: 34 },  // v4.1 est.
+  'Mistral Medium 3.5':      { swe: 32, agentic: 31, reasoning: 32, general: 33 },  // v4.1 est.
+  'Ling 2.6 Flash':          { swe: 21, agentic: 20, reasoning: 20, general: 22 },  // v4.1 est.
+  'Ling-1T':                 { swe: 16, agentic: 15, reasoning: 15, general: 16 },  // v4.1 est.
+  'Mistral Small 4':         { swe: 23, agentic: 22, reasoning: 21, general: 24 },  // v4.1 est.
+  'Granite 4.0 H Small':     { swe: 8,  agentic: 8,  reasoning: 7,  general: 9  },  // v4.1 est.
+  // RDMA cluster models — v4.1 est. (older reasoning models; pending AA-primary)
+  'DeepSeek-R1 671B':          { swe: 39, agentic: 40, reasoning: 44, general: 42 },  // v4.1 est. (was 55 on v4.0)
+  'Qwen3.5 235B A22B Q8':      { swe: 39, agentic: 40, reasoning: 41, general: 40 },  // v4.1 est. (was 50 on v4.0)
+  // Closed reference — verified AA v4.1
+  'Claude Fable 5 (max)':   { swe: 59, agentic: 60, reasoning: 59, general: 60 },  // #1 overall, currently unavailable
+  'Claude Opus 4.8 (max)':  { swe: 55, agentic: 57, reasoning: 56, general: 56 },  // top available
+  'GPT-5.5 (xhigh)':        { swe: 55, agentic: 54, reasoning: 54, general: 55 },
+  'Gemini 3.5 Flash (high)':{ swe: 54, agentic: 53, reasoning: 54, general: 55 },
+  'Claude Opus 4.7 (max)':  { swe: 53, agentic: 55, reasoning: 54, general: 54 },
+  'GPT-5.5 (high)':         { swe: 53, agentic: 53, reasoning: 52, general: 53 },
+  'Grok 4.3 (high)':        { swe: 52, agentic: 53, reasoning: 53, general: 53 },
+  'Claude Sonnet 4.6 (max)':{ swe: 51, agentic: 53, reasoning: 50, general: 52 },
+  'Gemini 3.1 Pro Preview': { swe: 45, agentic: 44, reasoning: 47, general: 46 },
 };
 
 // ── Human intelligence tier system ─────────────────────────────────────────
@@ -300,7 +311,7 @@ export const TIERS: Tier[] = [
     shortLabel: 'PhD+',
     min: 60, max: 67,
     accent: '#c084fc', bg: 'rgba(192,132,252,0.12)', border: 'rgba(192,132,252,0.3)',
-    description: 'Systematic expert-level analysis across multiple disciplines. Current world ceiling, GPT-5.5 scores 60.',
+    description: 'Systematic expert-level analysis across multiple disciplines. Current world ceiling, Claude Fable 5 scores 60 (Opus 4.8, the top available model, scores 56).',
     skills: [
       'Identifies factual errors and methodological flaws in published papers',
       'Synthesizes across unrelated disciplines to surface non-obvious connections',
@@ -415,59 +426,72 @@ export function getTier(score: number | null): Tier {
 // Intelligence index: 0–100 scale. No model has scored above 60 yet (June 2026).
 // Output speeds are API inference speeds; local Apple Silicon speeds are lower for large models
 export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
-  // ── New #1 open-weight (Jun 2026), large MoE that DOES fit the 2-node cluster at low quant ──
+  // ── New #1 open-weight (Jun 2026): GLM-5.2, large MoE that fits the 2-node cluster at low quant ──
+  {
+    name: 'GLM-5.2',
+    provider: 'Z AI',
+    intelligenceIndex: 51,  // AA Intelligence Index v4.1 — #1 open-weight (+11 over GLM-5.1)
+    codingScore: 50,        // SciCode 50, TerminalBench v2.1 78, GPQA Diamond 89
+    mathScore: 49,          // HLE 40, CritPt 21 — strong but reasoning is the relative weak spot
+    outputSpeed: 55,        // API; very verbose (~43k tok/task). Local 2-node IQ1_S ~15 t/s.
+    contextWindow: 1000000, // 1M-token context
+    isOpenSource: true,
+    minRamGb: 150,          // 744B total / 40B active MoE; IQ1_S (~150 GB) fits the 2-node window, IQ2_M ~222 GB
+    requiresCluster: true,
+    clusterNote: 'New #1 open-weight on the AA Intelligence Index v4.1 (51), +11 over GLM-5.1 and effectively level with GPT-5.5 (xhigh) on the GDPval-AA v2 work benchmark. 744B total / 40B active MoE, MIT license, 1M context. IQ1_S (~150 GB) runs across the 244 GB 2-node cluster at ~15 t/s; IQ2_M (~222 GB) also fits. Verbose (~43k tokens/task), so latency adds up. Self-hostable open weights, which suits air-gapped deployment.',
+  },
   {
     name: 'MiniMax M3',
     provider: 'MiniMax',
-    intelligenceIndex: 55,
+    intelligenceIndex: 44,  // AA Intelligence Index v4.1 (was 55 on v4.0)
     codingScore: null,      // AA reports the composite Index for M3; no separate coding sub-score published yet
     mathScore: null,        //   (M3 leads SWE-Bench Pro but is weak on abstract reasoning, see task scores)
-    outputSpeed: 58,        // notably slow + very verbose (took 91M tokens to run the Intelligence Index eval)
+    outputSpeed: 58,        // notably slow + very verbose
     contextWindow: 1000000, // 1M-token context via MiniMax Sparse Attention
     isOpenSource: true,
     minRamGb: 160,          // 428B total / 23B active MoE, Q2_K ~160 GB
     requiresCluster: true,
-    clusterNote: 'First multimodal M-series (text + image + video in), 1M context. 428B total / 23B active MoE, Q2_K (~160 GB) fits inside the 244 GB 2-node window; needs both nodes. Top open-weight Intelligence Index (55, AA v4.0), but slow and very verbose in practice, a marginal local pick despite the score. Self-hostable open weights, which suits air-gapped deployment.',
+    clusterNote: 'First multimodal M-series (text + image + video in), 1M context. 428B total / 23B active MoE, Q2_K (~160 GB) fits inside the 244 GB 2-node window; needs both nodes. Joint-2nd open-weight Intelligence Index (44, AA v4.1, tied with DeepSeek V4 Pro) behind GLM-5.2 (51), but slow and very verbose in practice. Self-hostable open weights, which suits air-gapped deployment.',
   },
   // ── Frontier open-weight (1T+ MoE, need 3–4 node cluster or future 512 GB hardware) ──
   // minRamGb = Q2_K quantization minimum. These do NOT fit the current 2-node 244 GB cluster.
-  { name: 'Kimi K2.6',              provider: 'Moonshot AI', intelligenceIndex: 54, codingScore: 54, mathScore: 50, outputSpeed: 34,  contextWindow: 262144,  isOpenSource: true, minRamGb: 360 },  // 1T total / 32B active
-  { name: 'MiMo-V2.5-Pro',          provider: 'Xiaomi',      intelligenceIndex: 54, codingScore: 51, mathScore: 53, outputSpeed: 68,  contextWindow: 1000000, isOpenSource: true, minRamGb: 360 },  // 1T total / 42B active
-  { name: 'Qwen3.6 Max Preview',    provider: 'Alibaba',     intelligenceIndex: 52, codingScore: 50, mathScore: 51, outputSpeed: 36,  contextWindow: 262144,  isOpenSource: true, minRamGb: null }, // Alibaba has not disclosed param count
-  { name: 'DeepSeek V4 Pro',        provider: 'DeepSeek',    intelligenceIndex: 52, codingScore: 50, mathScore: 55, outputSpeed: 34,  contextWindow: 1000000, isOpenSource: true, minRamGb: 580 },  // 1.6T total / 49B active
-  { name: 'GLM-5.1 Reasoning',      provider: 'Z AI',        intelligenceIndex: 51, codingScore: 48, mathScore: 52, outputSpeed: 60,  contextWindow: 200000,  isOpenSource: true, minRamGb: null }, // Z AI has not published param count
-  { name: 'GLM-5 Reasoning',        provider: 'Z AI',        intelligenceIndex: 50, codingScore: 47, mathScore: 51, outputSpeed: 65,  contextWindow: 200000,  isOpenSource: true, minRamGb: null }, // Z AI has not published param count
-  { name: 'Qwen3.6 Plus',           provider: 'Alibaba',     intelligenceIndex: 50, codingScore: 48, mathScore: 50, outputSpeed: 53,  contextWindow: 1000000, isOpenSource: true, minRamGb: null }, // Alibaba has not disclosed param count
-  { name: 'MiniMax-M2.7',           provider: 'MiniMax',     intelligenceIndex: 50, codingScore: 46, mathScore: 49, outputSpeed: 55,  contextWindow: 205000,  isOpenSource: true, minRamGb: 110 },  // 230B total / 10B active, Q3 ~110 GB
+  { name: 'DeepSeek V4 Pro',        provider: 'DeepSeek',    intelligenceIndex: 44, codingScore: 43, mathScore: 44, outputSpeed: 34,  contextWindow: 1000000, isOpenSource: true, minRamGb: 580 },  // v4.1 (was 52). 1.6T total / 49B active
+  { name: 'Kimi K2.6',              provider: 'Moonshot AI', intelligenceIndex: 43, codingScore: 43, mathScore: 41, outputSpeed: 34,  contextWindow: 262144,  isOpenSource: true, minRamGb: 360 },  // v4.1 (was 54). 1T total / 32B active
+  { name: 'MiMo-V2.5-Pro',          provider: 'Xiaomi',      intelligenceIndex: 42, codingScore: 40, mathScore: 43, outputSpeed: 68,  contextWindow: 1000000, isOpenSource: true, minRamGb: 360 },  // v4.1 (was 54). 1T total / 42B active
+  { name: 'Qwen3.6 Max Preview',    provider: 'Alibaba',     intelligenceIndex: 40, codingScore: 39, mathScore: 40, outputSpeed: 36,  contextWindow: 262144,  isOpenSource: true, minRamGb: null }, // v4.1 (was 52). Note: AA now lists Qwen "Max" as proprietary/API-only — flagged for review
+  { name: 'GLM-5.1 Reasoning',      provider: 'Z AI',        intelligenceIndex: 40, codingScore: 38, mathScore: 41, outputSpeed: 60,  contextWindow: 200000,  isOpenSource: true, minRamGb: null }, // v4.1 (was 51). Z AI has not published param count
+  { name: 'GLM-5 Reasoning',        provider: 'Z AI',        intelligenceIndex: 39, codingScore: 37, mathScore: 39, outputSpeed: 65,  contextWindow: 200000,  isOpenSource: true, minRamGb: null }, // v4.1 est. (was 50)
+  { name: 'Qwen3.6 Plus',           provider: 'Alibaba',     intelligenceIndex: 39, codingScore: 38, mathScore: 39, outputSpeed: 53,  contextWindow: 1000000, isOpenSource: true, minRamGb: null }, // v4.1 est. (was 50). Alibaba has not disclosed param count
+  { name: 'MiniMax-M2.7',           provider: 'MiniMax',     intelligenceIndex: 38, codingScore: 37, mathScore: 38, outputSpeed: 55,  contextWindow: 205000,  isOpenSource: true, minRamGb: 110 },  // v4.1 est. (was 50). 230B total / 10B active, Q3 ~110 GB
   // ── Strong mid-tier ──────────────────────────────────────────────────────
-  { name: 'DeepSeek V4 Flash',   provider: 'DeepSeek',    intelligenceIndex: 47, codingScore: 44, mathScore: 46, outputSpeed: 82,  contextWindow: 1000000, isOpenSource: true, minRamGb: 135 },  // 284B total / 13B active, Q3 ~135 GB
-  { name: 'Qwen3.6 27B',         provider: 'Alibaba',     intelligenceIndex: 46, codingScore: 43, mathScore: 44, outputSpeed: 66,  contextWindow: 262144,  isOpenSource: true, minRamGb: 17 },
-  { name: 'Qwen3.5 397B A17B',   provider: 'Alibaba',     intelligenceIndex: 45, codingScore: 42, mathScore: 44, outputSpeed: 53,  contextWindow: 262144,  isOpenSource: true, minRamGb: 150 },  // 397B total, Q2_K ~150 GB
-  { name: 'Qwen3.6 35B A3B',     provider: 'Alibaba',     intelligenceIndex: 43, codingScore: 41, mathScore: 42, outputSpeed: 200, contextWindow: 262144,  isOpenSource: true, minRamGb: 23 },
-  { name: 'Qwen3.5 27B',         provider: 'Alibaba',     intelligenceIndex: 42, codingScore: 40, mathScore: 41, outputSpeed: 87,  contextWindow: 262144,  isOpenSource: true, minRamGb: 17 },
-  { name: 'Mistral Medium 3.5',  provider: 'Mistral',     intelligenceIndex: 39, codingScore: 37, mathScore: 37, outputSpeed: 173, contextWindow: 131072,  isOpenSource: true, minRamGb: 79 },   // 128B dense, Q4_K_M ~79 GB
-  { name: 'Gemma 4 31B',         provider: 'Google',      intelligenceIndex: 39, codingScore: 36, mathScore: 37, outputSpeed: 35,  contextWindow: 131072,  isOpenSource: true, minRamGb: 20 },
-  { name: 'Kimi K2.5',           provider: 'Moonshot AI', intelligenceIndex: 37, codingScore: 36, mathScore: 36, outputSpeed: 50,  contextWindow: 262144,  isOpenSource: true, minRamGb: 360 },  // 1T MoE like K2.6
+  { name: 'DeepSeek V4 Flash',   provider: 'DeepSeek',    intelligenceIndex: 40, codingScore: 40, mathScore: 39, outputSpeed: 82,  contextWindow: 1000000, isOpenSource: true, minRamGb: 135 },  // v4.1 (was 47). 284B total / 13B active, Q3 ~135 GB
+  { name: 'Qwen3.6 27B',         provider: 'Alibaba',     intelligenceIndex: 37, codingScore: 35, mathScore: 36, outputSpeed: 66,  contextWindow: 262144,  isOpenSource: true, minRamGb: 17 },  // v4.1 verified (27.8B params) — #1 open-weight in the small 4B–40B class
+  { name: 'Qwen3.5 27B',         provider: 'Alibaba',     intelligenceIndex: 42, codingScore: 40, mathScore: 41, outputSpeed: 87,  contextWindow: 262144,  isOpenSource: true, minRamGb: 17 },  // v4.1 verified
+  { name: 'Qwen3.6 35B A3B',     provider: 'Alibaba',     intelligenceIndex: 41, codingScore: 39, mathScore: 40, outputSpeed: 200, contextWindow: 262144,  isOpenSource: true, minRamGb: 23 },  // v4.1 est.
+  { name: 'Gemma 4 31B',         provider: 'Google',      intelligenceIndex: 39, codingScore: 36, mathScore: 37, outputSpeed: 35,  contextWindow: 131072,  isOpenSource: true, minRamGb: 20 },  // v4.1 verified (Apache 2.0, multimodal)
+  { name: 'Qwen3.5 397B A17B',   provider: 'Alibaba',     intelligenceIndex: 34, codingScore: 33, mathScore: 34, outputSpeed: 53,  contextWindow: 262144,  isOpenSource: true, minRamGb: 150 },  // v4.1 est. (was 45). 397B total, Q2_K ~150 GB
+  { name: 'Mistral Medium 3.5',  provider: 'Mistral',     intelligenceIndex: 33, codingScore: 32, mathScore: 32, outputSpeed: 173, contextWindow: 131072,  isOpenSource: true, minRamGb: 79 },   // v4.1 est. (was 39). 128B dense, Q4_K_M ~79 GB
+  { name: 'Kimi K2.5',           provider: 'Moonshot AI', intelligenceIndex: 28, codingScore: 28, mathScore: 27, outputSpeed: 50,  contextWindow: 262144,  isOpenSource: true, minRamGb: 360 },  // v4.1 est. (was 37). 1T MoE like K2.6
   // ── TB5 RDMA cluster (244 GB usable, current 2-node setup) ───────────────
   {
     name: 'DeepSeek-R1 671B',
     provider: 'DeepSeek',
-    intelligenceIndex: 55,
-    codingScore: 52,
-    mathScore: 58,
+    intelligenceIndex: 42,  // v4.1 est. (was 55 on v4.0 — older reasoning model, re-baselined down)
+    codingScore: 39,
+    mathScore: 44,
     outputSpeed: 8,
     contextWindow: 131072,
     isOpenSource: true,
     minRamGb: 190,
     requiresCluster: true,
-    clusterNote: 'Q2_K ~190 GB, fits in 244 GB usable across both nodes. The full 671B reasoning model, not a distilled version.',
+    clusterNote: 'Q2_K ~190 GB, fits in 244 GB usable across both nodes. The full 671B reasoning model, not a distilled version. Now superseded on the leaderboard by GLM-5.2 and the V4 line.',
   },
   {
     name: 'Qwen3.5 235B A22B Q8',
     provider: 'Alibaba',
-    intelligenceIndex: 50,
-    codingScore: 48,
-    mathScore: 50,
+    intelligenceIndex: 40,  // v4.1 est. (was 50 on v4.0)
+    codingScore: 39,
+    mathScore: 41,
     outputSpeed: 12,
     contextWindow: 262144,
     isOpenSource: true,
@@ -479,7 +503,7 @@ export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
   {
     name: 'Ling-1T',
     provider: 'InclusionAI',
-    intelligenceIndex: 20,
+    intelligenceIndex: 16,  // v4.1 est. (was 20)
     codingScore: null,
     mathScore: null,
     outputSpeed: null,
@@ -490,13 +514,13 @@ export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
     clusterNote: 'Q3_K_M ~375 GB, beyond the current 2-node setup (244 GB). Needs 3-node cluster (~366 GB usable) or a future 512 GB Mac. At Q4: ~500 GB (4 nodes). 1T total / 50B active params, MIT license.',
   },
   // ── Small / edge models ──────────────────────────────────────────────────
-  { name: 'Qwen3.5 9B',          provider: 'Alibaba',      intelligenceIndex: 32, codingScore: 30, mathScore: 31, outputSpeed: 120, contextWindow: 131072,  isOpenSource: true, minRamGb: 6 },
-  { name: 'Phi-4 14B',           provider: 'Microsoft',    intelligenceIndex: 30, codingScore: 31, mathScore: 33, outputSpeed: 95,  contextWindow: 16384,   isOpenSource: true, minRamGb: 10 },
-  { name: 'Mistral Small 4',     provider: 'Mistral',      intelligenceIndex: 28, codingScore: null, mathScore: null, outputSpeed: 172, contextWindow: 262144, isOpenSource: true, minRamGb: 55 },  // 119B total / 6.5B active MoE
-  { name: 'Qwen3.5 4B',          provider: 'Alibaba',      intelligenceIndex: 27, codingScore: 26, mathScore: 26, outputSpeed: 182, contextWindow: 131072,  isOpenSource: true, minRamGb: 3 },
-  { name: 'Ling 2.6 Flash',      provider: 'InclusionAI',  intelligenceIndex: 26, codingScore: null, mathScore: null, outputSpeed: 206, contextWindow: 262144, isOpenSource: true, minRamGb: 49 },   // 107B total / 7.4B active MoE, Q3_K_M ~49 GB
-  { name: 'Gemma 4 4B',          provider: 'Google',       intelligenceIndex: 24, codingScore: 22, mathScore: 22, outputSpeed: 290, contextWindow: 131072,  isOpenSource: true, minRamGb: 3 },
-  { name: 'Phi-4-mini 3.8B',     provider: 'Microsoft',    intelligenceIndex: 22, codingScore: 24, mathScore: 26, outputSpeed: 310, contextWindow: 16384,   isOpenSource: true, minRamGb: 3 },
-  { name: 'Llama 3.2 3B',        provider: 'Meta',         intelligenceIndex: 18, codingScore: 16, mathScore: 15, outputSpeed: 340, contextWindow: 131072,  isOpenSource: true, minRamGb: 2 },
-  { name: 'Granite 4.0 H Small', provider: 'IBM',          intelligenceIndex: 11, codingScore: null, mathScore: null, outputSpeed: 364, contextWindow: 128000, isOpenSource: true, minRamGb: 20 }, // 32B total / 9B active MoE, speed leader
+  { name: 'Qwen3.5 9B',          provider: 'Alibaba',      intelligenceIndex: 25, codingScore: 24, mathScore: 24, outputSpeed: 120, contextWindow: 131072,  isOpenSource: true, minRamGb: 6 },   // v4.1 est. (was 32)
+  { name: 'Phi-4 14B',           provider: 'Microsoft',    intelligenceIndex: 24, codingScore: 25, mathScore: 26, outputSpeed: 95,  contextWindow: 16384,   isOpenSource: true, minRamGb: 10 },  // v4.1 est. (was 30)
+  { name: 'Gemma 4 4B',          provider: 'Google',       intelligenceIndex: 24, codingScore: 22, mathScore: 22, outputSpeed: 290, contextWindow: 131072,  isOpenSource: true, minRamGb: 3 },   // v4.1 est.
+  { name: 'Mistral Small 4',     provider: 'Mistral',      intelligenceIndex: 24, codingScore: null, mathScore: null, outputSpeed: 172, contextWindow: 262144, isOpenSource: true, minRamGb: 55 },  // v4.1 est. (was 28). 119B total / 6.5B active MoE
+  { name: 'Ling 2.6 Flash',      provider: 'InclusionAI',  intelligenceIndex: 22, codingScore: null, mathScore: null, outputSpeed: 206, contextWindow: 262144, isOpenSource: true, minRamGb: 49 },   // v4.1 est. (was 26). 107B total / 7.4B active MoE, Q3_K_M ~49 GB
+  { name: 'Qwen3.5 4B',          provider: 'Alibaba',      intelligenceIndex: 21, codingScore: 20, mathScore: 20, outputSpeed: 182, contextWindow: 131072,  isOpenSource: true, minRamGb: 3 },   // v4.1 est. (was 27)
+  { name: 'Phi-4-mini 3.8B',     provider: 'Microsoft',    intelligenceIndex: 18, codingScore: 19, mathScore: 21, outputSpeed: 310, contextWindow: 16384,   isOpenSource: true, minRamGb: 3 },   // v4.1 est. (was 22)
+  { name: 'Llama 3.2 3B',        provider: 'Meta',         intelligenceIndex: 14, codingScore: 13, mathScore: 12, outputSpeed: 340, contextWindow: 131072,  isOpenSource: true, minRamGb: 2 },   // v4.1 est. (was 18)
+  { name: 'Granite 4.0 H Small', provider: 'IBM',          intelligenceIndex: 9,  codingScore: null, mathScore: null, outputSpeed: 364, contextWindow: 128000, isOpenSource: true, minRamGb: 20 }, // v4.1 est. (was 11). 32B total / 9B active MoE, speed leader
 ];
