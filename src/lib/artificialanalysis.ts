@@ -438,7 +438,7 @@ export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
     isOpenSource: true,
     minRamGb: 150,          // 744B total / 40B active MoE; IQ1_S (~150 GB) fits the 2-node window, IQ2_M ~222 GB
     requiresCluster: true,
-    clusterNote: 'New #1 open-weight on the AA Intelligence Index v4.1 (51), +11 over GLM-5.1 and effectively level with GPT-5.5 (xhigh) on the GDPval-AA v2 work benchmark. 744B total / 40B active MoE, MIT license, 1M context. IQ1_S (~150 GB) runs across the 244 GB 2-node cluster at ~15 t/s; IQ2_M (~222 GB) also fits. Verbose (~43k tokens/task), so latency adds up. Self-hostable open weights, which suits air-gapped deployment.',
+    clusterNote: 'New #1 open-weight on the AA Intelligence Index v4.1 (51), +11 over GLM-5.1. On real coding and agentic work it BEATS GPT-5.5 — SWE-bench Pro 62.1 vs 58.6, FrontierSWE 74.4% vs 72.6%, MCP-Atlas 77.0 vs 75.3, GDPval-AA 1524 vs 1514 — and lands within a point of the top closed model, Opus 4.8, at roughly 1/6 the API cost. It trails only on Terminal-Bench 2.1 (81 vs 84) and the composite Index (where GPT-5.5 is 55), and has no image input yet. 744B total / 40B active MoE, MIT license, 1M context. IQ1_S (~150 GB) runs across the 244 GB 2-node cluster at ~15 t/s; IQ2_M (~222 GB) also fits. Verbose (~43k tokens/task). Self-hostable open weights — beats a cloud frontier model on real work, air-gapped and cheap.',
   },
   {
     name: 'MiniMax M3',
