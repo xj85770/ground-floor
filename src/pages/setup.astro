@@ -3,55 +3,80 @@ import Base from '../layouts/Base.astro';
 import { page, breadcrumb } from '../lib/seo';
 
 const schema = [
-  page('WebPage', { site:Astro.site, path:'/setup', name:'Local AI setup checker for Mac', description:'A planning estimate for local model size by documentation task and Mac memory.' }),
-  breadcrumb(Astro.site, [{ name:'Ground Floor', path:'/' }, { name:'Check my Mac', path:'/setup' }]),
+  page('WebPage', { site:Astro.site, path:'/setup', name:'My Mac local-model explorer', description:'Enter your Mac build and unified memory to see cautious local-model classes, named examples, runtime paths, and material limits.' }),
+  breadcrumb(Astro.site, [{ name:'Ground Floor', path:'/' }, { name:'My Mac', path:'/setup' }]),
 ];
 ---
 
-<Base title="Local AI setup checker for Mac" description="Choose a documentation task and Mac memory to get a cautious local-model planning range, review requirement, and evidence state." appearance="light" schema={schema}>
+<Base title="My Mac local-model explorer" description="Enter your Mac build and unified memory to see cautious local-model classes, named examples, runtime paths, and material limits." appearance="light" schema={schema}>
   <header class="gf-page-hero">
     <div class="gf-shell">
-      <p class="gf-eyebrow">Free planning tool</p>
-      <h1 class="gf-display mt-4">What local model size fits my Mac?</h1>
-      <p class="gf-lede">Choose a documentation task and the unified memory you have. The result is an estimate—not a benchmark, purchase recommendation, or promise of workflow quality.</p>
+      <p class="gf-eyebrow">My Mac</p>
+      <h1 class="gf-display mt-4">What can this Mac realistically run?</h1>
+      <p class="gf-lede">Enter what your Mac reports and the work you want to test. Get a cautious model range, real model examples to evaluate, compatible runtime paths, and the limits that still need measurement.</p>
     </div>
   </header>
 
   <div class="gf-content">
-    <div class="gf-shell grid lg:grid-cols-[0.82fr_1.18fr] gap-10 lg:gap-16 items-start">
-      <div class="gf-form lg:sticky lg:top-24">
+    <div class="gf-shell grid lg:grid-cols-[0.78fr_1.22fr] gap-10 lg:gap-14 items-start">
+      <form id="mac-explorer" class="gf-form lg:sticky lg:top-24" aria-labelledby="build-heading">
+        <div class="flex items-center justify-between gap-4 mb-6"><h2 id="build-heading" class="gf-h3">My build</h2><span class="gf-status">In browser</span></div>
         <div class="gf-form-grid !grid-cols-1">
-          <div class="gf-field"><label for="task">The documentation task</label><select id="task"><option value="draft">Draft from approved notes</option><option value="review">Triage documents before full review</option><option value="summarize">Summarize intake into a known format</option><option value="meeting">Turn meeting notes into a known format</option></select></div>
-          <div class="gf-field"><label for="memory-select">Unified memory</label><select id="memory-select"><option value="8">8 GB</option><option value="16" selected>16 GB</option><option value="18">18 GB</option><option value="24">24 GB</option><option value="32">32 GB</option><option value="36">36 GB</option><option value="48">48 GB</option><option value="64">64 GB</option><option value="96">96 GB</option><option value="128">128 GB</option><option value="192">192 GB</option><option value="custom">Other amount…</option></select><div id="memory-custom-wrap" class="mt-3" hidden><label for="memory-custom">Enter unified memory in GB</label><input id="memory-custom" type="number" min="8" max="512" step="1" value="64" inputmode="numeric" /></div><span class="text-[11px] text-[#63707a] mt-1">Apple menu → About This Mac → Memory</span></div>
+          <div class="gf-field">
+            <label for="build-name">Mac or chip name <span class="font-normal">(optional)</span></label>
+            <input id="build-name" type="text" maxlength="80" placeholder="Example: M5 Max MacBook Pro" autocomplete="off" />
+            <span class="gf-field-help">Use Apple menu → About This Mac. The name is recorded; memory drives this fit estimate.</span>
+          </div>
+          <div class="gf-field">
+            <label for="task">Work I want to test</label>
+            <select id="task"><option value="draft">Draft from approved notes</option><option value="review">Triage documents before full review</option><option value="summarize">Summarize intake into a known format</option><option value="meeting">Turn meeting notes into a known format</option><option value="general">General local chat and exploration</option></select>
+          </div>
+          <div class="gf-field">
+            <label for="memory-select">Unified memory</label>
+            <select id="memory-select"><option value="8">8 GB</option><option value="16" selected>16 GB</option><option value="18">18 GB</option><option value="24">24 GB</option><option value="32">32 GB</option><option value="36">36 GB</option><option value="48">48 GB</option><option value="64">64 GB</option><option value="96">96 GB</option><option value="128">128 GB</option><option value="192">192 GB</option><option value="custom">Other amount…</option></select>
+            <div id="memory-custom-wrap" class="mt-3" hidden><label for="memory-custom">Enter unified memory in GB</label><input id="memory-custom" type="number" min="8" max="512" step="1" value="64" inputmode="numeric" /></div>
+            <span class="gf-field-help">Apple menu → About This Mac → Memory</span>
+          </div>
+          <div class="gf-field">
+            <label for="context-select">Typical source size</label>
+            <select id="context-select"><option value="short">Short notes or chat</option><option value="document" selected>One ordinary document</option><option value="long">Long document or several files</option></select>
+          </div>
         </div>
-        <p class="text-[13px] leading-relaxed text-[#63707a] mt-5">No document is uploaded. These controls only change a planning calculation in your browser.</p>
-      </div>
+        <button class="gf-button w-full mt-6" type="submit">Build my starting point</button>
+        <p class="gf-field-help mt-4">No document is uploaded. This page only calculates from the choices above.</p>
+      </form>
 
-      <section class="gf-checker" aria-labelledby="setup-result-title" aria-live="polite">
-        <div class="gf-checker-head"><strong id="setup-result-title">Your planning result</strong><span class="gf-status">Estimate</span></div>
+      <section id="explorer-result" class="gf-checker gf-explorer-result" aria-labelledby="result-model" aria-live="polite">
+        <div class="gf-checker-head"><strong id="result-build">Apple silicon Mac · 16 GB</strong><span class="gf-status">Estimate</span></div>
         <div class="gf-reading">
           <div class="gf-reading-top">
-            <div><p class="gf-reading-label">Cautious model range</p><h2 id="result-model">7–9B model class at Q4</h2></div>
-            <span class="gf-status">Not benchmarked here</span>
+            <div><p class="gf-reading-label">Cautious model range</p><h2 id="result-model" tabindex="-1">7–9B class at Q4</h2></div>
+            <span class="gf-status">Not a benchmark</span>
           </div>
-          <p id="result-summary" class="gf-copy mt-4">A reasonable starting range for structured first drafts on a 16 GB Mac. Context length and runtime overhead reduce usable memory.</p>
+          <p id="result-summary" class="gf-copy mt-4">A practical small-model range. Long context and other applications reduce headroom.</p>
           <dl class="gf-reading-grid">
-            <div><dt>Memory</dt><dd id="result-memory">16 GB unified memory</dd></div>
-            <div><dt>Human review</dt><dd id="result-review">Verify every factual statement and unsupported addition.</dd></div>
-            <div><dt>Evidence</dt><dd>Memory-fit estimate; workflow remains a protocol.</dd></div>
+            <div><dt>Build</dt><dd id="result-memory">16 GB unified memory</dd></div>
+            <div><dt>Work</dt><dd id="result-review">Verify every factual statement and remove unsupported additions.</dd></div>
+            <div><dt>Evidence</dt><dd>Memory-fit estimate; exact artifact not tested here.</dd></div>
           </dl>
-          <div class="border-t border-[#d5dce0] pt-5 mt-2">
-            <p class="gf-reading-label">Material limits</p>
-            <ul class="gf-copy text-[14px] mt-3 pl-5 list-disc space-y-2">
-              <li>This does not predict tokens per second or output quality.</li>
-              <li>Exact model artifacts, context, runtime, and other apps change memory use.</li>
-              <li>Local processing does not make the workflow secure or compliant by itself.</li>
-            </ul>
+
+          <div class="gf-explorer-block">
+            <div class="gf-explorer-block-head"><div><p class="gf-reading-label">Named examples</p><h3>Models inside this cautious size range</h3></div><a href="/models" class="gf-link">Open model reference</a></div>
+            <div id="model-examples" class="gf-model-list"></div>
+            <p class="gf-reading-note mt-4">These are publisher-verified model identities, not a quality ranking. You still need a compatible quantized artifact; license terms, artifact size, context, and runtime matter.</p>
           </div>
-          <div class="flex flex-wrap gap-4 mt-6">
-            <a id="protocol-link" class="gf-button" href="/experiments/01-soap-notes-m4-mini">See the closest test protocol</a>
-            <button id="copy-link" type="button" class="gf-button gf-button-secondary">Copy this setup link</button>
+
+          <div class="gf-explorer-block">
+            <div class="gf-explorer-block-head"><div><p class="gf-reading-label">Runtime paths</p><h3>Three ways to run the artifact</h3></div></div>
+            <div id="runtime-options" class="gf-runtime-list"></div>
           </div>
+
+          <div class="gf-explorer-block gf-explorer-limit">
+            <p class="gf-reading-label">What this answer does not know</p>
+            <ul class="gf-copy text-[14px] mt-3 pl-5 list-disc space-y-2"><li>Tokens per second on your exact chip and runtime.</li><li>Whether a named model is good at your exact task.</li><li>How much context, cache, or concurrency your workflow needs.</li><li>Whether the complete system is private, secure, or compliant.</li></ul>
+          </div>
+
+          <div class="flex flex-wrap gap-4 mt-6"><a id="protocol-link" class="gf-button" href="/experiments/01-soap-notes-m4-mini">See the closest protocol</a><button id="copy-link" type="button" class="gf-button gf-button-secondary">Copy this build link</button></div>
         </div>
       </section>
     </div>
@@ -59,80 +84,73 @@ const schema = [
 
   <section class="gf-section gf-section-soft">
     <div class="gf-shell">
-      <div class="gf-section-head"><h2 class="gf-h2">How should I read this answer?</h2><p class="gf-copy">The checker separates “can the model artifact plausibly fit in memory?” from “does the workflow actually help?” Only the first is estimated here.</p></div>
-      <div class="gf-boundary-grid">
-        <div><h3>This checker estimates</h3><ul><li>A conservative model-size range for the chosen memory tier.</li><li>Likely pressure from context and runtime overhead.</li><li>The professional review requirement for the selected task.</li></ul></div>
-        <div><h3>A field test must measure</h3><ul><li>Actual speed on the exact machine and artifact.</li><li>Omissions, unsupported additions, and edit burden.</li><li>Whether the task saves enough time to be worth using.</li></ul></div>
-      </div>
-      <div class="gf-form mt-10"><h3 class="text-lg font-semibold">How the estimate is calculated</h3><p class="gf-copy mt-3">The checker reserves substantial memory for macOS, the runtime, and working context, then maps the remainder to broad Q4 model classes. Q4 is roughly half a byte per parameter before artifact metadata and runtime overhead. This intentionally rounds down; the exact artifact, context length, runtime, and open applications must still be tested.</p></div>
+      <div class="gf-section-head"><p class="gf-eyebrow">Read the answer correctly</p><h2 class="gf-h2 mt-3">Memory says what may fit. Testing says what is useful.</h2><p class="gf-copy">The chip generation and tier can materially change speed, but Ground Floor will not invent a speed number without the exact build, artifact, runtime, context, settings, and retained run.</p></div>
+      <div class="gf-boundary-grid"><div><h3>This explorer provides</h3><ul><li>A conservative Q4 size class from unified memory.</li><li>Real model identities inside that class.</li><li>Runtime paths with primary-source links.</li></ul></div><div><h3>A direct test must provide</h3><ul><li>Actual speed, memory pressure, and useful context.</li><li>Task errors, omissions, edits, and review time.</li><li>The complete local data path and controls.</li></ul></div></div>
+      <p class="gf-source-line">Sources checked July 19, 2026: <a href="https://support.apple.com/en-us/126319">Apple M5 Pro/Max specifications</a>, publisher model cards linked above, <a href="https://github.com/ml-explore/mlx-lm">MLX-LM</a>, <a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a>, and <a href="https://www.lmstudio.ai/docs/app/system-requirements">LM Studio requirements</a>.</p>
     </div>
   </section>
 
   <script>
+    import { modelExamples, runtimes, memoryTier } from '../lib/explorer';
+    const form = document.getElementById('mac-explorer') as HTMLFormElement | null;
+    const buildInput = document.getElementById('build-name') as HTMLInputElement | null;
     const task = document.getElementById('task') as HTMLSelectElement | null;
     const memorySelect = document.getElementById('memory-select') as HTMLSelectElement | null;
     const customMemory = document.getElementById('memory-custom') as HTMLInputElement | null;
     const customWrap = document.getElementById('memory-custom-wrap');
+    const contextSelect = document.getElementById('context-select') as HTMLSelectElement | null;
     const model = document.getElementById('result-model');
     const summary = document.getElementById('result-summary');
+    const build = document.getElementById('result-build');
     const memory = document.getElementById('result-memory');
     const review = document.getElementById('result-review');
+    const modelList = document.getElementById('model-examples');
+    const runtimeList = document.getElementById('runtime-options');
     const protocol = document.getElementById('protocol-link') as HTMLAnchorElement | null;
     const copy = document.getElementById('copy-link') as HTMLButtonElement | null;
+    const result = document.getElementById('explorer-result');
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
-    function memoryTier(gb: number) {
-      if (gb < 12) return { range:'3–4B model class at Q4', detail:'A constrained but useful starting range. Keep context short and close memory-heavy apps.' };
-      if (gb < 22) return { range:'7–9B model class at Q4', detail:'A cautious starting range for structured work. Long context and other apps reduce headroom.' };
-      if (gb < 30) return { range:'Up to a 14B model class at Q4', detail:'A plausible mid-size planning range. Verify the exact artifact and runtime.' };
-      if (gb < 36) return { range:'Up to roughly a 20B model class at Q4', detail:'More room than 24 GB, but long context and runtime overhead can still constrain the model.' };
-      if (gb < 48) return { range:'Up to a 27B model class at Q4', detail:'A larger planning range, but context, runtime, and concurrency still affect fit.' };
-      if (gb < 64) return { range:'Up to a 32B model class at Q4', detail:'A cautious large-midrange estimate. Verify the exact artifact, context, and runtime.' };
-      if (gb < 96) return { range:'Up to roughly a 40B model class at Q4', detail:'Larger artifacts are plausible, but reserve substantial memory for macOS, context, and the runtime.' };
-      return { range:'Up to a 70B model class at Q4', detail:'Large-model fit is plausible. Speed, quality, and useful context still require direct measurement.' };
-    }
     const tasks = {
-      draft: { review:'Verify every factual statement and remove unsupported additions.', protocol:'/experiments/01-soap-notes-m4-mini' },
-      review: { review:'Complete qualified review remains mandatory; check omissions and cross-references.', protocol:'/experiments/02-contract-review-legal' },
-      summarize: { review:'Check omissions, negations, identities, dates, and sensitive fields.', protocol:'/experiments/03-meeting-notes-financial' },
-      meeting: { review:'Verify names, figures, promises, dates, and action owners.', protocol:'/experiments/03-meeting-notes-financial' },
+      draft:{ label:'First-draft documentation', review:'Verify every factual statement and remove unsupported additions.', protocol:'/experiments/01-soap-notes-m4-mini' },
+      review:{ label:'Document triage', review:'Complete qualified review remains mandatory; check omissions and cross-references.', protocol:'/experiments/02-contract-review-legal' },
+      summarize:{ label:'Structured intake summary', review:'Check omissions, negations, identities, dates, and sensitive fields.', protocol:'/experiments/03-meeting-notes-financial' },
+      meeting:{ label:'Meeting record', review:'Verify names, figures, promises, dates, and action owners.', protocol:'/experiments/03-meeting-notes-financial' },
+      general:{ label:'General local exploration', review:'Treat output as unverified; do not rely on it for important factual or professional decisions.', protocol:'/experiments' },
     } as const;
+    const contextNotes = { short:'Short inputs leave the most headroom.', document:'An ordinary document uses additional working memory.', long:'Long or multiple documents can reduce fit materially; start below the ceiling.' } as const;
+
+    function memoryGb() { return memorySelect?.value === 'custom' ? Math.max(8,Number(customMemory?.value || 8)) : Number(memorySelect?.value || 16); }
     function readHash() {
       const values = new URLSearchParams(location.hash.slice(1));
-      const taskValue = values.get('task');
-      const memoryValue = values.get('memory');
+      const taskValue = values.get('task'); const memoryValue = values.get('memory'); const buildValue = values.get('build'); const contextValue = values.get('context');
       if (task && taskValue && taskValue in tasks) task.value = taskValue;
-      if (memorySelect && memoryValue) {
-        const exactOption = Array.from(memorySelect.options).some(option => option.value === memoryValue && option.value !== 'custom');
-        if (exactOption) memorySelect.value = memoryValue;
-        else if (!Number.isNaN(Number(memoryValue))) {
-          memorySelect.value = 'custom';
-          if (customMemory) customMemory.value = memoryValue;
-          if (customWrap) customWrap.hidden = false;
-        }
-      }
+      if (buildInput && buildValue) buildInput.value = buildValue;
+      if (contextSelect && contextValue && ['short','document','long'].includes(contextValue)) contextSelect.value = contextValue;
+      if (memorySelect && memoryValue) { const exact = Array.from(memorySelect.options).some(o => o.value === memoryValue && o.value !== 'custom'); if (exact) memorySelect.value = memoryValue; else if (!Number.isNaN(Number(memoryValue))) { memorySelect.value='custom'; if(customMemory)customMemory.value=memoryValue; if(customWrap)customWrap.hidden=false; } }
     }
-    function render() {
-      if (!task || !memorySelect || !model || !summary || !memory || !review || !protocol) return;
-      const memoryGb = memorySelect.value === 'custom' ? Math.max(8, Number(customMemory?.value || 8)) : Number(memorySelect.value);
-      const machine = memoryTier(memoryGb);
-      const work = tasks[task.value as keyof typeof tasks];
-      model.textContent = machine.range;
-      summary.textContent = machine.detail;
-      memory.textContent = `${memoryGb} GB unified memory`;
-      review.textContent = work.review;
-      protocol.href = work.protocol;
-      history.replaceState(null, '', `#task=${task.value}&memory=${memoryGb}`);
+    function renderModels(max:number) {
+      if (!modelList) return;
+      modelList.replaceChildren(...modelExamples.filter(item => item.size <= max).map((item,index) => {
+        const row=document.createElement('a'); row.className='gf-model-row'; row.href=item.source; row.target='_blank'; row.rel='noreferrer';
+        const text=document.createElement('span'); const strong=document.createElement('strong'); strong.textContent=item.name; const detail=document.createElement('small'); detail.textContent=`${item.modality} · ${item.license}`; text.append(strong,detail);
+        const state=document.createElement('span'); state.className='gf-model-state'; state.textContent=index === modelExamples.filter(m => m.size <= max).length-1 ? 'Largest listed' : 'Within range'; row.append(text,state); return row;
+      }));
     }
-    readHash(); render();
-    task?.addEventListener('change', render);
-    memorySelect?.addEventListener('change', () => {
-      if (customWrap) customWrap.hidden = memorySelect.value !== 'custom';
-      if (memorySelect.value === 'custom') customMemory?.focus();
-      render();
-    });
-    customMemory?.addEventListener('input', render);
-    copy?.addEventListener('click', async () => {
-      try { await navigator.clipboard.writeText(location.href); copy.textContent = 'Copied'; setTimeout(() => copy.textContent = 'Copy this setup link', 1400); } catch {}
-    });
+    function renderRuntimes() {
+      if (!runtimeList) return;
+      runtimeList.replaceChildren(...runtimes.map(item => { const row=document.createElement('a');row.className='gf-runtime-row';row.href=item.source;row.target='_blank';row.rel='noreferrer';const strong=document.createElement('strong');strong.textContent=item.name;const span=document.createElement('span');span.textContent=`${item.fit} — ${item.note}`;row.append(strong,span);return row; }));
+    }
+    function render(pushHash=true) {
+      if (!task || !memorySelect || !contextSelect || !model || !summary || !memory || !review || !protocol) return;
+      const gb=memoryGb(); const tier=memoryTier(gb); const work=tasks[task.value as keyof typeof tasks]; const buildName=buildInput?.value.trim() || 'Apple silicon Mac';
+      model.textContent=tier.range; summary.textContent=`${tier.detail} ${contextNotes[contextSelect.value as keyof typeof contextNotes]}`; if(build)build.textContent=`${buildName} · ${gb} GB`; memory.textContent=`${gb} GB unified memory · ${work.label}`; review.textContent=work.review; protocol.href=work.protocol; renderModels(tier.max); renderRuntimes();
+      if (pushHash) history.replaceState(null,'',`#build=${encodeURIComponent(buildInput?.value.trim() || '')}&task=${task.value}&memory=${gb}&context=${contextSelect.value}`);
+    }
+    readHash(); render(false);
+    form?.addEventListener('submit',event=>{event.preventDefault();render();result?.classList.remove('is-answer-ready');void result?.offsetWidth;result?.classList.add('is-answer-ready');result?.scrollIntoView({behavior:reducedMotion.matches?'auto':'smooth',block:'start'});setTimeout(()=>model?.focus({preventScroll:true}),reducedMotion.matches?0:320);});
+    memorySelect?.addEventListener('change',()=>{if(customWrap)customWrap.hidden=memorySelect.value!=='custom';if(memorySelect.value==='custom')customMemory?.focus();render();});
+    [task,contextSelect].forEach(el=>el?.addEventListener('change',()=>render())); buildInput?.addEventListener('input',()=>render()); customMemory?.addEventListener('input',()=>render());
+    copy?.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(location.href);copy.textContent='Copied';setTimeout(()=>copy.textContent='Copy this build link',1400);}catch{}});
   </script>
 </Base>
