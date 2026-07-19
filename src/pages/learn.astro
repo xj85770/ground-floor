@@ -1,0 +1,160 @@
+---
+import Base from '../layouts/Base.astro';
+import { article, breadcrumb } from '../lib/seo';
+
+const schema = [
+  article({ site:Astro.site, path:'/learn', headline:'Local AI deep dive', description:'A one-page technical guide to local AI on Apple silicon: architecture, memory, model fit, workflows, risk, and evidence.', techArticle:true }),
+  breadcrumb(Astro.site, [{ name:'Ground Floor', path:'/' }, { name:'Deep dive', path:'/learn' }]),
+];
+
+const contents = [
+  ['why-local', '1. What “local” changes'],
+  ['data-path', '2. The complete data path'],
+  ['hardware', '3. Apple silicon and memory'],
+  ['models', '4. Models, Q4, and context'],
+  ['workflows', '5. Work worth testing'],
+  ['evidence', '6. How claims earn trust'],
+  ['lab', '7. The Ground Floor testbed'],
+  ['start', '8. A responsible first run'],
+];
+---
+
+<Base title="Local AI deep dive" description="One technical guide to local AI on Apple silicon: architecture, memory, model fit, workflows, risks, and evidence." appearance="light" schema={schema}>
+  <header class="gf-page-hero">
+    <div class="gf-shell">
+      <p class="gf-eyebrow">The full technical story</p>
+      <h1 class="gf-display mt-4">Local AI, all on one page.</h1>
+      <p class="gf-lede">The useful detail that does not belong in a homepage: what stays local, what can still leave, how memory and model size interact, which work is testable, and what the evidence does—and does not—prove.</p>
+      <div class="flex flex-wrap gap-3 mt-7" aria-label="Evidence key">
+        <span class="gf-status">Measured = retained run</span>
+        <span class="gf-status">Estimate = calculation</span>
+        <span class="gf-status">Protocol = test not completed</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="gf-content">
+    <div class="gf-shell gf-deep-layout">
+      <aside class="gf-deep-toc" aria-label="On this page">
+        <p class="gf-reading-label">On this page</p>
+        <nav>{contents.map(([id, label]) => <a href={`#${id}`}>{label}</a>)}</nav>
+        <a class="gf-button mt-6" href="/setup">Check my Mac</a>
+      </aside>
+
+      <article class="gf-prose gf-deep-prose">
+        <section id="why-local">
+          <p class="gf-eyebrow">01 · Architecture</p>
+          <h2>What does “local AI” actually change?</h2>
+          <p>A local model performs inference on a computer you control instead of sending the prompt and source material to a hosted model API. That can reduce third-party exposure, give you more control over the model and runtime, and keep working when an external service is unavailable.</p>
+          <p>It does not automatically create privacy, security, accuracy, or compliance. Those are properties of the complete workflow: device access, storage, logs, backups, network behavior, retention, people, and professional review.</p>
+          <div class="gf-boundary-grid gf-deep-boundary">
+            <div><h3>Local can reduce</h3><ul><li>Model-API transmission</li><li>Dependence on one hosted vendor</li><li>Recurring per-token charges</li></ul></div>
+            <div><h3>Local does not remove</h3><ul><li>Device and account risk</li><li>Hallucinations and omissions</li><li>Your duty to review the work</li></ul></div>
+          </div>
+        </section>
+
+        <section id="data-path">
+          <p class="gf-eyebrow">02 · Boundaries</p>
+          <h2>Follow the complete data path—not the marketing label.</h2>
+          <p>“The model runs locally” only describes one component. A desktop app may still call home for updates, analytics, crash reports, license checks, cloud sync, web search, transcription, plugins, or remote model fallback.</p>
+          <ol><li>Identify the exact app and runtime.</li><li>Identify where the model artifact came from and where it is stored.</li><li>Inspect network behavior, logs, temporary files, sync, and backups.</li><li>Confirm who can access the machine and retained outputs.</li><li>Test with synthetic or public material before sensitive data.</li></ol>
+          <details class="gf-deep-detail"><summary>What would “offline” require?</summary><p>More than switching off Wi-Fi once. The workflow needs an installed model artifact, a runtime that does not require a remote service, disabled remote fallbacks and integrations, and a deliberate policy for updates, backups, exports, and later reconnection. Verify the actual system; do not infer it from a product label.</p></details>
+        </section>
+
+        <section id="hardware">
+          <p class="gf-eyebrow">03 · Hardware</p>
+          <h2>Why does unified memory matter so much?</h2>
+          <p>Apple silicon lets the CPU and GPU use one memory pool. That makes Macs unusually approachable for local inference because model weights do not need to be copied into a separate, smaller graphics-memory pool. But the model does not get every advertised gigabyte.</p>
+          <p>The operating system, open applications, model runtime, working context, and generated tokens all consume memory. The checker therefore rounds down and treats fit as a planning estimate—not a benchmark.</p>
+          <div class="gf-form">
+            <h3>Memory configurations covered by the checker</h3>
+            <p class="gf-copy mt-3"><strong>8, 16, 18, 24, 32, 36, 48, 64, 96, 128, and 192 GB</strong>, plus any custom amount. These span Apple-silicon configurations across multiple Mac generations and product families; they are not a claim that every amount is sold on every current Mac.</p>
+            <a class="gf-link inline-flex mt-4" href="/setup">Use the full memory checker →</a>
+          </div>
+          <details class="gf-deep-detail"><summary>How should I interpret the model ranges?</summary><p>They are cautious Q4 artifact-fit ranges. Roughly: 8 GB starts around 3–4B; 16–18 GB around 7–9B; 24 GB around 14B; 32 GB around 20B; 36 GB around 27B; 48 GB around 32B; 64 GB around 40B; and 96 GB or more can plausibly hold a 70B-class Q4 artifact. Exact artifacts, context, runtimes, and other apps can move the line.</p></details>
+          <details class="gf-deep-detail"><summary>Does more memory make the answer better?</summary><p>No. More memory lets you load a larger artifact or use more context. It does not establish that the larger model is better for your task, that it follows your format, or that it is fast enough to be useful.</p></details>
+        </section>
+
+        <section id="models">
+          <p class="gf-eyebrow">04 · Models</p>
+          <h2>Model size, quantization, and context are separate knobs.</h2>
+          <h3>Parameters</h3><p>A “7B” or “70B” label describes an approximate parameter count, not a quality score. Architecture, training data, post-training, tool use, and the task itself matter.</p>
+          <h3>Quantization</h3><p>Quantization stores weights at lower precision to reduce memory and often improve practical speed. “Q4” is a family of roughly four-bit approaches, not one universal file format or quality level. Always name the exact artifact.</p>
+          <h3>Context</h3><p>The prompt, source documents, conversation history, and generated output occupy working memory. A model may load successfully and then run out of headroom on a long document.</p>
+          <h3>Runtime</h3><p>The runtime is the software that loads and executes the model. MLX-based tools, llama.cpp-family tools, and packaged desktop apps can use different formats, kernels, defaults, and memory behavior. A model name alone is not a reproducible setup.</p>
+          <div class="gf-form"><h3>Fit ≠ speed ≠ quality ≠ suitability</h3><p class="gf-copy mt-3">Those are four different questions. The memory checker only estimates the first. A retained benchmark can measure speed. A scored field test can evaluate quality. A qualified professional and the organization’s controls determine suitability.</p></div>
+        </section>
+
+        <section id="workflows">
+          <p class="gf-eyebrow">05 · Workflow design</p>
+          <h2>Start with the customer’s real task.</h2>
+          <p>The strongest first candidates are repetitive documentation tasks with known source material, a standard output, and a qualified reviewer. The model drafts or transforms; a person owns the conclusion and final work.</p>
+          <div class="gf-task-list">
+            <details><summary>Meeting notes → a standard record</summary><p>Test names, dates, figures, commitments, action owners, omissions, and unsupported additions.</p></details>
+            <details><summary>Approved notes → a first draft</summary><p>Require source traceability. Check every factual statement and remove content the source did not support.</p></details>
+            <details><summary>Intake → a known internal format</summary><p>Score missing fields, negations, identity errors, dates, and sensitive-field handling.</p></details>
+            <details><summary>Document triage before full review</summary><p>Use it to prioritize attention, never to replace the complete professional review. Score omissions and cross-reference errors.</p></details>
+          </div>
+          <p>Poor first candidates include autonomous decisions, final legal or clinical conclusions, work without a reliable source, and any task where no qualified person can define correctness.</p>
+        </section>
+
+        <section id="evidence">
+          <p class="gf-eyebrow">06 · Evidence</p>
+          <h2>What turns a claim into evidence?</h2>
+          <p>A result becomes inspectable only when the exact machine, operating system, runtime, settings, model artifact, safe fixture, prompt, raw outputs, timing method, errors, and reviewer rubric are retained.</p>
+          <div class="gf-method gf-deep-method">
+            <div><span>Estimate</span><h3>Calculated</h3><p>Assumptions are stated. Useful for planning, not proof.</p></div>
+            <div><span>Protocol</span><h3>Predeclared</h3><p>The task and scoring plan exist, but the run is not complete.</p></div>
+            <div><span>Measured</span><h3>Retained</h3><p>The run artifacts, failures, timing, and evaluation can be inspected.</p></div>
+          </div>
+          <p>Ground Floor currently publishes three practitioner test protocols. They are plans, not completed practitioner studies. Attractive demo outputs are not silently promoted into results.</p>
+          <p><a class="gf-link" href="/experiments">Inspect the protocols</a> · <a class="gf-link" href="/playbook">Read the full evidence method</a></p>
+        </section>
+
+        <section id="lab">
+          <p class="gf-eyebrow">07 · Testbed</p>
+          <h2>What is the larger hardware lab trying to learn?</h2>
+          <p>The declared Ground Floor testbed includes two 128 GB M5 Max MacBook Pros connected over Thunderbolt 5. The reason for a two-node system is not that ordinary users need one. It creates room to study larger artifacts, distributed inference, interconnect overhead, and whether additional hardware produces useful workflow gains.</p>
+          <p><strong>Evidence boundary:</strong> hardware inventory is a declared configuration. Latency, bandwidth, throughput, scaling, energy, and quality claims only become measured when the exact command, settings, repetitions, logs, and raw results are retained with the run.</p>
+          <details class="gf-deep-detail"><summary>Why not publish a giant model leaderboard?</summary><p>Leaderboards age quickly and can hide the variables that matter: exact artifact, prompt, context, runtime, task, rubric, and hardware. Ground Floor prioritizes reproducible task-level evidence over a broad ranking assembled from mismatched sources.</p></details>
+        </section>
+
+        <section id="start">
+          <p class="gf-eyebrow">08 · First run</p>
+          <h2>A responsible first experiment takes about one narrow question.</h2>
+          <ol><li>Choose one repetitive task and define the required output.</li><li>Check your Mac’s unified memory and choose a conservative model class.</li><li>Install a known runtime and record the exact model artifact.</li><li>Use synthetic or public source material.</li><li>Save the prompt and every raw output—including failures.</li><li>Score facts, omissions, unsupported additions, format, edits, and time.</li><li>Decide whether the result merits a larger test. Do not jump directly to sensitive production work.</li></ol>
+          <div class="flex flex-wrap gap-4 mt-7"><a class="gf-button" href="/setup">Check my Mac</a><a class="gf-button gf-button-secondary" href="/quickstart">Open the safe quickstart</a></div>
+        </section>
+
+        <section class="gf-form gf-deep-last">
+          <p class="gf-eyebrow">The editorial rule</p>
+          <h2>Task first. Demonstrate what it does. Tell the whole material story—including the limits.</h2>
+          <p class="gf-copy">That is why this page keeps architecture, hardware, model fit, workflow value, evidence, and risk together. None of those pieces is the whole answer by itself.</p>
+        </section>
+      </article>
+    </div>
+  </div>
+
+  <style>
+    .gf-deep-layout{display:grid;grid-template-columns:240px minmax(0,720px);gap:72px;align-items:start}
+    .gf-deep-toc{position:sticky;top:96px;border-top:1px solid var(--gf-rule);padding-top:18px}
+    .gf-deep-toc nav{display:grid;margin-top:12px}
+    .gf-deep-toc nav a{font-size:13px;line-height:1.35;color:var(--gf-body);padding:7px 0;text-decoration:none}
+    .gf-deep-toc nav a:hover{color:var(--gf-action)}
+    .gf-deep-prose>section{scroll-margin-top:96px;padding-bottom:64px;border-bottom:1px solid var(--gf-rule)}
+    .gf-deep-prose>section+section{padding-top:64px}
+    .gf-deep-prose .gf-eyebrow+h2{margin-top:12px}
+    .gf-deep-boundary{margin-top:28px}
+    .gf-deep-boundary h3,.gf-deep-method h3{margin-top:0}
+    .gf-deep-detail{border-top:1px solid var(--gf-rule);padding:18px 0;margin-top:0}
+    .gf-deep-detail+ .gf-deep-detail{margin-top:0}
+    .gf-deep-detail summary,.gf-task-list summary{cursor:pointer;color:var(--gf-ink);font-weight:600}
+    .gf-deep-detail p,.gf-task-list details p{margin-top:12px}
+    .gf-deep-prose .gf-task-list details{padding:18px 0;border-bottom:1px solid var(--gf-rule)}
+    .gf-deep-method{margin-top:28px}
+    .gf-deep-last{border-bottom:0!important;padding:32px!important}
+    html[data-gf-theme="dark"] .gf-deep-toc nav a{color:var(--gf-body)}
+    @media(max-width:900px){.gf-deep-layout{grid-template-columns:1fr;gap:42px}.gf-deep-toc{position:static}.gf-deep-toc nav{grid-template-columns:1fr 1fr;column-gap:24px}}
+    @media(max-width:560px){.gf-deep-toc nav{grid-template-columns:1fr}.gf-deep-prose>section{padding-bottom:48px}.gf-deep-prose>section+section{padding-top:48px}}
+  </style>
+</Base>

@@ -10,7 +10,7 @@ export const GET: APIRoute = async ({ site }) => {
   const u = (p: string) => `${origin}${p}`;
 
   const staticPaths = [
-    '/', '/about', '/concepts', '/setup', '/pilot',
+    '/', '/about', '/concepts', '/setup', '/learn', '/pilot',
     '/playbook', '/quickstart', '/scope', '/experiments', '/industries',
   ];
 

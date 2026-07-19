@@ -56,11 +56,23 @@ const schema = [
           <div class="gf-field">
             <label for="home-memory">How much memory does your Mac have?</label>
             <select id="home-memory">
-              <option value="16">16 GB</option>
+              <option value="8">8 GB</option>
+              <option value="16" selected>16 GB</option>
+              <option value="18">18 GB</option>
               <option value="24">24 GB</option>
+              <option value="32">32 GB</option>
               <option value="36">36 GB</option>
+              <option value="48">48 GB</option>
+              <option value="64">64 GB</option>
+              <option value="96">96 GB</option>
               <option value="128">128 GB</option>
+              <option value="192">192 GB</option>
+              <option value="custom">Other amount…</option>
             </select>
+            <div id="home-memory-custom-wrap" class="mt-3" hidden>
+              <label for="home-memory-custom">Enter unified memory in GB</label>
+              <input id="home-memory-custom" type="number" min="8" max="512" step="1" value="64" inputmode="numeric" />
+            </div>
             <span class="text-[11px] text-[#63707a] mt-1">Apple menu → About This Mac → Memory</span>
           </div>
         </div>
@@ -79,6 +91,21 @@ const schema = [
           <p class="gf-reading-note" id="home-limit">This is a place to start—not a promise of quality, speed, security, or compliance.</p>
           <a id="home-setup-link" class="gf-link inline-flex mt-4" href="/setup#task=draft&memory=16">Show me the setup steps</a>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gf-section gf-section-white">
+    <div class="gf-shell gf-evidence-summary">
+      <div class="gf-evidence-count">
+        <strong>01</strong>
+        <span>one complete reference page</span>
+      </div>
+      <div>
+        <p class="gf-eyebrow">For the real nerds</p>
+        <h2 class="gf-h2 mt-3">Want the architecture, memory math, model language, risks, and testing method?</h2>
+        <p class="gf-copy mt-4">The homepage gives you the useful answer first. The deep dive keeps the fuller research in one place, with a table of contents and clear labels for measured results, estimates, and unfinished protocols.</p>
+        <a class="gf-button inline-flex mt-6" href="/learn">Open the deep dive</a>
       </div>
     </div>
   </section>
@@ -145,6 +172,8 @@ const schema = [
   <script>
     const task = document.getElementById('home-task') as HTMLSelectElement | null;
     const memory = document.getElementById('home-memory') as HTMLSelectElement | null;
+    const customMemory = document.getElementById('home-memory-custom') as HTMLInputElement | null;
+    const customWrap = document.getElementById('home-memory-custom-wrap');
     const title = document.getElementById('home-reading-title');
     const fit = document.getElementById('home-fit');
     const review = document.getElementById('home-review');
@@ -156,25 +185,35 @@ const schema = [
       review: { label:'document triage', task:'review', review:'Complete professional review remains mandatory; check omissions and cross-references.', target:27 },
       intake: { label:'an intake summary', task:'summarize', review:'Check omissions, negations, identities, dates, and sensitive fields.', target:14 },
     } as const;
-    const memoryData = {
-      '16': { model:'a 7–9B', max:9, fit:'A 7–9B model should fit. Long documents use more memory.' },
-      '24': { model:'up to a 14B', max:14, fit:'A model up to 14B should fit. Test the exact model and document length.' },
-      '36': { model:'up to a 27B', max:27, fit:'A model up to 27B should fit. Runtime and document length still matter.' },
-      '128': { model:'up to a 70B', max:70, fit:'A large model should fit. You still need to measure quality and speed.' },
-    } as const;
+    function memoryPlan(gb: number) {
+      if (gb < 12) return { model:'a 3–4B', max:4, fit:'Start around 3–4B. Keep context short and close other memory-heavy apps.' };
+      if (gb < 22) return { model:'a 7–9B', max:9, fit:'A 7–9B model is the cautious range. Long documents use more memory.' };
+      if (gb < 30) return { model:'up to a 14B', max:14, fit:'Up to 14B is a cautious range. Test the exact artifact and document length.' };
+      if (gb < 36) return { model:'up to a 20B', max:20, fit:'Up to roughly 20B may fit at Q4. Runtime and context still matter.' };
+      if (gb < 48) return { model:'up to a 27B', max:27, fit:'Up to 27B is plausible at Q4. Runtime and document length still matter.' };
+      if (gb < 64) return { model:'up to a 32B', max:32, fit:'Up to 32B is a cautious Q4 planning range. Verify the exact artifact.' };
+      if (gb < 96) return { model:'up to a 40B', max:40, fit:'Larger Q4 models are plausible, but leave room for macOS, context, and the runtime.' };
+      return { model:'up to a 70B', max:70, fit:'A 70B-class Q4 artifact may fit. Quality, context, and speed still need direct measurement.' };
+    }
 
     function updateReading() {
       if (!task || !memory || !title || !fit || !review || !link) return;
       const t = taskData[task.value as keyof typeof taskData];
-      const m = memoryData[memory.value as keyof typeof memoryData];
+      const memoryGb = memory.value === 'custom' ? Number(customMemory?.value || 8) : Number(memory.value);
+      const m = memoryPlan(memoryGb);
       const constrained = m.max < t.target;
       title.textContent = constrained ? `Start smaller—this Mac is tight for ${t.label}.` : `Yes—start with ${m.model} local model for ${t.label}.`;
       fit.textContent = m.fit;
       review.textContent = t.review;
-      link.href = `/setup#task=${t.task}&memory=${memory.value}`;
+      link.href = `/setup#task=${t.task}&memory=${memoryGb}`;
     }
     task?.addEventListener('change', updateReading);
-    memory?.addEventListener('change', updateReading);
+    memory?.addEventListener('change', () => {
+      if (customWrap) customWrap.hidden = memory.value !== 'custom';
+      if (memory.value === 'custom') customMemory?.focus();
+      updateReading();
+    });
+    customMemory?.addEventListener('input', updateReading);
     updateReading();
   </script>
 </Base>
