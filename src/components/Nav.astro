@@ -20,7 +20,7 @@ const active = (href: string) => href.startsWith('/#') ? false : pathname.starts
       {links.map(link => <a href={link.href} aria-current={active(link.href) ? 'page' : undefined}>{link.label}</a>)}
     </nav>
     <div class="gf-nav-actions">
-      <button class="gf-theme-toggle" data-gf-theme-toggle type="button" aria-label="Switch to dark mode" aria-pressed="false">
+      <button class="gf-theme-toggle" data-gf-theme-toggle type="button" role="switch" aria-label="Dark mode" aria-checked="true">
         <span class="gf-theme-orb" aria-hidden="true"></span>
         <span data-gf-theme-label>Dark</span>
       </button>
@@ -33,7 +33,7 @@ const active = (href: string) => href.startsWith('/#') ? false : pathname.starts
   <div id="mobile-menu" class="gf-mobile-menu" hidden>
     <nav aria-label="Mobile primary">
       {links.map(link => <a href={link.href} aria-current={active(link.href) ? 'page' : undefined}>{link.label}</a>)}
-      <button class="gf-theme-toggle gf-theme-toggle-mobile" data-gf-theme-toggle type="button" aria-label="Switch to dark mode" aria-pressed="false">
+      <button class="gf-theme-toggle gf-theme-toggle-mobile" data-gf-theme-toggle type="button" role="switch" aria-label="Dark mode" aria-checked="true">
         <span class="gf-theme-orb" aria-hidden="true"></span>
         <span data-gf-theme-label>Dark mode</span>
       </button>
@@ -57,10 +57,10 @@ const active = (href: string) => href.startsWith('/#') ? false : pathname.starts
   function syncThemeControls() {
     const dark = document.documentElement.dataset.gfTheme === 'dark';
     themeToggles.forEach(control => {
-      control.setAttribute('aria-pressed', String(dark));
-      control.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+      control.setAttribute('aria-checked', String(dark));
+      control.setAttribute('aria-label', 'Dark mode');
       const label = control.querySelector<HTMLElement>('[data-gf-theme-label]');
-      if (label) label.textContent = dark ? 'Light' : 'Dark';
+      if (label) label.textContent = 'Dark mode';
     });
     themeColor?.setAttribute('content', dark ? '#08070F' : '#F2F4F3');
   }

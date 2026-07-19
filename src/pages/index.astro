@@ -26,34 +26,45 @@ const schema = [
   <MacEntrance />
   <section class="gf-hero">
     <div class="gf-shell gf-hero-grid">
-      <div>
+      <div id="gf-hero-copy" class="gf-hero-copy">
         <p class="gf-eyebrow">Start with one real task</p>
         <h1 class="gf-display mt-4">What work do you want off your plate?</h1>
         <p class="gf-lede mt-6">Choose the work and your Mac’s memory. Get a cautious local-AI starting point immediately.</p>
         <div class="gf-hero-actions">
-          <a class="gf-button" href="#home-task">Get my answer</a>
+          <button id="gf-start-checker" class="gf-button" type="button" aria-controls="workflows">Get my answer</button>
           <a class="gf-button gf-button-secondary" href="/experiments">View the evidence</a>
           <button id="gf-replay-entrance" class="gf-replay-entrance" type="button">Replay opening</button>
         </div>
         <p class="gf-boundary">For first drafts and document work. A qualified person keeps the final say.</p>
       </div>
 
-      <div id="workflows" class="gf-checker" aria-labelledby="quick-check-title">
+      <form id="workflows" class="gf-checker" aria-labelledby="quick-check-title" novalidate>
         <div class="gf-checker-head">
-          <strong id="quick-check-title">Your task → your starting point</strong>
-          <span class="gf-status">Instant</span>
+          <strong id="quick-check-title">Find your starting point</strong>
+          <span id="gf-checker-status" class="gf-status">2 questions</span>
+        </div>
+        <div id="gf-walkthrough" class="gf-walkthrough" aria-live="polite" hidden>
+          <div>
+            <p id="gf-walkthrough-step" class="gf-reading-label">Step 1 of 2</p>
+            <p id="gf-walkthrough-text">Start with the work you want to make easier.</p>
+          </div>
+          <div class="gf-walkthrough-actions">
+            <button id="gf-walkthrough-next" class="gf-button" type="button">Next: choose memory</button>
+            <button id="gf-walkthrough-close" class="gf-walkthrough-close" type="button">Exit guide</button>
+          </div>
         </div>
         <div class="gf-checker-form">
-          <div class="gf-field">
+          <div id="gf-task-field" class="gf-field">
             <label for="home-task">Which task wastes your time?</label>
-            <select id="home-task">
+            <select id="home-task" required>
+              <option value="" selected disabled>Choose a task…</option>
               <option value="meeting">Turn meeting notes into a clean record</option>
               <option value="draft">Draft from approved source notes</option>
               <option value="review">Spot issues before full contract review</option>
               <option value="intake">Put intake into our standard format</option>
             </select>
           </div>
-          <div class="gf-field">
+          <div id="gf-memory-field" class="gf-field">
             <label for="home-memory">How much memory does your Mac have?</label>
             <select id="home-memory">
               <option value="8">8 GB</option>
@@ -76,11 +87,16 @@ const schema = [
             <span class="text-[11px] text-[#63707a] mt-1">Apple menu → About This Mac → Memory</span>
           </div>
         </div>
-        <div class="gf-reading" aria-live="polite">
+        <div class="gf-checker-submit">
+          <button id="gf-submit-answer" class="gf-button" type="submit" disabled>Show my starting point</button>
+          <span>Nothing is uploaded. This estimate runs in your browser.</span>
+        </div>
+        <p id="gf-result-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
+        <div id="gf-answer-reading" class="gf-reading" hidden>
           <div class="gf-reading-top">
             <div>
               <p class="gf-reading-label">Your starting point</p>
-              <h2 id="home-reading-title">Yes—start with a small local model for meeting notes.</h2>
+              <h2 id="home-reading-title" tabindex="-1">Yes—start with a small local model for meeting notes.</h2>
             </div>
           </div>
           <dl class="gf-reading-grid">
@@ -89,9 +105,12 @@ const schema = [
             <div><dt>Proof</dt><dd>Planning estimate. Practitioner study not completed.</dd></div>
           </dl>
           <p class="gf-reading-note" id="home-limit">This is a place to start—not a promise of quality, speed, security, or compliance.</p>
-          <a id="home-setup-link" class="gf-link inline-flex mt-4" href="/setup#task=draft&memory=16">Show me the setup steps</a>
+          <div class="flex flex-wrap gap-5 items-center mt-4">
+            <a id="home-setup-link" class="gf-link inline-flex" href="/setup#task=draft&memory=16">Show me the setup steps</a>
+            <button id="gf-restart-guide" class="gf-walkthrough-restart" type="button">Try another task</button>
+          </div>
         </div>
-      </div>
+      </form>
     </div>
   </section>
 
@@ -178,6 +197,22 @@ const schema = [
     const fit = document.getElementById('home-fit');
     const review = document.getElementById('home-review');
     const link = document.getElementById('home-setup-link') as HTMLAnchorElement | null;
+    const startButton = document.getElementById('gf-start-checker') as HTMLButtonElement | null;
+    const checker = document.getElementById('workflows');
+    const checkerStatus = document.getElementById('gf-checker-status');
+    const guide = document.getElementById('gf-walkthrough');
+    const guideStep = document.getElementById('gf-walkthrough-step');
+    const guideText = document.getElementById('gf-walkthrough-text');
+    const guideNext = document.getElementById('gf-walkthrough-next') as HTMLButtonElement | null;
+    const guideClose = document.getElementById('gf-walkthrough-close') as HTMLButtonElement | null;
+    const restartGuide = document.getElementById('gf-restart-guide') as HTMLButtonElement | null;
+    const submitAnswer = document.getElementById('gf-submit-answer') as HTMLButtonElement | null;
+    const resultStatus = document.getElementById('gf-result-status');
+    const taskField = document.getElementById('gf-task-field');
+    const memoryField = document.getElementById('gf-memory-field');
+    const answerReading = document.getElementById('gf-answer-reading');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let guideStage = 0;
 
     const taskData = {
       meeting: { label:'meeting notes', task:'meeting', review:'Verify names, figures, dates, promises, and action owners.', target:9 },
@@ -199,6 +234,7 @@ const schema = [
     function updateReading() {
       if (!task || !memory || !title || !fit || !review || !link) return;
       const t = taskData[task.value as keyof typeof taskData];
+      if (!t) return;
       const memoryGb = memory.value === 'custom' ? Number(customMemory?.value || 8) : Number(memory.value);
       const m = memoryPlan(memoryGb);
       const constrained = m.max < t.target;
@@ -207,13 +243,119 @@ const schema = [
       review.textContent = t.review;
       link.href = `/setup#task=${t.task}&memory=${memoryGb}`;
     }
-    task?.addEventListener('change', updateReading);
+
+    function setGuideStage(stage: 1 | 2) {
+      if (!guide || !guideStep || !guideText || !guideNext || !task || !memory) return;
+      guideStage = stage;
+      guide.hidden = false;
+      taskField?.classList.toggle('is-guide-focus', stage === 1);
+      memoryField?.classList.toggle('is-guide-focus', stage === 2);
+      if (checkerStatus) checkerStatus.textContent = `${stage} of 2`;
+      if (stage === 1) {
+        guideStep.textContent = 'Step 1 of 2 · The work';
+        guideText.textContent = 'Choose the real task you want to make easier. Keep the final review with a qualified person.';
+        guideNext.textContent = 'Next: choose memory';
+        guideNext.disabled = !task.value;
+        task.focus({ preventScroll:true });
+      } else {
+        guideStep.textContent = 'Step 2 of 2 · Your Mac';
+        guideText.textContent = 'Choose the unified memory shown in Apple menu → About This Mac. This sets the cautious model range.';
+        guideNext.textContent = 'Show my answer';
+        guideNext.disabled = false;
+        memory.focus({ preventScroll:true });
+      }
+    }
+
+    function startGuide() {
+      if (!checker || !guide) return;
+      answerReading?.classList.remove('is-answer-ready');
+      if (answerReading) answerReading.hidden = true;
+      checker.classList.add('is-guided');
+      checker.classList.remove('has-answer');
+      document.getElementById('gf-hero-copy')?.classList.add('is-guiding');
+      guide.hidden = false;
+      checker.scrollIntoView({ behavior:reducedMotion.matches ? 'auto' : 'smooth', block:'center' });
+      window.setTimeout(() => setGuideStage(1), reducedMotion.matches ? 0 : 420);
+    }
+
+    function finishGuide() {
+      if (!guide || !title || !task?.value) {
+        setGuideStage(1);
+        return;
+      }
+      guideStage = 0;
+      guide.hidden = true;
+      taskField?.classList.remove('is-guide-focus');
+      memoryField?.classList.remove('is-guide-focus');
+      checker?.classList.remove('is-guided');
+      checker?.classList.add('has-answer');
+      document.getElementById('gf-hero-copy')?.classList.remove('is-guiding');
+      if (checkerStatus) checkerStatus.textContent = 'Answer ready';
+      updateReading();
+      if (answerReading) answerReading.hidden = false;
+      answerReading?.classList.remove('is-answer-ready');
+      void answerReading?.offsetWidth;
+      answerReading?.classList.add('is-answer-ready');
+      answerReading?.scrollIntoView({ behavior:reducedMotion.matches ? 'auto' : 'smooth', block:'center' });
+      if (resultStatus) resultStatus.textContent = 'Your planning estimate is ready.';
+      window.setTimeout(() => title.focus({ preventScroll:true }), reducedMotion.matches ? 0 : 360);
+    }
+
+    function closeGuide() {
+      guideStage = 0;
+      if (guide) guide.hidden = true;
+      taskField?.classList.remove('is-guide-focus');
+      memoryField?.classList.remove('is-guide-focus');
+      checker?.classList.remove('is-guided');
+      document.getElementById('gf-hero-copy')?.classList.remove('is-guiding');
+      if (checkerStatus) checkerStatus.textContent = '2 questions';
+      startButton?.focus({ preventScroll:true });
+    }
+
+    function syncSubmit() {
+      if (submitAnswer) submitAnswer.disabled = !task?.value;
+    }
+
+    function markAnswerStale() {
+      if (!checker?.classList.contains('has-answer')) return;
+      checker.classList.remove('has-answer');
+      if (answerReading) answerReading.hidden = true;
+      if (submitAnswer) submitAnswer.textContent = 'Update my starting point';
+      if (checkerStatus) checkerStatus.textContent = 'Answer changed';
+    }
+
+    startButton?.addEventListener('click', startGuide);
+    restartGuide?.addEventListener('click', () => {
+      if (task) task.value = '';
+      syncSubmit();
+      startGuide();
+    });
+    guideClose?.addEventListener('click', closeGuide);
+    guideNext?.addEventListener('click', () => {
+      if (guideStage === 1) {
+        if (!task?.value) { task?.focus(); return; }
+        setGuideStage(2);
+      } else finishGuide();
+    });
+    checker?.addEventListener('submit', event => { event.preventDefault(); finishGuide(); });
+    task?.addEventListener('change', () => {
+      markAnswerStale();
+      updateReading();
+      syncSubmit();
+      if (guideStage === 1) setGuideStage(2);
+    });
     memory?.addEventListener('change', () => {
+      markAnswerStale();
       if (customWrap) customWrap.hidden = memory.value !== 'custom';
       if (memory.value === 'custom') customMemory?.focus();
       updateReading();
     });
-    customMemory?.addEventListener('input', updateReading);
+    customMemory?.addEventListener('input', () => {
+      markAnswerStale();
+      updateReading();
+      if (guideStage === 2 && Number(customMemory.value) >= 8) guideNext!.textContent = 'Show my answer';
+    });
+    syncSubmit();
     updateReading();
   </script>
 </Base>

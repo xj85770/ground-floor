@@ -28,7 +28,7 @@ const jsonLd = graph(Astro.site, schema);
 ---
 
 <!DOCTYPE html>
-<html lang="en" class:list={[appearance === 'light' ? 'gf-light-root' : 'gf-dark-root']}>
+<html lang="en" data-gf-theme="dark" class:list={[appearance === 'light' ? 'gf-light-root' : 'gf-dark-root']}>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -43,14 +43,14 @@ const jsonLd = graph(Astro.site, schema);
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content={pageTitle} />
   <meta name="twitter:description" content={description} />
-  <meta name="theme-color" content={appearance === 'light' ? '#F2F4F3' : '#000000'} />
+  <meta name="theme-color" content="#08070F" />
   <script is:inline>
     (() => {
       try {
         const saved = localStorage.getItem('gf-theme');
-        document.documentElement.dataset.gfTheme = saved === 'dark' ? 'dark' : 'light';
+        document.documentElement.dataset.gfTheme = saved === 'light' ? 'light' : 'dark';
       } catch {
-        document.documentElement.dataset.gfTheme = 'light';
+        document.documentElement.dataset.gfTheme = 'dark';
       }
     })();
   </script>

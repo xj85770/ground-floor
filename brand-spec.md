@@ -2,7 +2,7 @@
 
 ## Direction
 
-Local AI instrument panel: bright, calm, exact, and inspectable. It should feel like a tool used beside a professional workpaper—not an AI laboratory, editorial manifesto, crypto product, or startup pitch deck.
+Local AI instrument panel: dark, calm, exact, and inspectable. It should feel like a tool used beside a professional workpaper—not an AI laboratory, editorial manifesto, crypto product, or startup pitch deck.
 
 ## Identity
 
@@ -28,14 +28,13 @@ Local AI instrument panel: bright, calm, exact, and inspectable. It should feel 
 - Correction: `#A23B2A`
 - Success: `#1F6B45`
 
-Forbidden: purple, gradients, glow, glass, auroras, neon, decorative status colors, shadows on ordinary content, pill-heavy UI.
+In light mode, purple, gradients, glow, glass, auroras, neon, decorative status colors, shadows on ordinary content, and pill-heavy UI are forbidden.
 
-### Optional dark theme
+### Default dark theme
 
-- The default remains the bright instrument system above.
-- A user-selected dark theme may use black-violet canvas `#08070F`, surface `#11101A`, ink `#F7F5FF`, body `#C7C2D7`, muted `#938CA7`, and rule `#29243B`.
+- The default is a black-violet canvas `#08070F`, surface `#11101A`, ink `#F7F5FF`, body `#C7C2D7`, muted `#938CA7`, and rule `#29243B`.
 - Dark-theme action range: electric blue `#2F7BFF` → violet `#8B5CF6`. The gradient pulse is reserved for the primary action and focus state; it must not color evidence labels or ordinary content.
-- Theme choice persists locally. Motion stops under `prefers-reduced-motion`.
+- Light mode remains available from the theme switch using the bright palette above. Theme choice persists locally. Motion stops under `prefers-reduced-motion`.
 
 ## Typography
 
