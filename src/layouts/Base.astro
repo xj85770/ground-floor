@@ -7,115 +7,88 @@ interface Props {
   title: string;
   description?: string;
   ogType?: string;
-  /** Page-specific JSON-LD nodes; Organization + WebSite are always added automatically. */
+  appearance?: 'light' | 'dark';
+  noindex?: boolean;
   schema?: Record<string, unknown>[];
 }
 
 const {
   title,
-  description = "Prove it yourself: air-gapped, open-weight AI, now good enough for the daily work of regulated practices, running on hardware you own, no data leaves the building. A new experiment every week, with honest verdicts. Free.",
+  description = 'Ground Floor helps small professional practices evaluate local AI for narrow, human-reviewed documentation work.',
   ogType = 'website',
+  appearance = 'dark',
+  noindex = false,
   schema = [],
 } = Astro.props;
 
-const siteName  = 'Ground Floor';
-const pageTitle = title === siteName ? siteName : `${title}, ${siteName}`;
+const siteName = 'Ground Floor';
+const pageTitle = title === siteName ? siteName : `${title} | ${siteName}`;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://gflocal.netlify.app');
-const jsonLd    = graph(Astro.site, schema);
+const jsonLd = graph(Astro.site, schema);
 ---
 
 <!DOCTYPE html>
-<html lang="en" style="background:#000;">
+<html lang="en" class:list={[appearance === 'light' ? 'gf-light-root' : 'gf-dark-root']}>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content={description} />
   <link rel="canonical" href={canonical} />
-  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
-  <meta name="author" content="Xavier Jones" />
-
-  <meta property="og:title"       content={pageTitle} />
+  <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1'} />
+  <meta name="author" content="Ground Floor" />
+  <meta property="og:title" content={pageTitle} />
   <meta property="og:description" content={description} />
-  <meta property="og:type"        content={ogType} />
-  <meta property="og:url"         content={canonical} />
-  <meta name="twitter:card"       content="summary" />
-  <meta name="twitter:title"      content={pageTitle} />
+  <meta property="og:type" content={ogType} />
+  <meta property="og:url" content={canonical} />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content={pageTitle} />
   <meta name="twitter:description" content={description} />
-  <meta name="theme-color"        content="#000000" />
-
+  <meta name="theme-color" content={appearance === 'light' ? '#F2F4F3' : '#000000'} />
+  <script is:inline>
+    (() => {
+      try {
+        const saved = localStorage.getItem('gf-theme');
+        document.documentElement.dataset.gfTheme = saved === 'dark' ? 'dark' : 'light';
+      } catch {
+        document.documentElement.dataset.gfTheme = 'light';
+      }
+    })();
+  </script>
   <title>{pageTitle}</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
-    rel="stylesheet"
-  />
-
   <script type="application/ld+json" set:html={jsonLd} is:inline />
 </head>
 
-<body class="bg-obsidian text-chalk antialiased">
-  <Nav />
+<body class:list={['antialiased', appearance === 'light' ? 'gf-light' : 'bg-obsidian text-chalk']}>
+  <Nav appearance={appearance} />
+  <main><slot /></main>
 
-  <main>
-    <slot />
-  </main>
-
-  <!-- Footer -->
-  <footer style="border-top: 1px solid #424245;" class="mt-32">
+  <footer class:list={['gf-footer', appearance === 'light' && 'gf-footer-light']}>
     <div class="max-w-wide mx-auto px-5 md:px-10 py-14">
-      <div class="flex flex-col md:flex-row md:items-start justify-between gap-10">
-
+      <div class="gf-footer-grid">
         <div>
-          <p class="font-display font-semibold text-base text-chalk">Ground Floor</p>
-          <p class="text-sm text-ash mt-2 max-w-xs leading-relaxed">
-            Air-gapped AI for regulated practices.<br />
-            Weekly experiments. Honest verdicts.
-          </p>
+          <p class="gf-footer-name">Ground Floor</p>
+          <p class="gf-footer-copy">Independent local-AI education and field testing for sensitive professional work.</p>
         </div>
-
-        <nav class="flex flex-wrap gap-x-8 gap-y-3" aria-label="Footer">
-          {[
-            ['Experiments', '/experiments'],
-            ['Industries',  '/industries'],
-            ['Hardware',    '/hardware'],
-            ['Models',      '/models'],
-            ['Playbook',    '/playbook'],
-            ['About',       '/about'],
-          ].map(([label, href]) => (
-            <a href={href} class="text-sm text-ash hover:text-chalk transition-colors">{label}</a>
-          ))}
-          <a href="https://www.linkedin.com/in/xavier-jones-xajo/" class="text-sm text-ash hover:text-chalk transition-colors" rel="noopener noreferrer" target="_blank">LinkedIn</a>
-          <a href="https://x.com/xavierlocalai" class="text-sm text-ash hover:text-chalk transition-colors" rel="noopener noreferrer" target="_blank">X</a>
-          <a href="/scope" class="text-sm text-ash hover:text-chalk transition-colors">Scope &amp; Disclaimers</a>
+        <nav aria-label="Footer">
+          <a href="/setup">Check my Mac</a>
+          <a href="/experiments">Evidence</a>
+          <a href="/playbook">How testing works</a>
+          <a href="/about">About</a>
+          <a href="/pilot">Tell us the task</a>
+          <a href="/scope">Scope &amp; Disclaimers</a>
         </nav>
       </div>
-
-      <p class="mt-12 text-xs text-ash/60">
-        Ground Floor is an independent educational project. Nothing here is legal, compliance, or medical advice.
-        See the <a href="/scope" class="underline underline-offset-2 hover:text-ash transition-colors">Scope &amp; Disclaimers</a> page.
-      </p>
+      <p class="gf-footer-legal">Ground Floor is independent technical education—not legal, compliance, medical, tax, investment, or security advice. See <a href="/scope">Scope &amp; Disclaimers</a>.</p>
     </div>
   </footer>
 
-  <!-- Scroll reveal (runs on every page) -->
   <script>
-    const _observer = new IntersectionObserver(
-      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); }),
       { threshold: 0.08 }
     );
-    document.querySelectorAll('.reveal').forEach(el => _observer.observe(el));
-
-    /* Global mouse-tracking glow for .glow-card */
-    document.querySelectorAll<HTMLElement>('.glow-card').forEach(card => {
-      card.addEventListener('mousemove', (e: MouseEvent) => {
-        const rect = card.getBoundingClientRect();
-        card.style.setProperty('--mouse-x', `${((e.clientX - rect.left) / rect.width)  * 100}%`);
-        card.style.setProperty('--mouse-y', `${((e.clientY - rect.top)  / rect.height) * 100}%`);
-      });
-    });
+    document.querySelectorAll('.reveal').forEach(element => observer.observe(element));
   </script>
 </body>
 </html>

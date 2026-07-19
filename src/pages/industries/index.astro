@@ -1,68 +1,50 @@
 ---
 import Base from '../../layouts/Base.astro';
-import IndustryCard from '../../components/IndustryCard.astro';
-import Faq from '../../components/Faq.astro';
 import { getCollection } from 'astro:content';
 import { page, breadcrumb } from '../../lib/seo';
 
-const faq = [
-  { q: 'Which regulated industries does Ground Floor cover?', a: 'Ground Floor documents local, air-gapped AI for regulated practices: medical, legal, financial, and accounting. Each industry page explains why the data usually cannot go to a cloud API, the common tasks people want help with, and which of those a local model can handle today.' },
-  { q: 'Why does local AI matter more for regulated work?', a: 'In regulated work the data itself is the constraint. Patient records, privileged files, and financial accounts often cannot leave the building by rule. A local open-weight model keeps the data on hardware you own, so there is no API call and no third party holding a copy. Nothing leaves the machine, so the one exposure a cloud tool creates simply is not there.' },
-  { q: 'Does running AI locally make my practice compliant?', a: 'No, and Ground Floor is careful about this. Running a model locally removes one large exposure, the data leaving your control, but it does not by itself make you HIPAA-compliant or satisfy your specific obligations. Those depend on your rules, your specialty, and your carrier. The Scope page spells out what this site can and cannot answer.' },
-];
-
-const industries  = await getCollection('industries');
+const industries = (await getCollection('industries')).sort((a, b) => a.data.name.localeCompare(b.data.name));
 const experiments = await getCollection('experiments');
-
-const expCount = experiments.reduce<Record<string, number>>((acc, e) => {
-  acc[e.data.industry] = (acc[e.data.industry] ?? 0) + 1;
-  return acc;
+const counts = experiments.reduce<Record<string, number>>((all, item) => {
+  all[item.data.industry] = (all[item.data.industry] ?? 0) + 1;
+  return all;
 }, {});
-
-const sorted = industries.sort((a, b) => a.data.name.localeCompare(b.data.name));
 const schema = [
-  page('CollectionPage', { site: Astro.site, path: '/industries', name: 'Regulated industries served by Ground Floor', description: 'Local LLM experiments for regulated practices, medical, legal, financial. Your data never leaves your building.' }),
-  breadcrumb(Astro.site, [{ name: 'Industries', path: '/industries' }]),
+  page('CollectionPage', { site: Astro.site, path: '/industries', name: 'Local AI workflow starting points by practice', description: 'Candidate documentation tasks and evidence status for small professional practices evaluating local AI.' }),
+  breadcrumb(Astro.site, [{ name: 'Workflows', path: '/industries' }]),
 ];
 ---
 
-<Base
-  title="Industries"
-  description="Local LLM experiments for regulated practices, medical, legal, financial. Your data never leaves your building."
-  schema={schema}
->
-  <!-- Page hero -->
-  <div class="page-aurora">
-    <div class="page-aurora-glow" style="background:radial-gradient(ellipse 70% 60% at 50% -10%,rgba(67,97,238,0.3) 0%,transparent 70%);"></div>
-    <div class="max-w-wide mx-auto px-5 md:px-10 pt-24 pb-20 relative">
-      <p class="font-mono text-[0.7rem] tracking-[0.2em] uppercase mb-4" style="color:#4361ee;">
-        Regulated verticals
-      </p>
-      <h1 class="font-display font-semibold tracking-tight text-chalk mb-4"
-          style="font-size:clamp(2.4rem,5vw,3.75rem);line-height:1.06;">
-        Which practice can't send<br />data to the cloud?
-      </h1>
-      <p class="text-silver text-lg max-w-xl leading-relaxed">
-        Every experiment is designed for practitioners who can't send client data to a cloud API, 
-        and who have reasonable grounds for that reluctance. The question each one answers is the same:
-        does it work, and at what hardware tier?
-      </p>
+<Base title="Workflow starting points by practice" description="Candidate documentation tasks and evidence status for small professional practices evaluating local AI." appearance="light" schema={schema}>
+  <header class="gf-page-hero">
+    <div class="gf-shell">
+      <p class="gf-eyebrow">Practice doors</p>
+      <h1 class="gf-display mt-4">Start with the task, not the technology.</h1>
+      <p class="gf-lede">Choose the work you want help with. These pages organize candidate tasks; they do not establish that a workflow is safe, compliant, or useful in your practice.</p>
     </div>
-  </div>
+  </header>
 
-  <div class="max-w-wide mx-auto px-5 md:px-10 py-16 md:py-20">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {sorted.map(ind => (
-        <IndustryCard industry={ind} experimentCount={expCount[ind.slug] ?? 0} />
-      ))}
+  <section class="gf-content">
+    <div class="gf-shell">
+      <div class="gf-task-list">
+        {industries.map((industry) => (
+          <a class="gf-task" href={`/industries/${industry.slug}`}>
+            <div>
+              <p class="gf-eyebrow">{industry.data.shortName}</p>
+              <h2>{industry.data.name}</h2>
+              <p>{industry.data.commonUseCases.slice(0, 3).join(' · ')}</p>
+            </div>
+            <div class="gf-task-meta">
+              <span class="gf-status">{counts[industry.slug] ?? 0} protocol{(counts[industry.slug] ?? 0) === 1 ? '' : 's'}</span>
+              <span aria-hidden="true">→</span>
+            </div>
+          </a>
+        ))}
+      </div>
+      <div class="gf-boundary-grid mt-12">
+        <div><h3>What these pages do</h3><ul><li>Translate broad interest into narrow documentation tasks.</li><li>Show whether Ground Floor has a protocol for the task.</li><li>State the human review requirement.</li></ul></div>
+        <div><h3>What they do not do</h3><ul><li>Give legal, medical, tax, security, or compliance advice.</li><li>Certify a deployment for a profession or jurisdiction.</li><li>Turn a planned protocol into measured evidence.</li></ul></div>
+      </div>
     </div>
-
-    <p class="mt-10 text-sm text-ash leading-relaxed max-w-prose">
-      Don't see your industry? The setup applies to any practice that can't send client data to a third party.{' '}
-      <a href="/about" class="underline underline-offset-2 hover:text-chalk transition-colors">Reach out</a>{' '}
-, I'll consider it for a future experiment.
-    </p>
-  </div>
-
-  <Faq items={faq} heading="Local AI for regulated industries: common questions" eyebrow="FAQ" />
+  </section>
 </Base>

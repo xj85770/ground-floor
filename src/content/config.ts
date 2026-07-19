@@ -16,6 +16,7 @@ const experiments = defineCollection({
     task:       z.string(),
     model:      z.string(),
     verdict:    z.enum(['viable', 'partial', 'not-yet']),
+    evidenceStatus: z.enum(['measured', 'estimated', 'third-party', 'protocol']).default('protocol'),
     hypothesis: z.string(),
     linkedin:   z.string().url().optional(),
     description: z.string(),

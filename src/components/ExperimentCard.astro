@@ -1,45 +1,16 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import VerdictBadge from './VerdictBadge.astro';
-import TagPill from './TagPill.astro';
-
-interface Props {
-  experiment: CollectionEntry<'experiments'>;
-  compact?: boolean;
-}
-
-const { experiment, compact = false } = Astro.props;
+import EvidenceBadge from './EvidenceBadge.astro';
+interface Props { experiment: CollectionEntry<'experiments'>; compact?: boolean }
+const { experiment } = Astro.props;
 const { data, slug } = experiment;
-
-const date = data.date.toLocaleDateString('en-US', {
-  month: 'short', day: 'numeric', year: 'numeric',
-});
+const date = data.date.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
 ---
-
-<article class="glow-card relative group p-6 mb-3">
-  <div class="flex items-start justify-between gap-4 mb-2.5">
-    <span class="font-mono text-[0.65rem] text-ash tracking-widest uppercase">Week {data.week}</span>
-    <VerdictBadge verdict={data.verdict} />
+<article class="gf-task relative">
+  <div>
+    <strong><a class="text-inherit no-underline after:absolute after:inset-0" href={`/experiments/${slug}`}>{data.title}</a></strong>
+    <p>{data.description}</p>
   </div>
-
-  <h3 class:list={[
-    'font-display font-semibold leading-snug mb-2.5 text-chalk transition-colors duration-150',
-    compact ? 'text-lg' : 'text-xl',
-    'group-hover:text-rust',
-  ]}>
-    <a href={`/experiments/${slug}`} class="after:absolute after:inset-0">
-      {data.title}
-    </a>
-  </h3>
-
-  {!compact && (
-    <p class="text-sm text-silver leading-relaxed mb-4">{data.description}</p>
-  )}
-
-  <div class="flex items-center flex-wrap gap-1.5">
-    <TagPill label={data.industry} />
-    <TagPill label={data.hardware} mono />
-    <TagPill label={data.task} />
-    <span class="ml-auto font-mono text-[0.65rem] text-ash">{date}</span>
-  </div>
+  <p>{data.industry} · {data.hardware}<br />Updated {date}</p>
+  <EvidenceBadge status={data.evidenceStatus} />
 </article>

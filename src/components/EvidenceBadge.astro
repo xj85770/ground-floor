@@ -1,0 +1,6 @@
+---
+interface Props { status: 'measured' | 'estimated' | 'third-party' | 'protocol' }
+const { status } = Astro.props;
+const labels = { measured:'Measured', estimated:'Estimate', 'third-party':'Third-party', protocol:'Protocol—not yet tested' };
+---
+<span class="gf-status">{labels[status]}</span>

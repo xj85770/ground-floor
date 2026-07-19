@@ -1,93 +1,73 @@
 ---
+interface Props { appearance?: 'light' | 'dark' }
+const { appearance = 'dark' } = Astro.props;
 const links = [
-  { href: '/quickstart',  label: 'Quickstart'  },
-  { href: '/experiments', label: 'Experiments' },
-  { href: '/industries',  label: 'Industries'  },
-  { href: '/hardware',    label: 'Hardware'     },
-  { href: '/models',      label: 'Models'       },
-  { href: '/will-it-run', label: 'Will It Run?' },
-  { href: '/concepts',    label: 'Concepts'     },
-  { href: '/playbook',    label: 'Playbook'     },
-  { href: '/about',       label: 'About'        },
+  { href: '/setup', label: 'Check my Mac' },
+  { href: '/#workflows', label: 'Workflows' },
+  { href: '/experiments', label: 'Evidence' },
+  { href: '/playbook', label: 'How testing works' },
+  { href: '/about', label: 'About' },
 ];
-
 const { pathname } = Astro.url;
-
-function isActive(href: string) {
-  if (href === '/') return pathname === '/';
-  return pathname.startsWith(href);
-}
+const active = (href: string) => href.startsWith('/#') ? false : pathname.startsWith(href);
 ---
 
-<!-- Apple-style nav: rgba black + saturate + blur -->
-<header
-  id="site-nav"
-  class="sticky top-0 z-50 transition-all duration-300"
-  style="background: rgba(0,0,0,0.72); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); border-bottom: 1px solid rgba(255,255,255,0.08);"
->
-  <div class="max-w-wide mx-auto px-5 md:px-10 flex items-center justify-between" style="height: 52px;">
-
-    <a
-      href="/"
-      class="font-display text-[0.9375rem] font-semibold tracking-tight text-chalk hover:text-white transition-colors duration-150"
-    >
-      Ground Floor
-    </a>
-
-    <nav class="hidden md:flex items-center gap-8" aria-label="Primary">
-      {links.map(link => (
-        <a
-          href={link.href}
-          class:list={[
-            'text-[0.8125rem] font-medium transition-colors duration-150',
-            isActive(link.href) ? 'text-chalk' : 'text-silver hover:text-chalk',
-          ]}
-        >
-          {link.label}
-        </a>
-      ))}
+<header class:list={['gf-nav', appearance === 'light' && 'gf-nav-light']}>
+  <div class="gf-nav-inner">
+    <a href="/" class="gf-wordmark" aria-label="Ground Floor home">Ground Floor</a>
+    <nav class="gf-nav-desktop" aria-label="Primary">
+      {links.map(link => <a href={link.href} aria-current={active(link.href) ? 'page' : undefined}>{link.label}</a>)}
     </nav>
-
-    <button
-      id="nav-toggle"
-      class="md:hidden p-2 -mr-2 text-silver hover:text-chalk transition-colors"
-      aria-label="Open navigation"
-      aria-expanded="false"
-    >
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-        <path id="icon-open"  stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
-        <path id="icon-close" stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" class="hidden"/>
-      </svg>
+    <div class="gf-nav-actions">
+      <button class="gf-theme-toggle" data-gf-theme-toggle type="button" aria-label="Switch to dark mode" aria-pressed="false">
+        <span class="gf-theme-orb" aria-hidden="true"></span>
+        <span data-gf-theme-label>Dark</span>
+      </button>
+      <a class="gf-nav-action" href="/pilot">Tell us the task</a>
+    </div>
+    <button id="nav-toggle" class="gf-nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-menu">
+      <span></span><span></span><span></span>
     </button>
   </div>
-
-  <div id="mobile-menu" class="hidden md:hidden border-t border-white/10">
-    <nav class="max-w-wide mx-auto px-5 py-5 flex flex-col gap-4" aria-label="Mobile primary">
-      {links.map(link => (
-        <a
-          href={link.href}
-          class:list={[
-            'text-sm font-medium transition-colors',
-            isActive(link.href) ? 'text-chalk' : 'text-silver',
-          ]}
-        >
-          {link.label}
-        </a>
-      ))}
+  <div id="mobile-menu" class="gf-mobile-menu" hidden>
+    <nav aria-label="Mobile primary">
+      {links.map(link => <a href={link.href} aria-current={active(link.href) ? 'page' : undefined}>{link.label}</a>)}
+      <button class="gf-theme-toggle gf-theme-toggle-mobile" data-gf-theme-toggle type="button" aria-label="Switch to dark mode" aria-pressed="false">
+        <span class="gf-theme-orb" aria-hidden="true"></span>
+        <span data-gf-theme-label>Dark mode</span>
+      </button>
+      <a href="/pilot">Tell us the task</a>
     </nav>
   </div>
 </header>
 
 <script>
-  const toggle   = document.getElementById('nav-toggle')!;
-  const menu     = document.getElementById('mobile-menu')!;
-  const iconOpen  = document.getElementById('icon-open')!;
-  const iconClose = document.getElementById('icon-close')!;
-
-  toggle.addEventListener('click', () => {
-    const open = menu.classList.toggle('hidden') === false;
-    toggle.setAttribute('aria-expanded', String(open));
-    iconOpen.classList.toggle('hidden', open);
-    iconClose.classList.toggle('hidden', !open);
+  const toggle = document.getElementById('nav-toggle');
+  const menu = document.getElementById('mobile-menu');
+  toggle?.addEventListener('click', () => {
+    const opening = menu?.hasAttribute('hidden') ?? false;
+    if (opening) menu?.removeAttribute('hidden'); else menu?.setAttribute('hidden', '');
+    toggle.setAttribute('aria-expanded', String(opening));
+    toggle.setAttribute('aria-label', opening ? 'Close navigation' : 'Open navigation');
   });
+
+  const themeColor = document.querySelector('meta[name="theme-color"]');
+  const themeToggles = document.querySelectorAll<HTMLElement>('[data-gf-theme-toggle]');
+  function syncThemeControls() {
+    const dark = document.documentElement.dataset.gfTheme === 'dark';
+    themeToggles.forEach(control => {
+      control.setAttribute('aria-pressed', String(dark));
+      control.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+      const label = control.querySelector<HTMLElement>('[data-gf-theme-label]');
+      if (label) label.textContent = dark ? 'Light' : 'Dark';
+    });
+    themeColor?.setAttribute('content', dark ? '#08070F' : '#F2F4F3');
+  }
+  themeToggles.forEach(control => control.addEventListener('click', () => {
+    const next = document.documentElement.dataset.gfTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.gfTheme = next;
+    try { localStorage.setItem('gf-theme', next); } catch { /* Theme still applies for this page. */ }
+    syncThemeControls();
+  }));
+  syncThemeControls();
 </script>

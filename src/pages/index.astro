@@ -1,825 +1,180 @@
 ---
 import Base from '../layouts/Base.astro';
-import ExperimentCard from '../components/ExperimentCard.astro';
-import IndustryCard from '../components/IndustryCard.astro';
-import Faq from '../components/Faq.astro';
-import { getCollection } from 'astro:content';
+import MacEntrance from '../components/MacEntrance.astro';
+import { page, faqPage, breadcrumb } from '../lib/seo';
 
-// FAQ, self-contained citable atoms (verified facts only), drafted via the xavier-script
-// skill and passed through slop-scan (grade A) + agent-seo (94.5/100). Doubles as FAQPage schema.
 const faq = [
-  { q: 'What is Ground Floor?', a: "Ground Floor is an independent project documenting air-gapped, open-weight AI for regulated practices: legal, medical, financial, and accounting. The models run on hardware you own. There are no API calls and no vendor agreements, so the data that goes in stays in. Every week I run a real experiment and publish the honest verdict, including the ones that are not ready yet." },
-  { q: 'Can you run a large language model locally without sending data to the cloud?', a: "Yes. Ground Floor runs open-weight models entirely on your own machine, so there is no API call and no copy of your data on a vendor's server. For a clinic or a law firm, that is the point: patient records and privileged files never leave the building. The trade is that you run your own hardware instead of renting someone else's." },
-  { q: 'What hardware do you need to run a capable local model?', a: "Less than most people expect. Small open-weight models run on any modern Mac, and mid-size ones want roughly 32 to 128 GB of memory. The Ground Floor lab uses two M5 Max MacBook Pros with 256 GB of combined memory, but that is deliberately overbuilt so I can test the ceiling. Use the Will-It-Run tool to get the honest answer for your specific Mac." },
-  { q: 'Is a local model actually fast enough to be useful?', a: "In my Ground Floor testing, yes, for the work regulated practices actually do: drafting notes, summarizing documents, checking a contract clause. An M5 Max runs a 70B-parameter model faster than most cloud API round-trips, on hardware you own. It will not beat a frontier cloud model on the hardest reasoning, and I say so on each experiment. For everyday drafting, the gap that matters has closed." },
-  { q: 'Open-weight local model or a cloud API for regulated data?', a: "For data that cannot leave the building, such as PHI, privileged legal files, or financial records, a local open-weight model like Ground Floor avoids the thing a cloud API cannot: your data leaving your control and sitting with a third party. A cloud API is often more capable on raw reasoning, so the real question is whether the data is allowed to leave at all. If it is not, local is the honest answer. And running locally does not make you HIPAA-compliant by itself; it removes one large exposure, not all of them." },
+  { q: 'Does anything get uploaded?', a: 'The checker does not ask for documents. A local setup can keep processing on hardware you control, but your device, backups, access, and network policy still matter.' },
+  { q: 'Does local AI make the work compliant?', a: 'No. Local processing changes where the model runs. It does not replace professional review, security controls, recordkeeping, or the rules that apply to your work.' },
+  { q: 'Are these recommendations proven?', a: 'Not yet. The checker gives a planning estimate. Ground Floor has published three test protocols, but no completed practitioner study.' },
+  { q: 'What should I try first?', a: 'Choose repetitive documentation with known source material, a standard output, and a qualified person who will review the result.' },
 ];
 
-const allExperiments = await getCollection('experiments');
-const allIndustries  = await getCollection('industries');
-
-const sorted = allExperiments.sort(
-  (a, b) => b.data.date.getTime() - a.data.date.getTime()
-);
-const latest = sorted.slice(0, 3);
-
-const expCountByIndustry = allExperiments.reduce<Record<string, number>>((acc, e) => {
-  acc[e.data.industry] = (acc[e.data.industry] ?? 0) + 1;
-  return acc;
-}, {});
-
-const industryIcons: Record<string, string> = {
-  medical: '✚', legal: '§', financial: '$', accounting: '∑',
-};
-
-const industriesForStage = allIndustries.map(ind => ({
-  slug: ind.slug,
-  shortName: ind.data.shortName,
-  name: ind.data.name,
-  whyLocal: ind.data.whyLocal,
-  commonUseCases: ind.data.commonUseCases,
-  maturityNote: ind.data.maturityNote,
-  regulation: ind.data.regulation,
-  experimentCount: expCountByIndustry[ind.slug] ?? 0,
-  icon: industryIcons[ind.slug] ?? '◆',
-}));
+const schema = [
+  page('WebPage', { site: Astro.site, path: '/', name: 'Local AI for sensitive professional work', description: 'Ground Floor helps small professional practices evaluate local AI for narrow, human-reviewed documentation work.' }),
+  breadcrumb(Astro.site, [{ name: 'Ground Floor', path: '/' }]),
+  faqPage(faq),
+];
 ---
 
-<Base title="Ground Floor">
-
-  <!-- ═══ HERO, split: copy left, leaderboard card right ═══ -->
-  <section class="relative overflow-hidden" style="min-height:92vh;display:flex;align-items:center;">
-
-    <!-- Aurora glow, right-biased -->
-    <div aria-hidden="true" style="
-      position:absolute;top:-100px;right:-10%;
-      width:70%;height:700px;
-      background:radial-gradient(ellipse 80% 70% at 80% 30%,rgba(155,93,229,0.22) 0%,rgba(67,97,238,0.1) 50%,transparent 70%);
-      pointer-events:none;
-      animation:orb-drift 14s ease-in-out infinite;
-    "></div>
-
-    <div class="relative w-full max-w-7xl mx-auto px-5 md:px-10 py-24 hero-split-grid">
-
-      <!-- Left: copy -->
+<Base
+  title="Local AI for sensitive professional work"
+  description="Ground Floor helps small legal, medical, financial, and accounting practices evaluate local AI for narrow documentation tasks on hardware they control."
+  appearance="light"
+  schema={schema}
+>
+  <MacEntrance />
+  <section class="gf-hero">
+    <div class="gf-shell gf-hero-grid">
       <div>
-        <p class="hero-line font-mono text-[0.65rem] tracking-[0.2em] uppercase mb-4" style="--d:0.05s;color:#9b5de5;">Ground Floor · Models</p>
-
-        <h1 class="hero-line font-display font-bold tracking-tight leading-[1.08] mb-6" style="--d:0.1s;font-size:clamp(2.4rem,4vw,3.4rem);">
-          Air-gapped AI<br/>
-          <span class="gradient-text-animated">for regulated practices.</span>
-        </h1>
-
-        <p class="hero-line text-lg text-silver leading-relaxed mb-10" style="--d:0.28s;max-width:440px;">
-          Open-weight models running on hardware you own. No API calls. Zero vendor agreements. The data that goes in stays in.
-        </p>
-
-        <div class="hero-line flex flex-wrap gap-3 mb-10" style="--d:0.42s;">
-          <a href="/models" class="btn-primary text-base px-7 py-3">Open the leaderboard →</a>
-          <a href="/will-it-run" class="btn-ghost text-base px-7 py-3">Will it run on my Mac? →</a>
-          <a href="/hardware" class="btn-ghost text-base px-7 py-3">Hardware guide</a>
+        <p class="gf-eyebrow">Start with one real task</p>
+        <h1 class="gf-display mt-4">What work do you want off your plate?</h1>
+        <p class="gf-lede mt-6">Choose the work and your Mac’s memory. Get a cautious local-AI starting point immediately.</p>
+        <div class="gf-hero-actions">
+          <a class="gf-button" href="#home-task">Get my answer</a>
+          <a class="gf-button gf-button-secondary" href="/experiments">View the evidence</a>
+          <button id="gf-replay-entrance" class="gf-replay-entrance" type="button">Replay opening</button>
         </div>
-
-        <!-- RAM tier legend -->
-        <div class="hero-line" style="--d:0.54s;padding-top:20px;border-top:1px solid #2a2a2d;">
-          <p class="font-mono text-[0.58rem] tracking-[0.15em] uppercase mb-3" style="color:#6e6e73;">RAM color guide</p>
-          <div style="display:flex;flex-wrap:wrap;gap:7px;">
-            {[
-              ['≤ 36 GB · any Mac',     '#34d399','rgba(52,211,153,0.10)','rgba(52,211,153,0.25)'],
-              ['≤ 128 GB · M5 Max',     '#a78bfa','rgba(167,139,250,0.12)','rgba(167,139,250,0.3)'],
-              ['≤ 244 GB · cluster',    '#4cc9f0','rgba(76,201,240,0.10)','rgba(76,201,240,0.25)'],
-              ['> 244 GB · bigger cluster','#fb923c','rgba(251,146,60,0.10)','rgba(251,146,60,0.25)'],
-            ].map(([label, color, bg, border]) => (
-              <span class="font-mono" style={`font-size:0.6rem;padding:3px 9px;border-radius:4px;color:${color};background:${bg};border:1px solid ${border};`}>{label}</span>
-            ))}
-          </div>
-        </div>
+        <p class="gf-boundary">For first drafts and document work. A qualified person keeps the final say.</p>
       </div>
 
-      <!-- Right: floating leaderboard card -->
-      <div class="hero-line" style="--d:0.32s;">
-        <div style="background:#0a0a0d;border:1px solid #424245;border-radius:16px;overflow:hidden;box-shadow:0 0 60px rgba(155,93,229,0.12),0 4px 32px rgba(0,0,0,0.6);">
-
-          <!-- Card header -->
-          <div style="padding:13px 16px;border-bottom:1px solid #2a2a2d;background:rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:space-between;">
-            <span class="font-mono text-[0.58rem] tracking-[0.15em] uppercase" style="color:#6e6e73;">Open-weight leaderboard · 24 models</span>
-            <span style="width:6px;height:6px;border-radius:50%;background:#9b5de5;animation:pulse 2s ease-in-out infinite;display:inline-block;"></span>
+      <div id="workflows" class="gf-checker" aria-labelledby="quick-check-title">
+        <div class="gf-checker-head">
+          <strong id="quick-check-title">Your task → your starting point</strong>
+          <span class="gf-status">Instant</span>
+        </div>
+        <div class="gf-checker-form">
+          <div class="gf-field">
+            <label for="home-task">Which task wastes your time?</label>
+            <select id="home-task">
+              <option value="meeting">Turn meeting notes into a clean record</option>
+              <option value="draft">Draft from approved source notes</option>
+              <option value="review">Spot issues before full contract review</option>
+              <option value="intake">Put intake into our standard format</option>
+            </select>
           </div>
-
-          <!-- Mini table -->
-          <div style="position:relative;">
-            <table style="width:100%;border-collapse:collapse;font-family:'JetBrains Mono','SF Mono',monospace;font-size:0.7rem;">
-              <thead>
-                <tr style="border-bottom:1px solid #2a2a2d;background:rgba(255,255,255,0.015);">
-                  <th style="text-align:left;padding:9px 14px;font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:#6e6e73;font-weight:500;">Model</th>
-                  <th style="text-align:right;padding:9px 14px;font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:#6e6e73;font-weight:500;">Intel</th>
-                  <th style="text-align:right;padding:9px 14px;font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:#6e6e73;font-weight:500;">Min RAM</th>
-                  <th style="text-align:right;padding:9px 14px;font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:#6e6e73;font-weight:500;">t/s</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  { name: 'GLM-5.2',          cluster: true,  intel: 51, ram: '150 GB', ramColor: '#4cc9f0', ramBg: 'rgba(76,201,240,0.10)',  ramBorder: 'rgba(76,201,240,0.25)',  speed: 132},
-                  { name: 'MiniMax M3',       cluster: true,  intel: 44, ram: '160 GB', ramColor: '#4cc9f0', ramBg: 'rgba(76,201,240,0.10)',  ramBorder: 'rgba(76,201,240,0.25)',  speed: 92 },
-                  { name: 'Kimi K2.6',        cluster: false, intel: 43, ram: '360 GB', ramColor: '#fb923c', ramBg: 'rgba(251,146,60,0.10)',  ramBorder: 'rgba(251,146,60,0.25)',  speed: 83 },
-                  { name: 'DeepSeek V4 Flash',cluster: false, intel: 40, ram: '135 GB', ramColor: '#a78bfa', ramBg: 'rgba(167,139,250,0.12)', ramBorder: 'rgba(167,139,250,0.3)', speed: 104},
-                  { name: 'Qwen3.6 27B',      cluster: false, intel: 37, ram: '17 GB',  ramColor: '#34d399', ramBg: 'rgba(52,211,153,0.10)',  ramBorder: 'rgba(52,211,153,0.25)', speed: 57 },
-                  { name: 'Qwen3.5 9B',       cluster: false, intel: 25, ram: '6 GB',   ramColor: '#34d399', ramBg: 'rgba(52,211,153,0.10)',  ramBorder: 'rgba(52,211,153,0.25)', speed: 56 },
-                  { name: 'Gemma 4 E4B',      cluster: false, intel: 12, ram: '5 GB',   ramColor: '#34d399', ramBg: 'rgba(52,211,153,0.10)',  ramBorder: 'rgba(52,211,153,0.25)', speed: 290},
-                  { name: 'Phi-4 14B',        cluster: false, intel: 5,  ram: '10 GB',  ramColor: '#34d399', ramBg: 'rgba(52,211,153,0.10)',  ramBorder: 'rgba(52,211,153,0.25)', speed: 36 },
-                ].map((m, i) => (
-                  <tr style={`border-bottom:1px solid ${i < 6 ? '#1e1e22' : 'transparent'};${i === 6 ? 'opacity:0.45;' : ''}`}>
-                    <td style="padding:9px 14px;color:#e5e5ea;font-weight:500;font-size:0.67rem;">
-                      {m.name}
-                      {m.cluster && <span style="display:inline-flex;align-items:center;padding:1px 5px;border-radius:3px;font-size:0.52rem;margin-left:5px;color:#4cc9f0;background:rgba(76,201,240,0.08);border:1px solid rgba(76,201,240,0.2);">RDMA</span>}
-                    </td>
-                    <td style="padding:9px 14px;text-align:right;color:#9b5de5;font-weight:600;">{m.intel}</td>
-                    <td style="padding:9px 14px;text-align:right;">
-                      <span style={`display:inline-flex;align-items:center;padding:2px 7px;border-radius:4px;font-size:0.58rem;color:${m.ramColor};background:${m.ramBg};border:1px solid ${m.ramBorder};`}>{m.ram}</span>
-                    </td>
-                    <td style="padding:9px 14px;text-align:right;color:#a1a1a6;">{m.speed}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <!-- Fade mask -->
-            <div style="position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to bottom,transparent,#0a0a0d);pointer-events:none;"></div>
-          </div>
-
-          <!-- Card footer -->
-          <div style="padding:11px 16px;border-top:1px solid #1e1e22;display:flex;align-items:center;justify-content:space-between;">
-            <span class="font-mono text-[0.58rem]" style="color:#6e6e73;">Showing 8 of 24 · sorted by intelligence</span>
-            <a href="/models" class="font-mono text-[0.6rem]" style="color:#9b5de5;text-decoration:none;">Full table →</a>
+          <div class="gf-field">
+            <label for="home-memory">How much memory does your Mac have?</label>
+            <select id="home-memory">
+              <option value="16">16 GB</option>
+              <option value="24">24 GB</option>
+              <option value="36">36 GB</option>
+              <option value="128">128 GB</option>
+            </select>
+            <span class="text-[11px] text-[#63707a] mt-1">Apple menu → About This Mac → Memory</span>
           </div>
         </div>
-      </div>
-
-    </div>
-
-    <!-- Scroll cue -->
-    <div class="hero-line absolute bottom-10 left-1/2 -translate-x-1/2" style="--d:1s;">
-      <div style="width:1px;height:48px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,0.3));margin:0 auto;animation:scroll-cue 2s ease-in-out infinite;"></div>
-    </div>
-  </section>
-
-
-  <!-- ═══ PROOF STRIP ═══ -->
-  <div style="border-top:1px solid #424245;border-bottom:1px solid #424245;background:#0a0a0a;">
-    <div class="max-w-wide mx-auto px-5 md:px-10 py-5 flex flex-wrap items-center justify-center gap-3 md:gap-6">
-      {[
-        ['M5 Max × 2 nodes', '#9b5de5'],
-        ['256 GB unified memory', '#a1a1a6'],
-        ['16 TB storage', '#a1a1a6'],
-        ['TB5 RDMA · 3 µs latency', '#a1a1a6'],
-        ['100% on-premise', '#34d399'],
-      ].map(([label, color]) => (
-        <span class="font-mono text-[0.72rem] tracking-wide" style={`color:${color};`}>{label}</span>
-      ))}
-    </div>
-  </div>
-
-
-  <!-- ═══ THE CASE ═══ -->
-  <section style="background:#000;">
-    <div class="max-w-wide mx-auto px-5 md:px-10 py-24 md:py-36">
-
-      <div class="reveal text-center mb-20">
-        <p class="font-mono text-[0.7rem] tracking-[0.2em] uppercase text-ash mb-5">Why local</p>
-        <h2 class="font-display font-semibold tracking-tight text-chalk max-w-3xl mx-auto"
-            style="font-size:clamp(1.9rem,4vw,3rem);line-height:1.1;">
-          The cloud API is the weakest link.
-        </h2>
-        <p class="text-silver text-lg mt-5 max-w-xl mx-auto leading-relaxed">
-          Something I kept noticing: the practitioners who most need good AI tools are often the ones most exposed by cloud architecture. Every API call routes data somewhere else. For patient records, client files, and financial accounts, that's not a quirk. That's the whole problem. Air-gapped removes it from the equation entirely.
-        </p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {[
-          {
-            num: '01',
-            title: 'No API calls',
-            body: 'The model runs on the machine in front of you. No network call leaves, no vendor handles the data, no API logs it. Inference happens locally, that\'s the whole point.',
-            color: '#9b5de5',
-          },
-          {
-            num: '02',
-            title: 'No breach surface',
-            body: "Patient transcripts, client documents, financial records, none of it appears in a vendor's incident report. It never left your building.",
-            color: '#4361ee',
-          },
-          {
-            num: '03',
-            title: 'No lock-in',
-            body: 'Open weights on open hardware. Swap the model, change the runtime, upgrade the machine, without renegotiating anything.',
-            color: '#4cc9f0',
-          },
-        ].map(({ num, title, body, color }) => (
-          <div class="reveal glow-card p-8 md:p-10">
-            <p class="font-mono text-[0.65rem] tracking-widest uppercase mb-6" style={`color:${color};`}>{num}</p>
-            <h3 class="font-display font-semibold text-xl text-chalk mb-4">{title}</h3>
-            <p class="text-sm text-silver leading-relaxed">{body}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ═══ THE LAB ═══ -->
-  <section style="border-top:1px solid #424245;background:#000;">
-    <div class="max-w-wide mx-auto px-5 md:px-10 py-24 md:py-36">
-
-      <div class="reveal mb-16">
-        <p class="font-mono text-[0.7rem] tracking-[0.2em] uppercase text-ash mb-4">The hardware</p>
-        <h2 class="font-display font-semibold tracking-tight text-chalk"
-            style="font-size:clamp(1.75rem,4vw,2.75rem);">The Lab</h2>
-        <p class="text-silver mt-3 max-w-xl">
-          I have two M5 Max MacBook Pros connected over Thunderbolt 5 RDMA, 256 GB combined memory, 16 TB of storage, ~3 µs between nodes. It's an unreasonably powerful home office setup. But it means every experiment documented here has a specific, real hardware answer.
-        </p>
-      </div>
-
-      <!-- Laptop cluster visual -->
-      <div class="reveal mb-4 lab-cluster" style="display:flex;align-items:center;justify-content:center;gap:0;width:100%;">
-
-        <!-- Node A -->
-        <div style="display:flex;flex-direction:column;align-items:center;gap:18px;flex:0 0 auto;">
-          <p class="font-mono" style="font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:#9b5de5;">Node A</p>
-          <div class="lab-float-a lab-glow-a">
-            <svg width="230" height="175" viewBox="0 0 230 175" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="scrA" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox">
-                  <stop offset="0%"   stop-color="#1e0a38"/>
-                  <stop offset="35%"  stop-color="#120820"/>
-                  <stop offset="100%" stop-color="#06020e"/>
-                </linearGradient>
-                <radialGradient id="bloomA" cx="50%" cy="55%" r="50%">
-                  <stop offset="0%"   stop-color="#9b5de5" stop-opacity="0.22"/>
-                  <stop offset="60%"  stop-color="#9b5de5" stop-opacity="0.06"/>
-                  <stop offset="100%" stop-color="#9b5de5" stop-opacity="0"/>
-                </radialGradient>
-                <linearGradient id="lidA" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%"   stop-color="#2a2a2d"/>
-                  <stop offset="100%" stop-color="#18181a"/>
-                </linearGradient>
-                <linearGradient id="baseA" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%"   stop-color="#232325"/>
-                  <stop offset="100%" stop-color="#141416"/>
-                </linearGradient>
-                <linearGradient id="edgeA" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%"   stop-color="#9b5de5" stop-opacity="0"/>
-                  <stop offset="40%"  stop-color="#9b5de5" stop-opacity="0.9"/>
-                  <stop offset="100%" stop-color="#9b5de5" stop-opacity="0"/>
-                </linearGradient>
-                <linearGradient id="glareA" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%"   stop-color="white" stop-opacity="0.055"/>
-                  <stop offset="40%"  stop-color="white" stop-opacity="0"/>
-                </linearGradient>
-              </defs>
-              <rect x="8" y="4" width="214" height="138" rx="8" fill="url(#lidA)" stroke="#3a3a3c" stroke-width="0.8"/>
-              <rect x="14" y="10" width="202" height="126" rx="5" fill="#0c0c0e" stroke="#2a2a2c" stroke-width="0.5"/>
-              <rect x="18" y="14" width="194" height="118" rx="4" fill="url(#scrA)"/>
-              <rect x="18" y="14" width="194" height="118" rx="4" fill="url(#bloomA)"/>
-              <rect x="18" y="14" width="194" height="118" rx="4" fill="url(#glareA)"/>
-              <rect x="103" y="5" width="24" height="9" rx="4.5" fill="#111113"/>
-              <circle cx="115" cy="9.5" r="2" fill="#1a1a1c"/>
-              <circle cx="115" cy="9.5" r="0.8" fill="#252527"/>
-              <rect x="18" y="14" width="3.5" height="118" rx="1.75" fill="url(#edgeA)"/>
-              <line x1="30" y1="40" x2="110" y2="40" stroke="rgba(155,93,229,0.25)" stroke-width="1" stroke-linecap="round"/>
-              <line x1="30" y1="52" x2="145" y2="52" stroke="rgba(155,93,229,0.14)" stroke-width="1" stroke-linecap="round"/>
-              <line x1="30" y1="64" x2="88"  y2="64" stroke="rgba(155,93,229,0.2)"  stroke-width="1" stroke-linecap="round"/>
-              <line x1="30" y1="76" x2="128" y2="76" stroke="rgba(155,93,229,0.14)" stroke-width="1" stroke-linecap="round"/>
-              <line x1="30" y1="88" x2="96"  y2="88" stroke="rgba(155,93,229,0.18)" stroke-width="1" stroke-linecap="round"/>
-              <rect x="30" y="98" width="6" height="10" rx="1" fill="rgba(155,93,229,0.7)">
-                <animate attributeName="opacity" values="1;0;1" dur="1.1s" repeatCount="indefinite"/>
-              </rect>
-              <rect x="8" y="140" width="214" height="4" rx="1" fill="#1a1a1c"/>
-              <rect x="4" y="143" width="222" height="28" rx="4" fill="url(#baseA)" stroke="#333335" stroke-width="0.6"/>
-              <rect x="10" y="147" width="210" height="20" rx="2" fill="#161618"/>
-              <g fill="#232325" stroke="#2e2e30" stroke-width="0.4">
-                <rect x="14"  y="149" width="12" height="5" rx="1"/>
-                <rect x="28"  y="149" width="12" height="5" rx="1"/>
-                <rect x="42"  y="149" width="12" height="5" rx="1"/>
-                <rect x="56"  y="149" width="12" height="5" rx="1"/>
-                <rect x="72"  y="149" width="12" height="5" rx="1"/>
-                <rect x="86"  y="149" width="12" height="5" rx="1"/>
-                <rect x="100" y="149" width="12" height="5" rx="1"/>
-                <rect x="114" y="149" width="12" height="5" rx="1"/>
-                <rect x="130" y="149" width="12" height="5" rx="1"/>
-                <rect x="144" y="149" width="12" height="5" rx="1"/>
-                <rect x="158" y="149" width="12" height="5" rx="1"/>
-                <rect x="172" y="149" width="12" height="5" rx="1"/>
-                <rect x="186" y="149" width="12" height="5" rx="1"/>
-                <rect x="200" y="149" width="16" height="5" rx="1"/>
-              </g>
-              <g fill="#232325" stroke="#2e2e30" stroke-width="0.4">
-                <rect x="14"  y="156" width="12" height="6" rx="1"/>
-                <rect x="28"  y="156" width="12" height="6" rx="1"/>
-                <rect x="42"  y="156" width="12" height="6" rx="1"/>
-                <rect x="56"  y="156" width="12" height="6" rx="1"/>
-                <rect x="70"  y="156" width="12" height="6" rx="1"/>
-                <rect x="84"  y="156" width="12" height="6" rx="1"/>
-                <rect x="98"  y="156" width="12" height="6" rx="1"/>
-                <rect x="112" y="156" width="12" height="6" rx="1"/>
-                <rect x="126" y="156" width="12" height="6" rx="1"/>
-                <rect x="140" y="156" width="12" height="6" rx="1"/>
-                <rect x="154" y="156" width="12" height="6" rx="1"/>
-                <rect x="168" y="156" width="12" height="6" rx="1"/>
-                <rect x="182" y="156" width="34" height="6" rx="1"/>
-              </g>
-              <rect x="84" y="148" width="62" height="18" rx="3" fill="#1c1c1e" stroke="#2a2a2c" stroke-width="0.5"/>
-              <circle cx="20"  cy="169" r="2" fill="#111"/>
-              <circle cx="210" cy="169" r="2" fill="#111"/>
-              <rect x="200" y="152" width="3" height="12" rx="1.5" fill="#9b5de5" opacity="0.5">
-                <animate attributeName="opacity" values="0.5;0.9;0.5" dur="2s" repeatCount="indefinite"/>
-              </rect>
-            </svg>
-          </div>
-          <dl style="display:grid;grid-template-columns:1fr 1fr;gap:5px 20px;text-align:center;">
-            {[['Chip','M5 Max'],['Memory','128 GB'],['Storage','8 TB NVMe'],['OS','Tahoe 26.2']].map(([k,v]) => (
-              <div>
-                <dt class="font-mono" style="font-size:0.55rem;letter-spacing:0.14em;text-transform:uppercase;color:#6e6e73;margin-bottom:2px;">{k}</dt>
-                <dd style="font-size:0.8rem;color:#f5f5f7;font-weight:500;">{v}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-
-        <!-- Connector -->
-        <div class="lab-connector" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:9px;padding:0 6px;margin-top:-30px;">
-          <svg width="24" height="24" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="boltGrad" x1="6" y1="2" x2="20" y2="26" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#9b5de5"/>
-                <stop offset="100%" stop-color="#4361ee"/>
-              </linearGradient>
-            </defs>
-            <path d="M16.5 2L6.5 15.5H14L11.5 26L21.5 12.5H14L16.5 2Z" fill="url(#boltGrad)" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
-          </svg>
-          <div class="lab-connector-line"></div>
-          <p class="font-mono" style="font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:#6e6e73;white-space:nowrap;">Thunderbolt 5 · RDMA · ~3 µs</p>
-        </div>
-
-        <!-- Node B -->
-        <div style="display:flex;flex-direction:column;align-items:center;gap:18px;flex:0 0 auto;">
-          <p class="font-mono" style="font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:#4361ee;">Node B</p>
-          <div class="lab-float-b lab-glow-b">
-            <svg width="230" height="175" viewBox="0 0 230 175" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="scrB" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox">
-                  <stop offset="0%"   stop-color="#060e2e"/>
-                  <stop offset="35%"  stop-color="#05081e"/>
-                  <stop offset="100%" stop-color="#020410"/>
-                </linearGradient>
-                <radialGradient id="bloomB" cx="50%" cy="55%" r="50%">
-                  <stop offset="0%"   stop-color="#4361ee" stop-opacity="0.22"/>
-                  <stop offset="60%"  stop-color="#4361ee" stop-opacity="0.06"/>
-                  <stop offset="100%" stop-color="#4361ee" stop-opacity="0"/>
-                </radialGradient>
-                <linearGradient id="lidB" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%"   stop-color="#2a2a2d"/>
-                  <stop offset="100%" stop-color="#18181a"/>
-                </linearGradient>
-                <linearGradient id="baseB" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%"   stop-color="#232325"/>
-                  <stop offset="100%" stop-color="#141416"/>
-                </linearGradient>
-                <linearGradient id="edgeB" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%"   stop-color="#4361ee" stop-opacity="0"/>
-                  <stop offset="40%"  stop-color="#4361ee" stop-opacity="0.9"/>
-                  <stop offset="100%" stop-color="#4361ee" stop-opacity="0"/>
-                </linearGradient>
-                <linearGradient id="glareB" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%"   stop-color="white" stop-opacity="0.055"/>
-                  <stop offset="40%"  stop-color="white" stop-opacity="0"/>
-                </linearGradient>
-              </defs>
-              <rect x="8" y="4" width="214" height="138" rx="8" fill="url(#lidB)" stroke="#3a3a3c" stroke-width="0.8"/>
-              <rect x="14" y="10" width="202" height="126" rx="5" fill="#0c0c0e" stroke="#2a2a2c" stroke-width="0.5"/>
-              <rect x="18" y="14" width="194" height="118" rx="4" fill="url(#scrB)"/>
-              <rect x="18" y="14" width="194" height="118" rx="4" fill="url(#bloomB)"/>
-              <rect x="18" y="14" width="194" height="118" rx="4" fill="url(#glareB)"/>
-              <rect x="103" y="5" width="24" height="9" rx="4.5" fill="#111113"/>
-              <circle cx="115" cy="9.5" r="2" fill="#1a1a1c"/>
-              <circle cx="115" cy="9.5" r="0.8" fill="#252527"/>
-              <rect x="208.5" y="14" width="3.5" height="118" rx="1.75" fill="url(#edgeB)"/>
-              <line x1="30" y1="40" x2="118" y2="40" stroke="rgba(67,97,238,0.25)" stroke-width="1" stroke-linecap="round"/>
-              <line x1="30" y1="52" x2="150" y2="52" stroke="rgba(67,97,238,0.14)" stroke-width="1" stroke-linecap="round"/>
-              <line x1="30" y1="64" x2="92"  y2="64" stroke="rgba(67,97,238,0.2)"  stroke-width="1" stroke-linecap="round"/>
-              <line x1="30" y1="76" x2="135" y2="76" stroke="rgba(67,97,238,0.14)" stroke-width="1" stroke-linecap="round"/>
-              <line x1="30" y1="88" x2="100" y2="88" stroke="rgba(67,97,238,0.18)" stroke-width="1" stroke-linecap="round"/>
-              <rect x="30" y="98" width="6" height="10" rx="1" fill="rgba(67,97,238,0.7)">
-                <animate attributeName="opacity" values="0;1;0" dur="1.1s" begin="0.55s" repeatCount="indefinite"/>
-              </rect>
-              <rect x="8" y="140" width="214" height="4" rx="1" fill="#1a1a1c"/>
-              <rect x="4" y="143" width="222" height="28" rx="4" fill="url(#baseB)" stroke="#333335" stroke-width="0.6"/>
-              <rect x="10" y="147" width="210" height="20" rx="2" fill="#161618"/>
-              <g fill="#232325" stroke="#2e2e30" stroke-width="0.4">
-                <rect x="14"  y="149" width="12" height="5" rx="1"/>
-                <rect x="28"  y="149" width="12" height="5" rx="1"/>
-                <rect x="42"  y="149" width="12" height="5" rx="1"/>
-                <rect x="56"  y="149" width="12" height="5" rx="1"/>
-                <rect x="72"  y="149" width="12" height="5" rx="1"/>
-                <rect x="86"  y="149" width="12" height="5" rx="1"/>
-                <rect x="100" y="149" width="12" height="5" rx="1"/>
-                <rect x="114" y="149" width="12" height="5" rx="1"/>
-                <rect x="130" y="149" width="12" height="5" rx="1"/>
-                <rect x="144" y="149" width="12" height="5" rx="1"/>
-                <rect x="158" y="149" width="12" height="5" rx="1"/>
-                <rect x="172" y="149" width="12" height="5" rx="1"/>
-                <rect x="186" y="149" width="12" height="5" rx="1"/>
-                <rect x="200" y="149" width="16" height="5" rx="1"/>
-              </g>
-              <g fill="#232325" stroke="#2e2e30" stroke-width="0.4">
-                <rect x="14"  y="156" width="12" height="6" rx="1"/>
-                <rect x="28"  y="156" width="12" height="6" rx="1"/>
-                <rect x="42"  y="156" width="12" height="6" rx="1"/>
-                <rect x="56"  y="156" width="12" height="6" rx="1"/>
-                <rect x="70"  y="156" width="12" height="6" rx="1"/>
-                <rect x="84"  y="156" width="12" height="6" rx="1"/>
-                <rect x="98"  y="156" width="12" height="6" rx="1"/>
-                <rect x="112" y="156" width="12" height="6" rx="1"/>
-                <rect x="126" y="156" width="12" height="6" rx="1"/>
-                <rect x="140" y="156" width="12" height="6" rx="1"/>
-                <rect x="154" y="156" width="12" height="6" rx="1"/>
-                <rect x="168" y="156" width="12" height="6" rx="1"/>
-                <rect x="182" y="156" width="34" height="6" rx="1"/>
-              </g>
-              <rect x="84" y="148" width="62" height="18" rx="3" fill="#1c1c1e" stroke="#2a2a2c" stroke-width="0.5"/>
-              <circle cx="20"  cy="169" r="2" fill="#111"/>
-              <circle cx="210" cy="169" r="2" fill="#111"/>
-              <rect x="27" y="152" width="3" height="12" rx="1.5" fill="#4361ee" opacity="0.5">
-                <animate attributeName="opacity" values="0.9;0.5;0.9" dur="2s" repeatCount="indefinite"/>
-              </rect>
-            </svg>
-          </div>
-          <dl style="display:grid;grid-template-columns:1fr 1fr;gap:5px 20px;text-align:center;">
-            {[['Chip','M5 Max'],['Memory','128 GB'],['Storage','8 TB NVMe'],['OS','Tahoe 26.2']].map(([k,v]) => (
-              <div>
-                <dt class="font-mono" style="font-size:0.55rem;letter-spacing:0.14em;text-transform:uppercase;color:#6e6e73;margin-bottom:2px;">{k}</dt>
-                <dd style="font-size:0.8rem;color:#f5f5f7;font-weight:500;">{v}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-
-      </div>
-
-      <!-- Spinning conic cluster card -->
-      <div class="reveal conic-border glow-card">
-        <div class="p-8 md:p-10">
-          <p class="font-mono text-[0.65rem] tracking-[0.18em] uppercase text-ash mb-5">Combined cluster</p>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-8">
-            {[['256 GB','Unified memory'],['16 TB','Total storage'],['~3 µs','TB5 RDMA latency'],['~800 GB/s','Peak bandwidth']].map(([val,label]) => (
-              <div>
-                <p class="font-display font-semibold text-3xl gradient-text-animated mb-1">{val}</p>
-                <p class="font-mono text-[0.65rem] uppercase tracking-widest text-ash">{label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ═══ LATEST EXPERIMENTS ═══ -->
-  <section style="border-top:1px solid #424245;background:#000;">
-    <div class="max-w-wide mx-auto px-5 md:px-10 py-24 md:py-32">
-      <div class="reveal section-header">
-        <div>
-          <p class="font-mono text-[0.7rem] tracking-[0.2em] uppercase text-ash mb-2">Weekly</p>
-          <h2 class="font-display text-2xl font-semibold tracking-tight text-chalk">Latest experiments</h2>
-        </div>
-        <a href="/experiments" class="link-arrow text-sm shrink-0">View all →</a>
-      </div>
-      <div class="max-w-prose reveal">
-        {latest.map(exp => <ExperimentCard experiment={exp} />)}
-        {latest.length === 0 && (
-          <p class="text-silver text-sm py-8 border-t border-wire">
-            First experiment publishes soon. <a href="/experiments" class="underline underline-offset-2 hover:text-chalk transition-colors">Subscribe.</a>
-          </p>
-        )}
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ═══ INDUSTRIES, Stage Manager ═══ -->
-  <section style="border-top:1px solid #424245;background:#000;">
-    <div class="max-w-wide mx-auto px-5 md:px-10 py-24 md:py-32">
-
-      <div class="reveal section-header" style="margin-bottom:28px;">
-        <div>
-          <p class="font-mono text-[0.7rem] tracking-[0.2em] uppercase text-ash mb-2">Regulated verticals</p>
-          <h2 class="font-display text-2xl font-semibold tracking-tight text-chalk">By industry</h2>
-        </div>
-        <a href="/industries" class="link-arrow text-sm shrink-0">All industries →</a>
-      </div>
-
-      <!-- Stage Manager layout -->
-      <div class="reveal" id="sm-root" style="display:grid;grid-template-columns:200px 1fr;gap:12px;align-items:start;">
-
-        <!-- Left: persistent industry list -->
-        <div id="sm-tabs" style="display:flex;flex-direction:column;gap:6px;">
-          {industriesForStage.map((ind, i) => (
-            <button
-              class="sm-tab"
-              data-idx={String(i)}
-              style={`display:flex;flex-direction:column;gap:4px;padding:12px 14px;border-radius:10px;border:1px solid ${i === 0 ? '#9b5de5' : '#2a2a2d'};background:${i === 0 ? 'rgba(155,93,229,0.12)' : 'rgba(255,255,255,0.02)'};cursor:pointer;text-align:left;transition:all 0.18s;position:relative;`}
-            >
-              <span class="sm-pulse-dot" style={`position:absolute;top:10px;right:10px;width:5px;height:5px;border-radius:50%;background:#9b5de5;animation:pulse 2s ease-in-out infinite;display:${i === 0 ? 'block' : 'none'};`}></span>
-              <span style={`font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:${i === 0 ? '#9b5de5' : '#6e6e73'};`}>{ind.icon}</span>
-              <span style={`font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:${i === 0 ? '#9b5de5' : '#a1a1a6'};`}>{ind.shortName}</span>
-              {ind.experimentCount > 0 && (
-                <span style="font-family:'JetBrains Mono',monospace;font-size:0.55rem;color:#424245;">{ind.experimentCount} exp.</span>
-              )}
-            </button>
-          ))}
-        </div>
-
-        <!-- Center: detail card -->
-        <div id="sm-stage" class="glow-card" style="min-height:340px;border-radius:14px!important;">
-          <div id="sm-card" style="padding:28px 32px;">
-            <!-- filled by JS -->
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <script define:vars={{ industriesForStage }}>
-    const tabs  = document.querySelectorAll('.sm-tab');
-    const card  = document.getElementById('sm-card');
-    let active  = 0;
-
-    function render(idx) {
-      const d = industriesForStage[idx];
-      card.style.animation = 'none';
-      card.offsetHeight; // reflow
-      card.style.animation = 'sm-stage-in 0.26s cubic-bezier(0.22,1,0.36,1) forwards';
-      card.innerHTML = `
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;">
-          <div>
-            <p style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:#9b5de5;margin-bottom:8px;">${d.icon} · ${d.shortName}</p>
-            <h3 style="font-family:'Fraunces',Georgia,serif;font-size:1.4rem;font-weight:700;color:#e5e5ea;line-height:1.2;letter-spacing:-0.01em;">${d.name}</h3>
-          </div>
-          <a href="/industries/${d.slug}" style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:#9b5de5;text-decoration:none;white-space:nowrap;padding-top:4px;flex-shrink:0;">Full guide →</a>
-        </div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-          <div>
-            <p style="font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:0.16em;text-transform:uppercase;color:#6e6e73;margin-bottom:10px;">Why local</p>
-            <p style="font-size:0.85rem;color:#a1a1a6;line-height:1.65;">${d.whyLocal}</p>
-          </div>
-          <div>
-            <p style="font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:0.16em;text-transform:uppercase;color:#6e6e73;margin-bottom:10px;">Common use cases</p>
-            <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
-              ${d.commonUseCases.slice(0,5).map(u => `
-                <li style="display:flex;align-items:flex-start;gap:8px;font-size:0.82rem;color:#a1a1a6;line-height:1.45;">
-                  <span style="color:#9b5de5;margin-top:2px;flex-shrink:0;">·</span>${u}
-                </li>`).join('')}
-            </ul>
-            <div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:5px;">
-              ${d.regulation.slice(0,3).map(r => `<span style="font-family:'JetBrains Mono',monospace;font-size:0.55rem;padding:2px 8px;border-radius:4px;background:rgba(155,93,229,0.08);border:1px solid rgba(155,93,229,0.2);color:#9b5de5;">${r}</span>`).join('')}
-              ${d.regulation.length > 3 ? `<span style="font-family:'JetBrains Mono',monospace;font-size:0.55rem;padding:2px 8px;border-radius:4px;background:rgba(155,93,229,0.08);border:1px solid rgba(155,93,229,0.2);color:#9b5de5;">+${d.regulation.length - 3}</span>` : ''}
+        <div class="gf-reading" aria-live="polite">
+          <div class="gf-reading-top">
+            <div>
+              <p class="gf-reading-label">Your starting point</p>
+              <h2 id="home-reading-title">Yes—start with a small local model for meeting notes.</h2>
             </div>
           </div>
+          <dl class="gf-reading-grid">
+            <div><dt>Run</dt><dd id="home-fit">A 7–9B model should fit. Long documents use more memory.</dd></div>
+            <div><dt>Check</dt><dd id="home-review">Verify names, dates, figures, and action owners.</dd></div>
+            <div><dt>Proof</dt><dd>Planning estimate. Practitioner study not completed.</dd></div>
+          </dl>
+          <p class="gf-reading-note" id="home-limit">This is a place to start—not a promise of quality, speed, security, or compliance.</p>
+          <a id="home-setup-link" class="gf-link inline-flex mt-4" href="/setup#task=draft&memory=16">Show me the setup steps</a>
         </div>
-
-        ${d.maturityNote ? `
-        <div style="margin-top:20px;padding-top:18px;border-top:1px solid #1e1e22;">
-          <p style="font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:0.16em;text-transform:uppercase;color:#6e6e73;margin-bottom:6px;">Maturity note</p>
-          <p style="font-size:0.78rem;color:#6e6e73;line-height:1.6;font-style:italic;">${d.maturityNote}</p>
-        </div>` : ''}
-      `;
-    }
-
-    function setActive(idx) {
-      tabs.forEach((t, i) => {
-        const isActive = i === idx;
-        t.style.borderColor = isActive ? '#9b5de5' : '#2a2a2d';
-        t.style.background  = isActive ? 'rgba(155,93,229,0.12)' : 'rgba(255,255,255,0.02)';
-        const dot = t.querySelector('.sm-pulse-dot');
-        if (dot) dot.style.display = isActive ? 'block' : 'none';
-        const spans = t.querySelectorAll('span:not(.sm-pulse-dot)');
-        spans.forEach((s, si) => {
-          const isExpCount = si === spans.length - 1 && industriesForStage[i].experimentCount > 0;
-          s.style.color = isExpCount ? '#424245' : (isActive ? '#9b5de5' : (si === 0 ? '#6e6e73' : '#a1a1a6'));
-        });
-      });
-      active = idx;
-      render(idx);
-    }
-
-    tabs.forEach((t, i) => t.addEventListener('click', () => setActive(i)));
-
-    // init
-    render(0);
-  </script>
-
-
-  <!-- ═══ FAQ, decomposition coverage + FAQPage schema ═══ -->
-  <section style="border-top:1px solid #424245;background:#000;">
-    <Faq items={faq} heading="Common questions" eyebrow="FAQ" />
-  </section>
-
-
-  <!-- ═══ CLOSING ═══ -->
-  <section class="relative overflow-hidden" style="border-top:1px solid #424245;background:#000;">
-    <div aria-hidden="true" style="position:absolute;bottom:-30%;left:50%;transform:translateX(-50%);width:900px;height:600px;background:radial-gradient(ellipse at center,rgba(155,93,229,0.2) 0%,transparent 65%);filter:blur(80px);pointer-events:none;"></div>
-    <div class="relative max-w-3xl mx-auto px-5 md:px-10 py-32 md:py-48 text-center">
-      <p class="reveal font-mono text-[0.7rem] tracking-[0.2em] uppercase text-ash mb-8">June 2026</p>
-      <h2 class="reveal font-display font-semibold tracking-tight text-chalk mb-6"
-          style="font-size:clamp(2.2rem,5vw,4rem);line-height:1.05;">The question is answered.</h2>
-      <p class="reveal text-xl text-silver leading-relaxed mb-14">
-        An M5 Max Mac runs a 70B parameter model faster than most cloud API round-trips.
-        On hardware you own. With data that never leaves.
-        I wasn't certain this was practical two years ago. It is now.
-      </p>
-      <div class="reveal flex flex-wrap items-center justify-center gap-4">
-        <a href="/experiments" class="btn-primary text-base px-8 py-3.5">Explore experiments</a>
-        <a href="/playbook"    class="btn-ghost   text-base px-8 py-3.5">Read the playbook</a>
       </div>
     </div>
   </section>
 
+  <section class="gf-section gf-section-soft">
+    <div class="gf-shell">
+      <div class="gf-section-head">
+        <p class="gf-eyebrow">The whole story</p>
+        <h2 class="gf-h2 mt-3">What you gain—and what you still own.</h2>
+      </div>
+      <div class="gf-boundary-grid">
+        <div>
+          <h3>Your files can stay closer</h3>
+          <ul>
+            <li>Process documents on hardware you control.</li>
+            <li>Choose the model, runtime, and network policy.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Your judgment stays essential</h3>
+          <ul>
+            <li>Review every important fact and conclusion.</li>
+            <li>Security, records, and professional rules still apply.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gf-section gf-section-white">
+    <div class="gf-shell gf-evidence-summary">
+      <div class="gf-evidence-count">
+        <strong>3</strong>
+        <span>published test protocols</span>
+      </div>
+      <div>
+        <p class="gf-eyebrow">Proof before promises</p>
+        <h2 class="gf-h2 mt-3">The test plans are public. The results are not invented.</h2>
+        <p class="gf-copy mt-4">No practitioner study is complete yet. Until Ground Floor retains the setup, inputs, outputs, timing, errors, and reviewer score, the recommendation stays an estimate.</p>
+        <a class="gf-link inline-flex mt-5" href="/experiments">See what has—and has not—been tested</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="gf-section gf-section-soft" aria-labelledby="faq-heading">
+    <div class="gf-shell">
+      <div class="gf-section-head"><h2 id="faq-heading" class="gf-h2">Before you try it</h2></div>
+      <div class="gf-task-list">
+        {faq.map(item => <details class="border-b border-[#d5dce0] py-5"><summary class="cursor-pointer text-[17px] font-semibold">{item.q}</summary><p class="gf-copy mt-3 max-w-3xl">{item.a}</p></details>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="gf-cta">
+    <div class="gf-shell gf-cta-grid">
+      <div>
+        <h2 class="gf-h2">Have a task the checker missed?</h2>
+        <p class="gf-copy">Describe the work without sending confidential information. We’ll tell you whether it is a responsible test candidate.</p>
+      </div>
+      <a class="gf-button" href="/pilot">Tell us the task</a>
+    </div>
+  </section>
+
+  <script>
+    const task = document.getElementById('home-task') as HTMLSelectElement | null;
+    const memory = document.getElementById('home-memory') as HTMLSelectElement | null;
+    const title = document.getElementById('home-reading-title');
+    const fit = document.getElementById('home-fit');
+    const review = document.getElementById('home-review');
+    const link = document.getElementById('home-setup-link') as HTMLAnchorElement | null;
+
+    const taskData = {
+      meeting: { label:'meeting notes', task:'meeting', review:'Verify names, figures, dates, promises, and action owners.', target:9 },
+      draft: { label:'a first draft', task:'draft', review:'Verify every factual statement and remove unsupported additions.', target:9 },
+      review: { label:'document triage', task:'review', review:'Complete professional review remains mandatory; check omissions and cross-references.', target:27 },
+      intake: { label:'an intake summary', task:'summarize', review:'Check omissions, negations, identities, dates, and sensitive fields.', target:14 },
+    } as const;
+    const memoryData = {
+      '16': { model:'a 7–9B', max:9, fit:'A 7–9B model should fit. Long documents use more memory.' },
+      '24': { model:'up to a 14B', max:14, fit:'A model up to 14B should fit. Test the exact model and document length.' },
+      '36': { model:'up to a 27B', max:27, fit:'A model up to 27B should fit. Runtime and document length still matter.' },
+      '128': { model:'up to a 70B', max:70, fit:'A large model should fit. You still need to measure quality and speed.' },
+    } as const;
+
+    function updateReading() {
+      if (!task || !memory || !title || !fit || !review || !link) return;
+      const t = taskData[task.value as keyof typeof taskData];
+      const m = memoryData[memory.value as keyof typeof memoryData];
+      const constrained = m.max < t.target;
+      title.textContent = constrained ? `Start smaller—this Mac is tight for ${t.label}.` : `Yes—start with ${m.model} local model for ${t.label}.`;
+      fit.textContent = m.fit;
+      review.textContent = t.review;
+      link.href = `/setup#task=${t.task}&memory=${memory.value}`;
+    }
+    task?.addEventListener('change', updateReading);
+    memory?.addEventListener('change', updateReading);
+    updateReading();
+  </script>
 </Base>
-
-<style>
-  .hero-line {
-    display:block;
-    opacity:0;
-    transform:translateY(28px);
-    animation:hero-reveal 0.9s cubic-bezier(0.22,1,0.36,1) var(--d,0s) forwards;
-  }
-  @keyframes sm-stage-in {
-    from { opacity:0; transform:translateY(6px) scale(0.997); }
-    to   { opacity:1; transform:translateY(0)   scale(1); }
-  }
-  @media (max-width: 640px) {
-    #sm-root { grid-template-columns: 1fr !important; }
-    #sm-tabs { flex-direction: row !important; flex-wrap: wrap; }
-    .sm-tab  { flex: 1 1 calc(50% - 4px); }
-  }
-  @keyframes hero-reveal {
-    to { opacity:1; transform:translateY(0); }
-  }
-  @keyframes scroll-cue {
-    0%,100% { opacity:0.2; transform:scaleY(0.8); }
-    50%      { opacity:0.7; transform:scaleY(1.1); }
-  }
-  @keyframes pulse {
-    0%,100% { opacity:1; }
-    50%      { opacity:0.35; }
-  }
-  .hero-split-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 64px;
-    align-items: center;
-  }
-  @media (max-width: 768px) {
-    .hero-split-grid { grid-template-columns: 1fr; gap: 40px; }
-    .hero-split-grid > div:last-child { display: none; }
-  }
-
-  /* lab floating animations */
-  .lab-float-a { animation: lab-float-a 3.8s ease-in-out infinite; }
-  .lab-float-b { animation: lab-float-b 3.8s ease-in-out infinite; }
-  @keyframes lab-float-a {
-    0%, 100% { transform: translateY(0px); }
-    50%      { transform: translateY(-10px); }
-  }
-  @keyframes lab-float-b {
-    0%, 100% { transform: translateY(-5px); }
-    50%      { transform: translateY(5px); }
-  }
-
-  /* lab glow */
-  .lab-glow-a {
-    filter:
-      drop-shadow(0 0 14px rgba(155,93,229,0.55))
-      drop-shadow(0 12px 28px rgba(155,93,229,0.25))
-      drop-shadow(0 0 60px rgba(155,93,229,0.1));
-    transition: filter 0.4s;
-  }
-  .lab-glow-a:hover {
-    filter:
-      drop-shadow(0 0 22px rgba(155,93,229,0.9))
-      drop-shadow(0 12px 36px rgba(155,93,229,0.4))
-      drop-shadow(0 0 80px rgba(155,93,229,0.2));
-  }
-  .lab-glow-b {
-    filter:
-      drop-shadow(0 0 14px rgba(67,97,238,0.55))
-      drop-shadow(0 12px 28px rgba(67,97,238,0.25))
-      drop-shadow(0 0 60px rgba(67,97,238,0.1));
-    transition: filter 0.4s;
-  }
-  .lab-glow-b:hover {
-    filter:
-      drop-shadow(0 0 22px rgba(67,97,238,0.9))
-      drop-shadow(0 12px 36px rgba(67,97,238,0.4))
-      drop-shadow(0 0 80px rgba(67,97,238,0.2));
-  }
-
-  /* lab section connector */
-  .lab-connector-line {
-    width: 100%;
-    height: 1px;
-    position: relative;
-    background: linear-gradient(
-      to right,
-      rgba(155,93,229,0.7),
-      rgba(155,93,229,0.35) 20%,
-      rgba(200,200,255,0.2) 50%,
-      rgba(67,97,238,0.35) 80%,
-      rgba(67,97,238,0.7)
-    );
-    box-shadow: 0 0 4px rgba(155,93,229,0.3), 0 0 8px rgba(67,97,238,0.2);
-    overflow: visible;
-  }
-  /* left→right pulse */
-  .lab-connector-line::before {
-    content: '';
-    position: absolute;
-    top: -1.5px;
-    width: 20%;
-    height: 4px;
-    border-radius: 3px;
-    background: linear-gradient(to right, transparent, rgba(255,255,255,0.85), transparent);
-    animation: lab-pulse-ltr 2.8s ease-in-out infinite;
-  }
-  /* right→left pulse, offset by half cycle */
-  .lab-connector-line::after {
-    content: '';
-    position: absolute;
-    top: -1.5px;
-    width: 20%;
-    height: 4px;
-    border-radius: 3px;
-    background: linear-gradient(to left, transparent, rgba(255,255,255,0.85), transparent);
-    animation: lab-pulse-rtl 2.8s ease-in-out infinite 1.4s;
-  }
-  @keyframes lab-pulse-ltr {
-    0%   { left: -20%; opacity: 0; }
-    10%  { opacity: 1; }
-    90%  { opacity: 1; }
-    100% { left: 100%; opacity: 0; }
-  }
-  @keyframes lab-pulse-rtl {
-    0%   { left: 120%; opacity: 0; }
-    10%  { opacity: 1; }
-    90%  { opacity: 1; }
-    100% { left: -20%; opacity: 0; }
-  }
-
-  /* ── responsive ── */
-
-  /* tablet: shrink SVGs so both fit side-by-side */
-  @media (max-width: 860px) {
-    .lab-float-a > svg,
-    .lab-float-b > svg {
-      width: 155px;
-      height: auto;
-    }
-    .lab-connector { margin-top: -18px !important; }
-  }
-
-  /* mobile: stack vertically */
-  @media (max-width: 600px) {
-    .lab-cluster {
-      flex-direction: column !important;
-      align-items: center !important;
-    }
-    .lab-float-a > svg,
-    .lab-float-b > svg {
-      width: min(220px, 72vw);
-      height: auto;
-    }
-    /* connector becomes a compact horizontal row between stacked laptops */
-    .lab-connector {
-      flex: none !important;
-      flex-direction: row !important;
-      width: min(300px, 80vw);
-      margin-top: 0 !important;
-      padding: 6px 0 !important;
-      gap: 10px !important;
-    }
-    .lab-connector-line { flex: 1; }
-    /* hide the label on mobile to keep it tight */
-    .lab-connector p { display: none; }
-  }
-</style>
-
-<script>
-  document.querySelectorAll<HTMLElement>('.glow-card').forEach(card => {
-    card.addEventListener('mousemove', (e: MouseEvent) => {
-      const r = card.getBoundingClientRect();
-      card.style.setProperty('--mouse-x', `${((e.clientX-r.left)/r.width)*100}%`);
-      card.style.setProperty('--mouse-y', `${((e.clientY-r.top)/r.height)*100}%`);
-    });
-  });
-</script>

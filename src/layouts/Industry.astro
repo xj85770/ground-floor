@@ -1,7 +1,7 @@
 ---
 import Base from './Base.astro';
 import ExperimentCard from '../components/ExperimentCard.astro';
-import { article, faqPage, breadcrumb } from '../lib/seo';
+import { page, breadcrumb } from '../lib/seo';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -11,114 +11,48 @@ interface Props {
 const { industry, experiments } = Astro.props;
 const { data } = industry;
 const path = `/industries/${industry.slug}`;
-// FAQ mirrors the visible copy on this page (legitimate: schema reflects what a human reads).
-const faq = [
-  { q: `Why does local, air-gapped AI matter for ${data.name.toLowerCase()}?`, a: data.whyLocal },
-  {
-    q: `What can Ground Floor not tell me about ${data.shortName.toLowerCase()}?`,
-    a: "The experiments here cover what's technically possible with local hardware. Your specific regulatory obligations, your state's rules, your specialty's requirements, your malpractice carrier's stance, your EHR vendor's terms, are questions this site cannot answer.",
-  },
-];
 const schema = [
-  article({ site: Astro.site, path, headline: `Local, air-gapped AI for ${data.name}`, description: data.whyLocal }),
-  faqPage(faq),
-  breadcrumb(Astro.site, [
-    { name: 'Industries', path: '/industries' },
-    { name: data.name, path },
-  ]),
+  page('WebPage', { site: Astro.site, path, name: `Local AI task ideas for ${data.name}`, description: `Candidate documentation tasks and evidence status for ${data.name}.` }),
+  breadcrumb(Astro.site, [{ name: 'Workflows', path: '/industries' }, { name: data.shortName, path }]),
 ];
 ---
 
-<Base title={data.name} description={data.whyLocal} schema={schema}>
-
-  <div class="page-aurora">
-    <div class="page-aurora-glow" style="background:radial-gradient(ellipse 70% 60% at 50% -10%,rgba(67,97,238,0.28) 0%,transparent 70%);"></div>
-    <div class="max-w-prose mx-auto px-5 md:px-0 pt-20 pb-14 relative">
-      <nav class="mb-8 text-xs text-ash font-mono" aria-label="Breadcrumb">
-        <a href="/industries" class="hover:text-silver transition-colors">Industries</a>
-        <span class="mx-2">→</span>
-        <span>{data.shortName}</span>
-      </nav>
-      <div class="flex flex-wrap gap-1.5 mb-5">
-        {data.regulation.map((reg: string) => <span class="tag">{reg}</span>)}
-      </div>
-      <h1 class="font-display text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-chalk">
-        {data.name}
-      </h1>
+<Base title={`Local AI task ideas for ${data.shortName}`} description={`Candidate documentation tasks and evidence status for ${data.name}.`} appearance="light" schema={schema}>
+  <header class="gf-page-hero">
+    <div class="gf-shell">
+      <a class="gf-link" href="/industries">← All practice doors</a>
+      <p class="gf-eyebrow mt-8">Candidate tasks · not deployment advice</p>
+      <h1 class="gf-display mt-4">{data.name}</h1>
+      <p class="gf-lede">The useful first question is narrow: which repetitive documentation task is worth testing under professional review?</p>
     </div>
-  </div>
+  </header>
 
-  <div class="max-w-prose mx-auto px-5 md:px-0 py-16 md:py-20">
-
-    <!-- Why local -->
-    <div class="glow-card p-7 mb-10">
-      <h2 class="font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-4">Why local matters here</h2>
-      <p class="text-base leading-editorial text-silver">{data.whyLocal}</p>
-    </div>
-
-    <!-- Use cases -->
-    <section class="mb-12">
-      <h2 class="font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-5">Common use cases</h2>
-      <ul class="space-y-2.5">
-        {data.commonUseCases.map((uc: string) => (
-          <li class="flex items-baseline gap-3 text-sm text-chalk">
-            <span style="color:#ff6b47;" class="font-mono text-xs shrink-0">→</span>
-            <span>{uc}</span>
-          </li>
-        ))}
-      </ul>
-    </section>
-
-    {data.maturityNote && (
-      <div class="glow-card p-5 mb-12 text-sm text-silver leading-relaxed">
-        <span class="font-mono text-[0.6rem] uppercase tracking-widest text-ash block mb-2">Note on maturity</span>
-        {data.maturityNote}
+  <section class="gf-content">
+    <div class="gf-shell grid lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-20 items-start">
+      <div>
+        <p class="gf-eyebrow">Candidate work</p>
+        <h2 class="gf-h2 mt-3">Tasks a field test could examine</h2>
+        <ul class="gf-copy mt-6 pl-5 list-disc space-y-3">
+          {data.commonUseCases.map((useCase: string) => <li>{useCase}</li>)}
+        </ul>
       </div>
-    )}
-
-    <div class="prose-editorial mb-14"><slot /></div>
-
-    <!-- Experiments -->
-    <section>
-      <div class="section-header">
-        <h2 class="font-display text-xl font-semibold text-chalk">Experiments for {data.shortName}</h2>
-        {experiments.length === 0 && <span class="text-xs text-ash font-mono">Coming soon</span>}
-      </div>
-      {experiments.length > 0 ? (
-        <div>{experiments.map(exp => <ExperimentCard experiment={exp} />)}</div>
-      ) : (
-        <p class="text-silver text-sm leading-relaxed py-8 border-t border-wire">
-          No experiments published yet for {data.name}. The first one is in progress, check back soon, or browse{' '}
-          <a href="/experiments" class="underline underline-offset-2 hover:text-chalk transition-colors">all experiments</a>.
-        </p>
-      )}
-    </section>
-
-    <!-- Honest gaps -->
-    <section class="mt-14 pt-10 border-t border-wire">
-      <h2 class="font-display text-xl font-semibold text-chalk mb-5">What this site can't answer</h2>
-      <p class="text-sm text-silver leading-relaxed">
-        The experiments here cover what's technically possible with local hardware.
-        Your specific regulatory obligations, your state's rules, your specialty's requirements,
-        your malpractice carrier's stance, your EHR vendor's terms, are questions this site cannot answer.
-      </p>
-      <p class="text-sm text-silver leading-relaxed mt-3">
-        See the <a href="/scope" class="underline underline-offset-2 hover:text-chalk transition-colors">Scope &amp; Disclaimers</a> page.
-      </p>
-    </section>
-
-    <div class="mt-10 pt-6 border-t border-wire">
-      <a href="/industries" class="link-arrow"><span aria-hidden="true">←</span><span>All industries</span></a>
+      <aside class="gf-form">
+        <p class="gf-eyebrow">Material boundary</p>
+        <h2 class="text-xl font-semibold mt-3">Local is a data-flow choice—not a compliance verdict.</h2>
+        <p class="gf-copy mt-4">A local model can avoid sending a prompt to a model API. The complete system may still involve cloud sync, backups, telemetry, transcription, plugins, or other services. Your obligations depend on the actual workflow and jurisdiction.</p>
+        <a class="gf-link inline-flex mt-5" href="/scope">Read scope and disclaimers →</a>
+      </aside>
     </div>
-  </div>
+  </section>
+
+  <section class="gf-section gf-section-soft">
+    <div class="gf-shell">
+      <div class="gf-section-head"><p class="gf-eyebrow">Evidence</p><h2 class="gf-h2 mt-3">What has actually been tested?</h2><p class="gf-copy">A protocol describes a future test. It is not a result.</p></div>
+      {experiments.length ? <div class="gf-task-list">{experiments.map(experiment => <ExperimentCard experiment={experiment} />)}</div> : <div class="gf-form"><p class="gf-copy">No protocol is published for this practice yet.</p></div>}
+    </div>
+  </section>
+
+  <section class="gf-section gf-section-white">
+    <div class="gf-shell"><div class="gf-cta"><div><p class="gf-eyebrow">A real task is more useful than a broad category</p><h2>Tell us what currently eats your time.</h2></div><a class="gf-button" href="/pilot">Tell us the task</a></div></div>
+  </section>
 </Base>
-
-<script>
-  document.querySelectorAll<HTMLElement>('.glow-card').forEach(card => {
-    card.addEventListener('mousemove', (e: MouseEvent) => {
-      const r = card.getBoundingClientRect();
-      card.style.setProperty('--mouse-x', `${((e.clientX-r.left)/r.width)*100}%`);
-      card.style.setProperty('--mouse-y', `${((e.clientY-r.top)/r.height)*100}%`);
-    });
-  });
-</script>

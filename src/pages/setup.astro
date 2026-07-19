@@ -1,0 +1,117 @@
+---
+import Base from '../layouts/Base.astro';
+import { page, breadcrumb } from '../lib/seo';
+
+const schema = [
+  page('WebPage', { site:Astro.site, path:'/setup', name:'Local AI setup checker for Mac', description:'A planning estimate for local model size by documentation task and Mac memory.' }),
+  breadcrumb(Astro.site, [{ name:'Ground Floor', path:'/' }, { name:'Check my Mac', path:'/setup' }]),
+];
+---
+
+<Base title="Local AI setup checker for Mac" description="Choose a documentation task and Mac memory to get a cautious local-model planning range, review requirement, and evidence state." appearance="light" schema={schema}>
+  <header class="gf-page-hero">
+    <div class="gf-shell">
+      <p class="gf-eyebrow">Free planning tool</p>
+      <h1 class="gf-display mt-4">What local model size fits my Mac?</h1>
+      <p class="gf-lede">Choose a documentation task and the unified memory you have. The result is an estimate—not a benchmark, purchase recommendation, or promise of workflow quality.</p>
+    </div>
+  </header>
+
+  <div class="gf-content">
+    <div class="gf-shell grid lg:grid-cols-[0.82fr_1.18fr] gap-10 lg:gap-16 items-start">
+      <div class="gf-form lg:sticky lg:top-24">
+        <div class="gf-form-grid !grid-cols-1">
+          <div class="gf-field"><label for="task">The documentation task</label><select id="task"><option value="draft">Draft from approved notes</option><option value="review">Triage documents before full review</option><option value="summarize">Summarize intake into a known format</option><option value="meeting">Turn meeting notes into a known format</option></select></div>
+          <div class="gf-field"><label for="memory-select">Unified memory</label><select id="memory-select"><option value="16">16 GB</option><option value="24">24 GB</option><option value="36">36 GB</option><option value="128">128 GB</option></select><span class="text-[11px] text-[#63707a] mt-1">Apple menu → About This Mac → Memory</span></div>
+        </div>
+        <p class="text-[13px] leading-relaxed text-[#63707a] mt-5">No document is uploaded. These controls only change a planning calculation in your browser.</p>
+      </div>
+
+      <section class="gf-checker" aria-labelledby="setup-result-title" aria-live="polite">
+        <div class="gf-checker-head"><strong id="setup-result-title">Your planning result</strong><span class="gf-status">Estimate</span></div>
+        <div class="gf-reading">
+          <div class="gf-reading-top">
+            <div><p class="gf-reading-label">Cautious model range</p><h2 id="result-model">7–9B model class at Q4</h2></div>
+            <span class="gf-status">Not benchmarked here</span>
+          </div>
+          <p id="result-summary" class="gf-copy mt-4">A reasonable starting range for structured first drafts on a 16 GB Mac. Context length and runtime overhead reduce usable memory.</p>
+          <dl class="gf-reading-grid">
+            <div><dt>Memory</dt><dd id="result-memory">16 GB unified memory</dd></div>
+            <div><dt>Human review</dt><dd id="result-review">Verify every factual statement and unsupported addition.</dd></div>
+            <div><dt>Evidence</dt><dd>Memory-fit estimate; workflow remains a protocol.</dd></div>
+          </dl>
+          <div class="border-t border-[#d5dce0] pt-5 mt-2">
+            <p class="gf-reading-label">Material limits</p>
+            <ul class="gf-copy text-[14px] mt-3 pl-5 list-disc space-y-2">
+              <li>This does not predict tokens per second or output quality.</li>
+              <li>Exact model artifacts, context, runtime, and other apps change memory use.</li>
+              <li>Local processing does not make the workflow secure or compliant by itself.</li>
+            </ul>
+          </div>
+          <div class="flex flex-wrap gap-4 mt-6">
+            <a id="protocol-link" class="gf-button" href="/experiments/01-soap-notes-m4-mini">See the closest test protocol</a>
+            <button id="copy-link" type="button" class="gf-button gf-button-secondary">Copy this setup link</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <section class="gf-section gf-section-soft">
+    <div class="gf-shell">
+      <div class="gf-section-head"><h2 class="gf-h2">How should I read this answer?</h2><p class="gf-copy">The checker separates “can the model artifact plausibly fit in memory?” from “does the workflow actually help?” Only the first is estimated here.</p></div>
+      <div class="gf-boundary-grid">
+        <div><h3>This checker estimates</h3><ul><li>A conservative model-size range for the chosen memory tier.</li><li>Likely pressure from context and runtime overhead.</li><li>The professional review requirement for the selected task.</li></ul></div>
+        <div><h3>A field test must measure</h3><ul><li>Actual speed on the exact machine and artifact.</li><li>Omissions, unsupported additions, and edit burden.</li><li>Whether the task saves enough time to be worth using.</li></ul></div>
+      </div>
+      <div class="gf-form mt-10"><h3 class="text-lg font-semibold">How the estimate is calculated</h3><p class="gf-copy mt-3">The checker reserves substantial memory for macOS, the runtime, and working context, then maps the remainder to broad Q4 model classes. Q4 is roughly half a byte per parameter before artifact metadata and runtime overhead. This intentionally rounds down; the exact artifact, context length, runtime, and open applications must still be tested.</p></div>
+    </div>
+  </section>
+
+  <script>
+    const task = document.getElementById('task') as HTMLSelectElement | null;
+    const memorySelect = document.getElementById('memory-select') as HTMLSelectElement | null;
+    const model = document.getElementById('result-model');
+    const summary = document.getElementById('result-summary');
+    const memory = document.getElementById('result-memory');
+    const review = document.getElementById('result-review');
+    const protocol = document.getElementById('protocol-link') as HTMLAnchorElement | null;
+    const copy = document.getElementById('copy-link') as HTMLButtonElement | null;
+
+    const memoryTiers = {
+      '16': { label:'16 GB unified memory', range:'7–9B model class at Q4', detail:'A cautious starting range for structured work. Long context and other apps can reduce headroom.' },
+      '24': { label:'24 GB unified memory', range:'Up to a 14B model class at Q4', detail:'A plausible mid-size planning range with moderate context. Verify the exact artifact and runtime.' },
+      '36': { label:'36 GB unified memory', range:'Up to a 27B model class at Q4', detail:'A larger planning range, but context, runtime, and concurrency still affect fit.' },
+      '128': { label:'128 GB unified memory', range:'Up to a 70B model class at Q4', detail:'Large-model fit is plausible. Speed, quality, and useful context still require direct measurement.' },
+    } as const;
+    const tasks = {
+      draft: { review:'Verify every factual statement and remove unsupported additions.', protocol:'/experiments/01-soap-notes-m4-mini' },
+      review: { review:'Complete qualified review remains mandatory; check omissions and cross-references.', protocol:'/experiments/02-contract-review-legal' },
+      summarize: { review:'Check omissions, negations, identities, dates, and sensitive fields.', protocol:'/experiments/03-meeting-notes-financial' },
+      meeting: { review:'Verify names, figures, promises, dates, and action owners.', protocol:'/experiments/03-meeting-notes-financial' },
+    } as const;
+    function readHash() {
+      const values = new URLSearchParams(location.hash.slice(1));
+      const taskValue = values.get('task');
+      const memoryValue = values.get('memory');
+      if (task && taskValue && taskValue in tasks) task.value = taskValue;
+      if (memorySelect && memoryValue && memoryValue in memoryTiers) memorySelect.value = memoryValue;
+    }
+    function render() {
+      if (!task || !memorySelect || !model || !summary || !memory || !review || !protocol) return;
+      const machine = memoryTiers[memorySelect.value as keyof typeof memoryTiers];
+      const work = tasks[task.value as keyof typeof tasks];
+      model.textContent = machine.range;
+      summary.textContent = machine.detail;
+      memory.textContent = machine.label;
+      review.textContent = work.review;
+      protocol.href = work.protocol;
+      history.replaceState(null, '', `#task=${task.value}&memory=${memorySelect.value}`);
+    }
+    readHash(); render();
+    [task,memorySelect].forEach(element => element?.addEventListener('change', render));
+    copy?.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(location.href); copy.textContent = 'Copied'; setTimeout(() => copy.textContent = 'Copy this setup link', 1400); } catch {}
+    });
+  </script>
+</Base>

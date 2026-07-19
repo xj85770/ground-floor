@@ -1,0 +1,49 @@
+---
+import Base from '../layouts/Base.astro';
+import { page, breadcrumb } from '../lib/seo';
+
+const schema = [
+  page('ContactPage', { site: Astro.site, path: '/pilot', name: 'Tell Ground Floor about a field-test task', description: 'Describe one repetitive documentation task without submitting confidential information.' }),
+  breadcrumb(Astro.site, [{ name: 'Ground Floor', path: '/' }, { name: 'Tell us the task', path: '/pilot' }]),
+];
+---
+
+<Base title="Tell us the task" description="Describe one repetitive documentation task without submitting confidential information." appearance="light" schema={schema}>
+  <header class="gf-page-hero">
+    <div class="gf-shell">
+      <p class="gf-eyebrow">Field-test conversation</p>
+      <h1 class="gf-display mt-4">Tell us the office task that wastes your time.</h1>
+      <p class="gf-lede">A useful first task is repetitive, document-based, and still reviewed by a qualified person. Do not submit client, patient, account, or other confidential information.</p>
+    </div>
+  </header>
+
+  <div class="gf-content">
+    <div class="gf-shell grid lg:grid-cols-[0.7fr_1.3fr] gap-12 lg:gap-20 items-start">
+      <div>
+        <h2 class="gf-h2">What happens next?</h2>
+        <div class="gf-method mt-8 !grid-cols-1">
+          <div><span>01</span><h3>Clarify the task</h3><p>We define the source, expected output, reviewer, and failure conditions.</p></div>
+          <div class="!border-l-0 border-t !pl-0"><span>02</span><h3>Create a safe fixture</h3><p>No live confidential material is required to discuss or design the test.</p></div>
+          <div class="!border-l-0 border-t !pl-0"><span>03</span><h3>Decide whether to run it</h3><p>A submission starts a conversation. It does not create a consulting or professional relationship.</p></div>
+        </div>
+      </div>
+
+      <form class="gf-form" name="field-test" method="POST" action="/thanks" data-netlify="true" netlify-honeypot="company-website">
+        <input type="hidden" name="form-name" value="field-test" />
+        <p hidden><label>Do not fill this out: <input name="company-website" /></label></p>
+        <div class="gf-form-grid">
+          <div class="gf-field"><label for="name">Name</label><input id="name" name="name" autocomplete="name" required /></div>
+          <div class="gf-field"><label for="email">Work email</label><input id="email" name="email" type="email" autocomplete="email" required /></div>
+          <div class="gf-field full"><label for="role">Practice and role</label><input id="role" name="role" placeholder="Example: solo commercial attorney" required /></div>
+          <div class="gf-field full"><label for="task">The repetitive task</label><textarea id="task" name="task" placeholder="What approved information goes in, what must come out, and who reviews it?" required></textarea></div>
+          <div class="gf-field"><label for="time">Current time cost</label><input id="time" name="time" placeholder="Example: 25 minutes per meeting" /></div>
+          <div class="gf-field"><label for="hardware">Available Mac</label><input id="hardware" name="hardware" placeholder="Example: M4 Pro, 24 GB" /></div>
+          <div class="gf-field full"><label for="fixture">How could the test avoid confidential material?</label><textarea id="fixture" name="fixture" placeholder="Synthetic, public, or properly sanitized test material only." required></textarea></div>
+          <label class="gf-check full"><input type="checkbox" name="safe-data-confirmation" required /><span>I am not submitting confidential client, patient, account, employee, or other protected information. I understand Netlify processes this form submission so Ground Floor can respond.</span></label>
+          <div class="full"><button class="gf-button" type="submit">Send the task</button></div>
+        </div>
+        <p class="text-[12px] leading-relaxed text-[#63707a] mt-5">Ground Floor uses the information only to evaluate and respond to this field-test idea. Reply through the same contact channel to request deletion.</p>
+      </form>
+    </div>
+  </div>
+</Base>

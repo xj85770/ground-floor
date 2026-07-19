@@ -1,135 +1,48 @@
 ---
 import Base from '../../layouts/Base.astro';
 import ExperimentCard from '../../components/ExperimentCard.astro';
-import Faq from '../../components/Faq.astro';
 import { getCollection } from 'astro:content';
 import { page, breadcrumb } from '../../lib/seo';
 
-const faq = [
-  { q: 'What does Ground Floor test each week?', a: 'Each Ground Floor experiment runs one real task for a regulated practice on a local, open-weight model: a SOAP note, a contract clause, a set of meeting minutes. It runs on Apple Silicon with the air-gap held. I publish what it did, the model and hardware used, and a plain verdict of viable, partial, or not yet.' },
-  { q: 'Are the failures published too?', a: 'Yes. An experiment gets a "not yet" verdict when the local model could not do the task well enough to trust, and that verdict stays up. The point is an honest record of what local AI can and cannot do for regulated work right now, not a highlight reel.' },
-  { q: 'What hardware and models do the experiments use?', a: 'The experiments run open-weight models on Apple Silicon Macs, from an M4 mini up to the two-M5-Max lab. Each write-up lists the exact model, the Mac, and the task, so you can judge whether it maps to your own setup.' },
-];
-
-const all    = await getCollection('experiments');
-const sorted = all.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
-
-const industries = [...new Set(all.map(e => e.data.industry))].sort();
-const verdicts   = ['viable', 'partial', 'not-yet'] as const;
+const all = (await getCollection('experiments')).sort((a,b) => a.data.week - b.data.week);
 const schema = [
-  page('CollectionPage', { site: Astro.site, path: '/experiments', name: 'Ground Floor experiments', description: "Weekly experiments testing open-source LLMs on local Apple Silicon, for regulated practices that can't use cloud AI." }),
-  breadcrumb(Astro.site, [{ name: 'Experiments', path: '/experiments' }]),
+  page('CollectionPage', { site: Astro.site, path: '/experiments', name: 'Ground Floor evidence and test protocols', description: 'Public evidence states and validation protocols for local AI documentation workflows.' }),
+  breadcrumb(Astro.site, [{ name:'Ground Floor', path:'/' }, { name:'Evidence', path:'/experiments' }]),
 ];
 ---
 
-<Base
-  title="Experiments"
-  description="Weekly experiments testing open-source LLMs on local Apple Silicon, for regulated practices that can't use cloud AI."
-  schema={schema}
->
-
-  <!-- Page hero -->
-  <div class="page-aurora">
-    <div class="page-aurora-glow"></div>
-    <div class="max-w-wide mx-auto px-5 md:px-10 pt-24 pb-20 relative">
-      <p class="font-mono text-[0.7rem] tracking-[0.2em] uppercase mb-4" style="color:#9b5de5;">
-        Real hardware · Real tasks · Honest verdicts
-      </p>
-      <h1 class="font-display font-semibold tracking-tight text-chalk mb-4"
-          style="font-size:clamp(2.4rem,5vw,3.75rem);line-height:1.06;">
-        Your data doesn't<br />leave this machine.
-      </h1>
-      <p class="text-silver text-lg max-w-xl leading-relaxed">
-        Weekly experiments on Apple Silicon. Each one targets a specific task
-        for a specific regulated industry and returns a verdict you can actually act on, 
-        not "promising" or "has potential," but viable, partial, or not yet.
-      </p>
+<Base title="Evidence and test protocols" description="Public evidence states and validation protocols for local AI documentation workflows." appearance="light" schema={schema}>
+  <header class="gf-page-hero">
+    <div class="gf-shell">
+      <p class="gf-eyebrow">Evidence</p>
+      <h1 class="gf-display mt-4">What has Ground Floor actually tested?</h1>
+      <p class="gf-lede">No regulated workflow currently meets the measured-evidence standard. The three items below are protocols: useful test designs with no completed outcome claimed.</p>
     </div>
-  </div>
+  </header>
 
-  <div class="max-w-wide mx-auto px-5 md:px-10 py-16 md:py-20">
-
-    <!-- Filters -->
-    <div id="filter-bar" class="flex flex-wrap gap-2 mb-10 pb-6 border-b border-wire">
-      <button data-filter="all" data-group="all" class="filter-btn active tag cursor-pointer">All</button>
-      {industries.length > 0 && <span class="self-center text-ash text-xs font-mono mx-1">Industry:</span>}
-      {industries.map(ind => (
-        <button data-filter={ind} data-group="industry"
-          class="filter-btn tag cursor-pointer hover:border-glow-purple hover:text-glow-purple transition-colors"
-        >{ind}</button>
-      ))}
-      <span class="self-center text-ash text-xs font-mono mx-1">Verdict:</span>
-      {verdicts.map(v => (
-        <button data-filter={v} data-group="verdict"
-          class="filter-btn tag cursor-pointer hover:border-glow-purple hover:text-glow-purple transition-colors"
-        >{v}</button>
-      ))}
-    </div>
-
-    <p id="experiment-count" class="text-xs text-ash font-mono mb-4">
-      {sorted.length} experiment{sorted.length !== 1 ? 's' : ''}
-    </p>
-
-    <div id="experiment-list" class="max-w-prose">
-      {sorted.map(exp => (
-        <div class="experiment-item"
-          data-industry={exp.data.industry}
-          data-hardware={exp.data.hardware}
-          data-verdict={exp.data.verdict}
-        >
-          <ExperimentCard experiment={exp} />
+  <section class="gf-section gf-section-white">
+    <div class="gf-shell gf-evidence-summary">
+      <aside>
+        <div class="gf-evidence-count"><strong>0</strong><span>Measured regulated workflows</span></div>
+        <div class="mt-8 gf-copy text-[14px]">
+          <p><strong>Measured</strong>: retained run artifacts and evaluation.</p>
+          <p class="mt-3"><strong>Estimate</strong>: calculated from disclosed assumptions.</p>
+          <p class="mt-3"><strong>Third-party</strong>: attributed external evidence.</p>
+          <p class="mt-3"><strong>Protocol</strong>: a proposed test without a result.</p>
+          <a class="gf-link inline-flex mt-5" href="/playbook">Read the testing method</a>
         </div>
-      ))}
-      {sorted.length === 0 && <p class="text-silver text-sm py-12 border-t border-wire">First experiment publishes soon.</p>}
+      </aside>
+      <div>
+        <div class="gf-task-list">{all.map(item => <ExperimentCard experiment={item} />)}</div>
+        <div class="mt-8 border border-[#d5dce0] p-5">
+          <p class="gf-eyebrow text-[#a23b2a]">Correction record</p>
+          <p class="gf-copy mt-2">An earlier contract-review draft named a Llama 3.1 model size that Meta did not release. The outcome was withdrawn and replaced with a protocol.</p>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <p id="no-results" class="hidden text-silver text-sm py-12 border-t border-wire">
-      No experiments match that filter.{' '}
-      <a href="#" id="clear-filter" class="underline underline-offset-2 hover:text-chalk transition-colors">Clear.</a>
-    </p>
-  </div>
-
-  <Faq items={faq} heading="About the experiments" eyebrow="FAQ" />
+  <section class="gf-cta">
+    <div class="gf-shell gf-cta-grid"><div><h2 class="gf-h2">Help turn one protocol into evidence.</h2><p class="gf-copy">Bring a repeatable documentation task and help define what “correct” means.</p></div><a class="gf-button" href="/pilot">Tell us the task</a></div>
+  </section>
 </Base>
-
-<style>
-  .filter-btn.active { border-color:#9b5de5; color:#9b5de5; background:rgba(155,93,229,0.12); }
-</style>
-
-<script>
-  const buttons  = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
-  const items    = document.querySelectorAll<HTMLElement>('.experiment-item');
-  const countEl  = document.getElementById('experiment-count')!;
-  const noResult = document.getElementById('no-results')!;
-  const clearBtn = document.getElementById('clear-filter')!;
-  let activeGroup = 'all', activeFilter = 'all';
-
-  function applyFilter() {
-    let visible = 0;
-    items.forEach(item => {
-      const show = activeFilter === 'all' || item.dataset[activeGroup as 'industry'|'hardware'|'verdict'] === activeFilter;
-      item.style.display = show ? '' : 'none';
-      if (show) visible++;
-    });
-    countEl.textContent = `${visible} experiment${visible !== 1 ? 's' : ''}`;
-    noResult.classList.toggle('hidden', visible > 0);
-  }
-
-  buttons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      buttons.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      activeFilter = btn.dataset.filter!;
-      activeGroup  = btn.dataset.group!;
-      applyFilter();
-    });
-  });
-
-  clearBtn.addEventListener('click', e => {
-    e.preventDefault();
-    buttons.forEach(b => b.classList.remove('active'));
-    document.querySelector<HTMLButtonElement>('[data-filter="all"]')?.classList.add('active');
-    activeFilter = 'all'; activeGroup = 'all';
-    applyFilter();
-  });
-</script>

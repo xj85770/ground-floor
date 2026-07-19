@@ -2,96 +2,35 @@
 import Base from '../layouts/Base.astro';
 import { page, breadcrumb } from '../lib/seo';
 const schema = [
-  page('AboutPage', { site: Astro.site, path: '/about', name: 'About Ground Floor', description: 'Who is behind Ground Floor and why this project exists.' }),
-  breadcrumb(Astro.site, [{ name: 'About', path: '/about' }]),
+  page('AboutPage', { site:Astro.site, path:'/about', name:'About Ground Floor', description:'What Ground Floor tests and where its authority stops.' }),
+  breadcrumb(Astro.site, [{ name:'Ground Floor', path:'/' }, { name:'About', path:'/about' }]),
 ];
 ---
-
-<Base title="About" description="Who is behind Ground Floor and why this project exists." schema={schema}>
-
-  <div class="page-aurora">
-    <div class="page-aurora-glow"></div>
-    <div class="max-w-wide mx-auto px-5 md:px-10 pt-24 pb-20 relative">
-      <p class="font-mono text-[0.7rem] tracking-[0.2em] uppercase mb-4" style="color:#9b5de5;">About</p>
-      <h1 class="font-display font-semibold tracking-tight text-chalk"
-          style="font-size:clamp(2.4rem,5vw,3.75rem);line-height:1.06;">Ground Floor</h1>
-    </div>
-  </div>
-
-  <div class="max-w-prose mx-auto px-5 md:px-0 py-16 md:py-24">
-    <div class="prose-editorial">
-
-      <p>
-        I run this project from a home office. None of it is theoretical. The results live or die on this specific setup: two M5 Max
-        MacBook Pros connected over Thunderbolt 5 RDMA, 256 GB of unified memory,
-        16 TB of storage, ~3 µs latency between nodes. That's the same hardware I write about
-        on this site.
-      </p>
-
-      <h2>Why this work</h2>
-      <p>
-        For a while I kept seeing the same conversation repeat. A solo physician asks about AI
-        documentation tools. The products people recommend, all of them excellent, 
-        require an internet connection, a vendor agreement, and some number of calls
-        with a compliance consultant. That physician, who runs a single-provider
-        practice with two staff and no IT department, quietly closes the browser tab.
-      </p>
-      <p>
-        The tools that exist for large health systems don't translate well to small
-        practices. Tools built for small practices often handle the compliance
-        question with a checkbox and a promise. There's a third option that almost
-        nobody is covering in a systematic way: air-gapped AI. Run the model locally, on
-        hardware you already understand, and don't create a third-party data flow in the first place.
-      </p>
-      <p>
-        That's the gap Ground Floor is trying to close. Not with a product. This is
-        an education project, not a company, and the way it closes the gap is with clear documentation of what
-        actually works.
-      </p>
-
-      <h2>The format</h2>
-      <p>
-        Each week I pick one thing to test: a model, a hardware tier, a task, an industry.
-        I document the setup, the results, the failure modes, and what you'd need to replicate it.
-        The verdict answers the question most people actually have: <em>is this worth my time?</em>
-      </p>
-      <p>
-        The writeups live here. Discussion happens on LinkedIn.
-        This site is the reference layer.
-      </p>
-
-      <h2>What I'm not</h2>
-      <p>
-        I'm not a lawyer, a compliance consultant, a physician, a financial advisor,
-        or a licensed professional in any of the industries I write about, and I want
-        to be clear about that because I think it matters. What I am is someone who understands
-        air-gapped AI infrastructure and wants to make that knowledge accessible to people
-        who don't have time to piece it together from technical papers and Discord servers.
-      </p>
-      <p>
-        Every experiment result is a technical finding. The compliance implications
-        for your practice are a separate question that requires someone who knows your
-        specific situation. My <a href="/scope">Scope &amp; Disclaimers</a> page says this more carefully.
-      </p>
-
-      <h2>The lab setup</h2>
-      <p>
-        Two M5 Max MacBook Pros on a Thunderbolt 5 RDMA cluster, 256 GB unified memory,
-        16 TB, ~800 GB/s peak bandwidth. It's more hardware than most people will buy.
-        But it lets me test the full spectrum: throttle the config down to match a $799
-        Mac mini, or open it up for 70B context workloads. When I say something works
-        at entry level, it ran at entry level.
-      </p>
-
-      <h2>Contact</h2>
-      {/* TODO: add Gmail contact once the address exists, e.g. " or by email at <a href="mailto:ADDRESS">ADDRESS</a>" appended to the line below. */}
-      <p>
-        Best way to reach me is on <a href="https://www.linkedin.com/in/xavier-jones-xajo/" target="_blank" rel="noopener noreferrer">LinkedIn</a> or <a href="https://x.com/xavierlocalai" target="_blank" rel="noopener noreferrer">X</a>.
-        I read everything. If you're a practitioner in a regulated industry and want to share
-        a use case, challenge a finding, or suggest an experiment, I want to hear it.
-        The experiments get better when they're grounded in real workflows.
-      </p>
-
-    </div>
-  </div>
+<Base title="About Ground Floor" description="What Ground Floor tests and where its authority stops." appearance="light" schema={schema}>
+  <header class="gf-page-hero"><div class="gf-shell"><p class="gf-eyebrow">About</p><h1 class="gf-display mt-4">A practical test bench for small professional practices.</h1><p class="gf-lede">Ground Floor is an independent project built around a local Apple Silicon lab. It exists to answer one narrow question honestly: can a particular documentation task be useful on hardware the practice controls?</p></div></header>
+  <div class="gf-content"><div class="gf-shell grid lg:grid-cols-[1fr_280px] gap-12 lg:gap-24 items-start">
+    <article class="gf-prose">
+      <h2>What does Ground Floor do?</h2>
+      <p>Ground Floor designs and documents local-AI field tests for repetitive work such as source-based drafts, meeting notes, intake summaries, and document triage. A qualified professional still reviews and owns the final work.</p>
+      <p>The setup checker is available now as a planning tool. The regulated-workflow pages are currently protocols, not completed studies.</p>
+      <h2>Why start with local processing?</h2>
+      <p>A local runtime can remove a third-party model API from the data path. That is useful when the source material is sensitive. It does not automatically make a workflow secure, private, privileged, compliant, accurate, or appropriate.</p>
+      <h2>Where does its authority stop?</h2>
+      <p>Ground Floor’s authority is technical: hardware, runtimes, test design, retained outputs, and measurement. It does not provide legal, medical, compliance, financial, or tax advice.</p>
+      <h2>How does Ground Floor communicate?</h2>
+      <p>Start with the customer’s real task. Show what the tool does. State the limits beside the claim. Publish “not good enough” when that is what the evidence earns. Those rules matter more here than sounding visionary.</p>
+      <h2>How can I get involved?</h2>
+      <p>Bring one repetitive documentation task. Describe it without sending confidential material. If it is safe and evaluable, Ground Floor can help turn it into a test protocol.</p>
+      <a class="gf-button mt-4" href="/pilot">Tell us the task</a>
+    </article>
+    <aside class="border-t-4 border-[#111820] pt-5 lg:sticky lg:top-24">
+      <p class="gf-eyebrow">Project facts</p>
+      <dl class="text-[14px] leading-relaxed mt-5">
+        <dt class="text-[#63707a]">Current measured workflows</dt><dd class="mt-1 mb-5">0</dd>
+        <dt class="text-[#63707a]">Published protocols</dt><dd class="mt-1 mb-5">3</dd>
+        <dt class="text-[#63707a]">Business model</dt><dd class="mt-1 mb-5">Independent education and field testing; no software purchase required.</dd>
+      </dl>
+      <a class="gf-link text-[14px]" href="/scope">Read the full scope</a>
+    </aside>
+  </div></div>
 </Base>

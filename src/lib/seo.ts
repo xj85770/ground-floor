@@ -9,15 +9,9 @@
 export const SITE = {
   name: 'Ground Floor',
   /** Short, entity-restated description used as the canonical definition atom. */
-  tagline: 'Air-gapped, open-weight AI for regulated practices.',
+  tagline: 'Local AI for sensitive professional work.',
   description:
-    'Ground Floor is an independent project documenting air-gapped, open-weight AI for regulated practices (legal, medical, financial, accounting), models that run on hardware you own, with no API calls and no data leaving the building. Weekly experiments, honest verdicts.',
-  /** Public profiles already linked in the site footer, used for sameAs (entity disambiguation). */
-  sameAs: [
-    'https://www.linkedin.com/in/xavier-jones-xajo/',
-    'https://x.com/xavierlocalai',
-  ],
-  author: 'Xavier Jones',
+    'Ground Floor is an independent education and field-testing project that helps small professional practices evaluate local, open-weight AI for narrow documentation tasks under human review.',
 } as const;
 
 type JsonLd = Record<string, unknown>;
@@ -36,8 +30,7 @@ export function organization(site: URL | string | undefined): JsonLd {
     name: SITE.name,
     url: abs(site, '/'),
     description: SITE.description,
-    sameAs: [...SITE.sameAs],
-    founder: { '@type': 'Person', name: SITE.author, sameAs: [...SITE.sameAs] },
+    creator: { '@id': abs(site, '/#org') },
   };
 }
 
@@ -73,7 +66,7 @@ export function article(opts: {
     headline: opts.headline,
     description: opts.description,
     url: abs(opts.site, opts.path),
-    author: { '@type': 'Person', name: SITE.author, sameAs: [...SITE.sameAs] },
+    author: { '@id': abs(opts.site, '/#org') },
     publisher: { '@id': abs(opts.site, '/#org') },
     isPartOf: { '@id': abs(opts.site, '/#website') },
   };
@@ -156,7 +149,11 @@ export function dataset(opts: {
 export function graph(site: URL | string | undefined, nodes: JsonLd[]): string {
   const doc = {
     '@context': 'https://schema.org',
-    '@graph': [organization(site), website(site), ...nodes],
+    '@graph': [
+      organization(site),
+      website(site),
+      ...nodes,
+    ],
   };
   return JSON.stringify(doc);
 }

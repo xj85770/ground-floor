@@ -2,161 +2,23 @@
 import Base from '../layouts/Base.astro';
 import { article, breadcrumb } from '../lib/seo';
 const schema = [
-  article({ site: Astro.site, path: '/playbook', headline: 'The Ground Floor experiment playbook', description: 'How Ground Floor experiments are structured, evaluated, and published.' }),
-  breadcrumb(Astro.site, [{ name: 'Playbook', path: '/playbook' }]),
+  article({ site:Astro.site, path:'/playbook', headline:'How Ground Floor tests local AI', description:'The public evidence method for local-AI field tests.', techArticle:true }),
+  breadcrumb(Astro.site, [{ name:'Ground Floor', path:'/' }, { name:'How testing works', path:'/playbook' }]),
 ];
 ---
-
-<Base title="Playbook" description="How Ground Floor experiments are structured, evaluated, and published." schema={schema}>
-
-  <div class="page-aurora">
-    <div class="page-aurora-glow" style="background:radial-gradient(ellipse 70% 60% at 50% -10%,rgba(67,97,238,0.28) 0%,transparent 70%);"></div>
-    <div class="max-w-wide mx-auto px-5 md:px-10 pt-24 pb-20 relative">
-      <p class="font-mono text-[0.7rem] tracking-[0.2em] uppercase mb-4" style="color:#4361ee;">Public edition · Methodology</p>
-      <h1 class="font-display font-semibold tracking-tight text-chalk mb-4"
-          style="font-size:clamp(2.4rem,5vw,3.75rem);line-height:1.06;">The Playbook</h1>
-      <p class="text-silver text-lg max-w-xl leading-relaxed">
-        How I design, run, and publish experiments.
-        The methodology is public because reproducibility matters more than mystique.
-      </p>
-    </div>
-  </div>
-
-  <div class="max-w-prose mx-auto px-5 md:px-0 py-16 md:py-24">
-    <div class="prose-editorial">
-
-      <h2>Why this project exists</h2>
-      <p>
-        I kept running into the same moment. A physician, an attorney, a solo RIA, they'd look
-        at a good AI tool, see the internet dependency, and quietly step back from the whole
-        conversation. Not out of technophobia. Out of a very reasonable calculation about vendor
-        agreements, compliance overhead, and what happens when something goes wrong on someone
-        else's server.
-      </p>
-      <p>
-        Air-gapped AI is the architectural answer. A model running on hardware you own makes no
-        network calls. The data stays where you put it. Ground Floor documents whether these
-        models are actually good enough to be worth the hardware investment, and for which tasks,
-        on which hardware.
-      </p>
-
-      <h2>The air-gapped AI thesis</h2>
-      <p>
-        By 2025, consumer hardware had crossed the threshold I'd been watching for. Apple Silicon's
-        unified memory architecture eliminated the VRAM ceiling that had made local inference
-        impractical for years. A quantized 8B model runs faster on a $799 Mac mini than most
-        cloud API round-trips, with no data leaving the building. It's 2026. The question is
-        answered. What I didn't expect is how much documentation work remains: which models,
-        which tasks, which hardware tiers, which failure modes.
-      </p>
-
-      <h2>Experiment design</h2>
-
-      <h3>Choosing a task</h3>
-      <p>A task qualifies if it meets three criteria:</p>
-      <ol>
-        <li><strong>High volume in the target industry.</strong> The task must represent a meaningful share of practitioners' non-billable time.</li>
-        <li><strong>Evaluable output.</strong> There must be a clear standard to judge AI output against, a format, a checklist, a rubric a practitioner can apply.</li>
-        <li><strong>Human-in-the-loop review.</strong> A qualified human reviews and owns the final output. Ground Floor does not test autonomous AI decision-making.</li>
-      </ol>
-
-      <h3>Verdict criteria</h3>
-      <dl>
-        <dt><strong>Viable</strong></dt>
-        <dd>The model's output is good enough that the practitioner's job is editing, not authoring. Time savings are real and the error rate is low enough that a normal review process catches problems before they matter.</dd>
-
-        <dt><strong>Partial</strong></dt>
-        <dd>The model helps for a subset of the task or volume. Works well for simple cases, struggles with complex ones. Worth using with awareness of where it breaks down.</dd>
-
-        <dt><strong>Not yet</strong></dt>
-        <dd>Current models at this hardware tier don't meet the bar for practical use. The output requires so much correction that it doesn't meaningfully reduce the practitioner's work. Failure modes are documented clearly. This is the most useful verdict for understanding what's missing.</dd>
-      </dl>
-
-      <h3>Hardware documentation</h3>
-      <p>
-        Every experiment specifies the exact hardware: machine, RAM, chip generation, runtime version.
-        Results are not portable across hardware tiers without re-testing. When an experiment is
-        documented as "viable at entry level," the configuration was deliberately constrained to match
-        a base Mac mini, even though the lab cluster has significantly more headroom.
-      </p>
-
-      <h2>Publication format</h2>
-      <p>Each experiment ships in three formats:</p>
-      <ul>
-        <li><strong>Writeup (this site):</strong> Full methodology, results, failure modes, replication instructions. Permanent reference.</li>
-        <li><strong>Video:</strong> Screen recording of setup and inference in action. Shows what the model actually produces, not a curated highlight.</li>
-        <li><strong>Post (LinkedIn):</strong> 3–5 paragraph summary with verdict. Links to writeup for depth.</li>
-      </ul>
-
-      <h2>Failure modes, what to watch for</h2>
-      <p>
-        Every experiment on this site documents failure modes explicitly. Here's the
-        pattern I see across all three regulated industries.
-      </p>
-
-      <h3>False precision</h3>
-      <p>
-        The most dangerous failure mode isn't a wrong answer: it's a confidently wrong
-        answer with no signal that it's wrong. A local 8B model drafting a SOAP note
-        will occasionally invent a medication dose, a legal model will cite a clause number
-        that doesn't exist, a financial model will produce a figure that's plausible but off.
-        These aren't rare edge cases. They happen.
-      </p>
-      <p>
-        Here's the defense: treat every output as a first draft by a junior colleague who is
-        smart but hasn't verified their work. Your review is not optional. It's the
-        point of the architecture. The model handles the drafting friction. You handle
-        the accuracy.
-      </p>
-
-      <h3>Complexity degrades quality</h3>
-      <p>
-        Smaller models (8B–13B) perform well on structured, predictable tasks.
-        They struggle on complex ones, a new patient with a complicated history, a
-        contract with cross-referencing clauses, a financial meeting with emotionally
-        complicated family dynamics. The output becomes more generic, misses nuance,
-        or confidently omits relevant detail.
-      </p>
-      <p>
-        This isn't a reason to avoid local AI. It's the reason to know which tasks
-        belong at which hardware tier. The experiments map this out explicitly.
-      </p>
-
-      <h3>Prompt quality determines output quality</h3>
-      <p>
-        A vague prompt produces vague output. "Summarize this meeting" produces something
-        generic. "Extract action items, decisions made, and follow-up commitments from
-        this meeting transcript, structured as a CRM note with the sections: Topics Discussed,
-        Decisions, Client Actions, Advisor Actions" produces something useful.
-      </p>
-      <p>
-        The experiments publish the actual prompts used. Start there.
-      </p>
-
-      <h3>Red flags by industry</h3>
-      <dl>
-        <dt><strong>Medical</strong></dt>
-        <dd>Watch for invented clinical specifics, dosages, lab values, procedure names that weren't in the transcript. The model will fill gaps with plausible-sounding detail rather than flagging uncertainty.</dd>
-
-        <dt><strong>Legal</strong></dt>
-        <dd>Watch for invented case citations, clause numbers that don't match the document, and jurisdiction-specific analysis that's generic rather than accurate. The model lacks depth on state-level variations.</dd>
-
-        <dt><strong>Financial</strong></dt>
-        <dd>Watch for misattributed action items (model swaps who owns what), invented figures in numerical summaries, and regulatory language that sounds right but doesn't match current rules.</dd>
-      </dl>
-
-      <h2>What this playbook doesn't cover</h2>
-      <p>
-        Compliance guidance, legal interpretation, and clinical recommendations are out of scope.
-        The <a href="/scope">Scope &amp; Disclaimers</a> page explains this in detail.
-      </p>
-
-    </div>
-
-    <div class="mt-14 pt-8 border-t border-wire">
-      <p class="text-xs text-ash font-mono">
-        This is the public edition of the Ground Floor playbook. It describes methodology and framework, not internal processes.
-      </p>
-    </div>
-  </div>
+<Base title="How Ground Floor tests local AI" description="The public evidence method for local-AI field tests." appearance="light" schema={schema}>
+  <header class="gf-page-hero"><div class="gf-shell"><p class="gf-eyebrow">Public testing method</p><h1 class="gf-display mt-4">How does a local-AI claim earn trust?</h1><p class="gf-lede">Another person must be able to inspect the configuration, safe inputs, raw outputs, rubric, timing, and failures that produced it.</p></div></header>
+  <div class="gf-content"><div class="gf-shell"><article class="gf-prose">
+    <h2>What evidence labels does Ground Floor use?</h2>
+    <p><strong>Measured</strong> means a completed run has retained configuration, fixture, prompt, raw output, timing, errors, and evaluation. <strong>Estimate</strong> is a calculation from stated assumptions. <strong>Third-party</strong> is attributed external evidence. <strong>Protocol</strong> is a test plan without a completed result.</p>
+    <h2>What makes a task testable?</h2>
+    <ol><li>It happens often enough to matter.</li><li>The source and required output are known.</li><li>A qualified reviewer can define and score correctness.</li><li>The test can use synthetic, public, or properly sanitized material.</li><li>A human owns the final work and decision.</li></ol>
+    <h2>What must a measured run retain?</h2>
+    <ul><li>Machine, memory, operating system, runtime, and settings.</li><li>Model identity, source, quantization, and artifact hash when available.</li><li>Exact prompts and safe test fixtures.</li><li>Every raw output, including failed examples.</li><li>Predeclared rubric, reviewer role, corrections, and critical errors.</li><li>Timing method, repetitions, context size, and variance.</li></ul>
+    <h2>When is a result useful?</h2>
+    <p>The pass and failure thresholds are fixed before the run. A result is useful only inside the task, hardware, model, fixtures, and review process actually tested. A few attractive examples are not a result.</p>
+    <h2>What does the method not answer?</h2>
+    <p>Ground Floor does not provide legal, clinical, tax, investment, accounting, privacy, security, or compliance approval. It measures a technical workflow. Qualified professionals decide whether that workflow belongs in a real practice.</p>
+    <p><a class="gf-link" href="/experiments">Inspect the current protocols</a></p>
+  </article></div></div>
 </Base>
