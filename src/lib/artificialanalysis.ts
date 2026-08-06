@@ -502,7 +502,20 @@ export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
   { name: 'MiMo-V2.5-Pro',          provider: 'Xiaomi',      intelligenceIndex: 42, codingScore: 40, mathScore: 43, outputSpeed: 49,  contextWindow: 1000000, isOpenSource: true, minRamGb: 360 },  // v4.1 (was 54). ~1T total / 42B active
   { name: 'GLM-5.1 Reasoning',      provider: 'Z AI',        intelligenceIndex: 40, codingScore: 38, mathScore: 41, outputSpeed: 74,  contextWindow: 200000,  isOpenSource: true, minRamGb: 150, requiresCluster: true, clusterNote: '744B total / 40B active MoE; IQ1_S (~150 GB) needs the 2-node cluster. Superseded by GLM-5.2.' }, // v4.1 (was 51)
   { name: 'GLM-5 Reasoning',        provider: 'Z AI',        intelligenceIndex: 40, codingScore: 38, mathScore: 40, outputSpeed: 68,  contextWindow: 200000,  isOpenSource: true, minRamGb: 150, requiresCluster: true, clusterNote: '744B total / 40B active MoE; IQ1_S (~150 GB) needs the 2-node cluster. Superseded by GLM-5.1 and GLM-5.2.' }, // v4.1 verified
-  { name: 'DeepSeek V4 Flash',      provider: 'DeepSeek',    intelligenceIndex: 40, codingScore: 40, mathScore: 39, outputSpeed: 104, contextWindow: 1000000, isOpenSource: true, minRamGb: 135 },  // v4.1 (was 47). 284B total / 13B active, Q3 ~135 GB
+  // ── VERIFIED IN-HOUSE, not an AA/leaderboard estimate — measured on our own hardware 2026-08-05 ──
+  {
+    name: 'DeepSeek-V4-Flash-0731 (MXFP4, verified)',
+    provider: 'DeepSeek',
+    intelligenceIndex: 40,  // same base model as the AA-estimated row below; index carried over, not independently re-scored
+    codingScore: 40,
+    mathScore: 39,
+    outputSpeed: 15,        // MEASURED: steady median 14.9 tok/s, peak 19.0 tok/s, thinking-high, single stream (not an AA API number)
+    contextWindow: 500000,  // measured at 500k ctx live (thinking-high, reasoning_effort high)
+    isOpenSource: true,
+    minRamGb: 128,          // runs on ONE 128GB Mac via SSD expert-streaming (145 GiB GGUF total, 75GB hot-expert cache resident) — no cluster needed
+    clusterNote: 'Our own build, not a vendor benchmark: MXFP4 "lossless" quant (antirez ds4 engine, SSD expert-streaming), 145 GiB GGUF. Runs on a SINGLE 128GB Mac — no 2-node cluster required. Tuned cache ladder found 75GB hot-expert cache as the sweet spot: steady median 14.9 tok/s, peak 19.0 tok/s, thinking-high (max reasoning), 500k context. Verified identically on both our M5 Max boxes 2026-08-05. A non-streaming resident config on the same hardware hits ~38 tok/s but needs far more RAM headroom; 75GB-cache streaming is the practical daily-driver recipe for the full 500k-context, thinking-on setup.',
+  },
+  { name: 'DeepSeek V4 Flash',      provider: 'DeepSeek',    intelligenceIndex: 40, codingScore: 40, mathScore: 39, outputSpeed: 104, contextWindow: 1000000, isOpenSource: true, minRamGb: 135 },  // v4.1 (was 47). 284B total / 13B active, Q3 ~135 GB. AA vendor estimate, kept for reference — see verified row above for our real measured numbers.
   { name: 'MiniMax-M2.7',           provider: 'MiniMax',     intelligenceIndex: 38, codingScore: 37, mathScore: 38, outputSpeed: 43,  contextWindow: 205000,  isOpenSource: true, minRamGb: 110 },  // v4.1 (was 50). 230B total / 10B active, Q3 ~110 GB
   { name: 'Kimi K2.5',              provider: 'Moonshot AI', intelligenceIndex: 38, codingScore: 37, mathScore: 36, outputSpeed: 46,  contextWindow: 262144,  isOpenSource: true, minRamGb: 360 },  // v4.1 (AA-estimated label). 1T MoE like K2.6
   // ── Mid-tier ──────────────────────────────────────────────────────────────
