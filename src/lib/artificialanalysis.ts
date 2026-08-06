@@ -280,6 +280,13 @@ export const TASK_SCORES: Record<string, Record<string, number>> = {
   'Gemma 4 E4B':             { swe: 11, agentic: 11, reasoning: 12, general: 12 },
   'Granite 4.0 H Small':     { swe: 5,  agentic: 5,  reasoning: 4,  general: 5  },
   'Phi-4 14B':               { swe: 5,  agentic: 4,  reasoning: 5,  general: 5  },
+  // American open-weight labs — added 2026-08-06
+  'Inkling':                  { swe: 40, agentic: 41, reasoning: 39, general: 41 },  // leading US-lab open-weight, Thinking Machines, Jul 2026
+  'Nemotron 3 Ultra':         { swe: 38, agentic: 37, reasoning: 40, general: 38 },  // NVIDIA, OpenMDW-1.1, training data + recipes published
+  'gpt-oss-120b':             { swe: 24, agentic: 23, reasoning: 25, general: 24 },  // OpenAI, Apache-2.0, fits a single 128GB Mac
+  'gpt-oss-20b':               { swe: 15, agentic: 14, reasoning: 15, general: 15 },  // OpenAI, Apache-2.0, fits the entry-tier Mac mini
+  'Llama 4 Maverick':          { swe: 13, agentic: 14, reasoning: 12, general: 14 },
+  'Llama 4 Scout':             { swe: 9,  agentic: 10, reasoning: 8,  general: 10 },
   // Open-weight — added 2026-08-06
   'Kimi K3':                 { swe: 56, agentic: 57, reasoning: 57, general: 57 },  // new #1 open-weight; #7 overall; can't fit our 2-node cluster (~594 GB min)
   // Closed reference — added 2026-08-06
@@ -561,5 +568,37 @@ export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
   { name: 'Granite 4.0 H Small', provider: 'IBM',          intelligenceIndex: 5,  codingScore: 5,  mathScore: 4,  outputSpeed: 374, contextWindow: 128000, isOpenSource: true, minRamGb: 20 },  // v4.1 (was 11). 32B total / 9B active MoE, speed leader
   { name: 'Phi-4 14B',           provider: 'Microsoft',    intelligenceIndex: 5,  codingScore: 5,  mathScore: 6,  outputSpeed: 36,  contextWindow: 16384,   isOpenSource: true, minRamGb: 10 },  // v4.1 (AA-estimated; was 30). 14B dense
   { name: 'Llama 3.2 3B',        provider: 'Meta',         intelligenceIndex: 4,  codingScore: 3,  mathScore: 3,  outputSpeed: 52,  contextWindow: 131072,  isOpenSource: true, minRamGb: 2 },   // v4.1 (was 18). 3B dense
-  { name: 'Phi-4-mini 3.8B',     provider: 'Microsoft',    intelligenceIndex: 3,  codingScore: 3,  mathScore: 4,  outputSpeed: 44,  contextWindow: 16384,   isOpenSource: true, minRamGb: 3 }    // v4.1 (was 22). 3.8B dense
+  { name: 'Phi-4-mini 3.8B',     provider: 'Microsoft',    intelligenceIndex: 3,  codingScore: 3,  mathScore: 4,  outputSpeed: 44,  contextWindow: 16384,   isOpenSource: true, minRamGb: 3 },   // v4.1 (was 22). 3.8B dense
+
+  // ── Added 2026-08-06: American open-weight labs, previously missing from this list entirely ──
+  {
+    name: 'Inkling',
+    provider: 'Thinking Machines',
+    intelligenceIndex: 41,  // AA Intelligence Index, Jul 2026 — new #1 open-weight release from a US lab (beat Nemotron 3 Ultra's 38)
+    codingScore: 40,        // illustrative
+    mathScore: 39,          // illustrative
+    outputSpeed: 50,        // API t/s, est. — no local number measured yet
+    contextWindow: 1000000, // 1M via HF weights (Tinker API is 256K)
+    isOpenSource: true,     // Apache-2.0, full open-source (weights + recipe), 45T training tokens disclosed
+    minRamGb: 190,          // est. 975B total / 41B active MoE, similar footprint to GLM-5.2/Kimi K2.6 class at low quant
+    requiresCluster: true,
+    clusterNote: 'Mira Murati\'s Thinking Machines Lab, released Jul 15 2026 — the new leading open-weight model from a US lab (41 vs Nemotron 3 Ultra\'s 38). Apache-2.0, text/image/audio input, 975B total / 41B active MoE. Needs the 2-node cluster at low quant; a lighter "Inkling-Small" (12B active) preview also exists and may fit a single Mac — not yet benchmarked by us.',
+  },
+  {
+    name: 'Nemotron 3 Ultra',
+    provider: 'NVIDIA',
+    intelligenceIndex: 38,  // AA Intelligence Index, 2026 — top MMLU-Pro/GPQA Diamond/LiveCodeBench among US-lab open-weight models
+    codingScore: 38,        // illustrative (LiveCodeBench 89.0 per NVIDIA)
+    mathScore: 36,          // illustrative
+    outputSpeed: 45,        // API/cloud t/s, est. — no local number measured yet
+    contextWindow: 262144,
+    isOpenSource: true,     // OpenMDW-1.1 — training data + post-training recipes published, genuinely open-source not just open-weight
+    minRamGb: 275,          // 550B total / 55B active MoE, hybrid Mamba-Transformer. NVIDIA cites 550GB VRAM at FP8 for all experts; low quant (NVFP4-class) roughly halves that
+    requiresCluster: true,
+    clusterNote: 'Hybrid Mamba-Transformer MoE with LatentMoE routing, built for long-running agents. OpenMDW-1.1 license ships training data and post-training recipes, not just weights — most genuinely "open-source" of the American entries here. Tight fit even across the 2-node cluster at aggressive quant; not yet validated on our hardware.',
+  },
+  { name: 'gpt-oss-120b',        provider: 'OpenAI',      intelligenceIndex: 24, codingScore: 24, mathScore: 22, outputSpeed: 55,  contextWindow: 131072,  isOpenSource: true, minRamGb: 65 },  // AA Intelligence Index (high). 117B total / 5.1B active MoE. Native MXFP4, ships at 60.8GB — fits a SINGLE 128GB Mac, no cluster needed. Apache-2.0.
+  { name: 'gpt-oss-20b',         provider: 'OpenAI',      intelligenceIndex: 15, codingScore: 15, mathScore: 13, outputSpeed: 90,  contextWindow: 131072,  isOpenSource: true, minRamGb: 16 },  // AA Intelligence Index (high). 21B total / 3.6B active MoE. Native MXFP4, 12.8GB — fits the entry-tier Mac mini. Apache-2.0.
+  { name: 'Llama 4 Maverick',    provider: 'Meta',        intelligenceIndex: 14, codingScore: 13, mathScore: 12, outputSpeed: 40,  contextWindow: 1000000, isOpenSource: true, minRamGb: 150 }, // AA Intelligence Index. 400B total / 17B active MoE, 128 experts. Released Apr 2025; Meta has not shipped a Llama 4 update in 2026 (Meta Superintelligence Labs' newer "Muse Spark" work is closed-weight).
+  { name: 'Llama 4 Scout',       provider: 'Meta',        intelligenceIndex: 10, codingScore: 9,  mathScore: 8,  outputSpeed: 60,  contextWindow: 10000000, isOpenSource: true, minRamGb: 65 }   // AA Intelligence Index. 109B total / 17B active MoE, 16 experts, 10M context (largest of any open-weight model). Fits a single 128GB Mac.
 ];
