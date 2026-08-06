@@ -1,9 +1,16 @@
 // Build-time fetch from artificialanalysis.ai API
 // Returns only open-weight/open-source models, sorted by intelligence index
-// Intelligence Index is 0–100 scale (AA Intelligence Index v4.1, June 2026).
-// Current world ceiling is Claude Fable 5 at 60 — but Fable 5 is currently unavailable,
-//   so Claude Opus 4.8 at 56 is the top *available* model. (GPT-5.5 xhigh is 55.)
-// Top open-weight model is now GLM-5.2 at 51 (AA Intelligence Index v4.1).
+// Intelligence Index is 0–100 scale (AA Intelligence Index v4.1, June 2026 baseline).
+// UPDATED 2026-08-06: Claude Opus 5 (max) is the new world ceiling at 61, ahead of
+//   Claude Fable 5 (60, previously #1) and GPT-5.6 Sol (59). Rankings below are additive —
+//   prior June 2026 rows are kept for history, not deleted.
+// Top open-weight model is now Kimi K3 (max) at 57 (AA Intelligence Index, Jul 2026) —
+//   #7 overall, ahead of every proprietary model except Opus 5 / Fable 5 / GPT-5.6 Sol / Opus 4.8.
+//   It supersedes GLM-5.2 (51), the prior open-weight #1. Kimi K3 is open-weight (attribution
+//   license, not fully open-source — no training data/code), 2.8T total / 104B active MoE, 1M context.
+//   IMPORTANT: Kimi K3 does NOT fit our 2-node cluster — even the most aggressive 1-bit GGUF needs
+//   ~594 GB combined RAM/VRAM, well beyond the 244 GB usable across both M5 Max nodes. Listed for
+//   reference/tracking; GLM-5.2 remains the practical #1 open-weight model we can actually run.
 // v4.1 re-baselined the scale downward (~10–12 pts vs v4.0) and re-weighted toward agentic work.
 // Scores are low because benchmarks are hard: Humanity's Last Exam, GPQA Diamond, SciCode, etc.
 // A score of 51 means the model answered 51% of an extremely difficult multi-domain eval mix.
@@ -223,14 +230,22 @@ export interface ClosedModel {
 }
 
 export const CLOSED_SOURCE_REFERENCE: ClosedModel[] = [
-  { name: 'Claude Fable 5 (max)',   provider: 'Anthropic', intelligenceIndex: 60, outputSpeed: 50,  note: '#1 overall, June 2026 (Opus 4.8 fallback). Currently UNAVAILABLE. API only.' },
-  { name: 'Claude Opus 4.8 (max)',  provider: 'Anthropic', intelligenceIndex: 56, outputSpeed: 50,  note: 'Top *available* model, June 2026. API only.' },
+  // ── Added 2026-08-06 (new #1 overall + new releases since the June 2026 baseline) ──
+  { name: 'Claude Opus 5 (max)',    provider: 'Anthropic', intelligenceIndex: 61, outputSpeed: 50,  note: 'NEW #1 overall, Aug 2026. API only.' },
+  { name: 'Claude Fable 5 (max)',   provider: 'Anthropic', intelligenceIndex: 60, outputSpeed: 50,  note: '#2 overall. Previously #1 (June 2026); availability improved since the June outage. API only.' },
+  { name: 'GPT-5.6 Sol (max)',      provider: 'OpenAI',    intelligenceIndex: 59, outputSpeed: 85,  note: 'API only.' },
+  { name: 'Kimi K3 (max)',          provider: 'Moonshot AI',intelligenceIndex: 57, outputSpeed: 60, note: 'Open-weight, but #7 overall — beats every closed model except the three above and Opus 4.8. API only reference; see STATIC_OPEN_SOURCE_MODELS for local-hosting notes.' },
+  { name: 'Claude Opus 4.8 (max)',  provider: 'Anthropic', intelligenceIndex: 56, outputSpeed: 50,  note: 'Top model as of the June 2026 baseline. API only.' },
+  { name: 'GPT-5.6 Terra (max)',    provider: 'OpenAI',    intelligenceIndex: 55, outputSpeed: 85,  note: 'API only.' },
+  { name: 'Grok 4.5 (high)',        provider: 'xAI',       intelligenceIndex: 54, outputSpeed: 90,  note: 'API only.' },
+  { name: 'Claude Sonnet 5 (max)',  provider: 'Anthropic', intelligenceIndex: 53, outputSpeed: 51,  note: 'Powers Claude Code as of Aug 2026, succeeding Sonnet 4.6. API only.' },
+  // ── June 2026 baseline (kept for history) ──
   { name: 'GPT-5.5 (xhigh)',        provider: 'OpenAI',    intelligenceIndex: 55, outputSpeed: 85,  note: 'API only.' },
   { name: 'Gemini 3.5 Flash (high)',provider: 'Google',    intelligenceIndex: 55, outputSpeed: 180, note: 'API only, fast tier.' },
   { name: 'Claude Opus 4.7 (max)',  provider: 'Anthropic', intelligenceIndex: 54, outputSpeed: 56,  note: 'API only.' },
   { name: 'GPT-5.5 (high)',         provider: 'OpenAI',    intelligenceIndex: 53, outputSpeed: 83,  note: 'API only.' },
-  { name: 'Grok 4.3 (high)',        provider: 'xAI',       intelligenceIndex: 53, outputSpeed: 90,  note: 'API only.' },
-  { name: 'Claude Sonnet 4.6 (max)',provider: 'Anthropic', intelligenceIndex: 52, outputSpeed: 51,  note: 'Powers Claude Code. Strong agentic performance, reliable everyday benchmark. API only.' },
+  { name: 'Grok 4.3 (high)',        provider: 'xAI',       intelligenceIndex: 53, outputSpeed: 90,  note: 'API only. Superseded by Grok 4.5.' },
+  { name: 'Claude Sonnet 4.6 (max)',provider: 'Anthropic', intelligenceIndex: 52, outputSpeed: 51,  note: 'Previously powered Claude Code; superseded by Sonnet 5. API only.' },
   { name: 'Gemini 3.1 Pro Preview', provider: 'Google',    intelligenceIndex: 46, outputSpeed: 141, note: 'API only.' },
 ];
 
@@ -265,15 +280,23 @@ export const TASK_SCORES: Record<string, Record<string, number>> = {
   'Gemma 4 E4B':             { swe: 11, agentic: 11, reasoning: 12, general: 12 },
   'Granite 4.0 H Small':     { swe: 5,  agentic: 5,  reasoning: 4,  general: 5  },
   'Phi-4 14B':               { swe: 5,  agentic: 4,  reasoning: 5,  general: 5  },
-  // Closed reference — verified AA v4.1
-  'Claude Fable 5 (max)':   { swe: 59, agentic: 60, reasoning: 59, general: 60 },  // #1 overall, currently unavailable
-  'Claude Opus 4.8 (max)':  { swe: 55, agentic: 57, reasoning: 56, general: 56 },  // top available
+  // Open-weight — added 2026-08-06
+  'Kimi K3':                 { swe: 56, agentic: 57, reasoning: 57, general: 57 },  // new #1 open-weight; #7 overall; can't fit our 2-node cluster (~594 GB min)
+  // Closed reference — added 2026-08-06
+  'Claude Opus 5 (max)':     { swe: 60, agentic: 61, reasoning: 60, general: 61 },  // new #1 overall
+  'GPT-5.6 Sol (max)':       { swe: 58, agentic: 59, reasoning: 58, general: 59 },
+  'GPT-5.6 Terra (max)':     { swe: 54, agentic: 55, reasoning: 54, general: 55 },
+  'Grok 4.5 (high)':         { swe: 53, agentic: 54, reasoning: 54, general: 54 },
+  'Claude Sonnet 5 (max)':   { swe: 52, agentic: 54, reasoning: 51, general: 53 },  // now powers Claude Code
+  // Closed reference — verified AA v4.1 (June 2026 baseline, kept for history)
+  'Claude Fable 5 (max)':   { swe: 59, agentic: 60, reasoning: 59, general: 60 },  // #2 overall as of Aug 2026 update
+  'Claude Opus 4.8 (max)':  { swe: 55, agentic: 57, reasoning: 56, general: 56 },  // top model as of June 2026 baseline
   'GPT-5.5 (xhigh)':        { swe: 55, agentic: 54, reasoning: 54, general: 55 },
   'Gemini 3.5 Flash (high)':{ swe: 54, agentic: 53, reasoning: 54, general: 55 },
   'Claude Opus 4.7 (max)':  { swe: 53, agentic: 55, reasoning: 54, general: 54 },
   'GPT-5.5 (high)':         { swe: 53, agentic: 53, reasoning: 52, general: 53 },
-  'Grok 4.3 (high)':        { swe: 52, agentic: 53, reasoning: 53, general: 53 },
-  'Claude Sonnet 4.6 (max)':{ swe: 51, agentic: 53, reasoning: 50, general: 52 },
+  'Grok 4.3 (high)':        { swe: 52, agentic: 53, reasoning: 53, general: 53 },  // superseded by Grok 4.5
+  'Claude Sonnet 4.6 (max)':{ swe: 51, agentic: 53, reasoning: 50, general: 52 },  // superseded by Sonnet 5
   'Gemini 3.1 Pro Preview': { swe: 45, agentic: 44, reasoning: 47, general: 46 },
 };
 
@@ -312,7 +335,7 @@ export const TIERS: Tier[] = [
     shortLabel: 'PhD+',
     min: 60, max: 67,
     accent: '#c084fc', bg: 'rgba(192,132,252,0.12)', border: 'rgba(192,132,252,0.3)',
-    description: 'Systematic expert-level analysis across multiple disciplines. Current world ceiling, Claude Fable 5 scores 60 (Opus 4.8, the top available model, scores 56).',
+    description: 'Systematic expert-level analysis across multiple disciplines. Current world ceiling, Claude Opus 5 scores 61 (as of Aug 2026; Claude Fable 5 close behind at 60, Opus 4.8 at 56).',
     skills: [
       'Identifies factual errors and methodological flaws in published papers',
       'Synthesizes across unrelated disciplines to surface non-obvious connections',
@@ -431,7 +454,21 @@ export function getTier(score: number | null): Tier {
 // Output speeds are API inference speeds; local Apple Silicon speeds are lower for large models.
 // Ceiling is 60 (no model above it). Listed in true descending order of the v4.1 Intelligence Index.
 export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
-  // ── New #1 open-weight (Jun 2026): GLM-5.2, large MoE that fits the 2-node cluster at low quant ──
+  // ── New #1 open-weight by score (Jul 2026): Kimi K3 — but it does NOT fit our cluster. Listed
+  //    for reference/tracking; GLM-5.2 below remains the practical #1 we can actually self-host. ──
+  {
+    name: 'Kimi K3',
+    provider: 'Moonshot AI',
+    intelligenceIndex: 57,  // AA Intelligence Index, Jul 2026 — new #1 open-weight, #7 overall (beats every closed model except Opus 5/Fable 5/GPT-5.6 Sol/Opus 4.8)
+    codingScore: 56,        // illustrative: tops the Frontend Code Arena
+    mathScore: 54,          // illustrative
+    outputSpeed: 60,        // API t/s, est.
+    contextWindow: 1000000, // 1M-token context, native multimodal (text/image/video in)
+    isOpenSource: true,     // open-weight (attribution license w/ commercial thresholds), NOT fully open-source — no training data/code
+    minRamGb: 594,          // 2.8T total / 104B active MoE. Even the most aggressive 1-bit GGUF needs ~594 GB combined RAM/VRAM
+    requiresCluster: true,
+    clusterNote: 'Does NOT fit the current 2-node cluster (244 GB usable) at any practical quant — the most aggressive 1-bit dynamic GGUF still needs ~594 GB combined RAM/VRAM, and a 2-bit build runs ~861 GB. Would need roughly 3x our current cluster capacity (a 5+ node setup or future high-RAM hardware). Listed for tracking, not self-hostable today — GLM-5.2 stays the practical #1 open-weight pick for regulated on-prem deployments.',
+  },
   {
     name: 'GLM-5.2',
     provider: 'Z AI',
@@ -465,7 +502,20 @@ export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
   { name: 'MiMo-V2.5-Pro',          provider: 'Xiaomi',      intelligenceIndex: 42, codingScore: 40, mathScore: 43, outputSpeed: 49,  contextWindow: 1000000, isOpenSource: true, minRamGb: 360 },  // v4.1 (was 54). ~1T total / 42B active
   { name: 'GLM-5.1 Reasoning',      provider: 'Z AI',        intelligenceIndex: 40, codingScore: 38, mathScore: 41, outputSpeed: 74,  contextWindow: 200000,  isOpenSource: true, minRamGb: 150, requiresCluster: true, clusterNote: '744B total / 40B active MoE; IQ1_S (~150 GB) needs the 2-node cluster. Superseded by GLM-5.2.' }, // v4.1 (was 51)
   { name: 'GLM-5 Reasoning',        provider: 'Z AI',        intelligenceIndex: 40, codingScore: 38, mathScore: 40, outputSpeed: 68,  contextWindow: 200000,  isOpenSource: true, minRamGb: 150, requiresCluster: true, clusterNote: '744B total / 40B active MoE; IQ1_S (~150 GB) needs the 2-node cluster. Superseded by GLM-5.1 and GLM-5.2.' }, // v4.1 verified
-  { name: 'DeepSeek V4 Flash',      provider: 'DeepSeek',    intelligenceIndex: 40, codingScore: 40, mathScore: 39, outputSpeed: 104, contextWindow: 1000000, isOpenSource: true, minRamGb: 135 },  // v4.1 (was 47). 284B total / 13B active, Q3 ~135 GB
+  // ── VERIFIED IN-HOUSE, not an AA/leaderboard estimate — measured on our own hardware 2026-08-05 ──
+  {
+    name: 'DeepSeek-V4-Flash-0731 (MXFP4, verified)',
+    provider: 'DeepSeek',
+    intelligenceIndex: 40,  // same base model as the AA-estimated row below; index carried over, not independently re-scored
+    codingScore: 40,
+    mathScore: 39,
+    outputSpeed: 15,        // MEASURED: steady median 14.9 tok/s, peak 19.0 tok/s, thinking-high, single stream (not an AA API number)
+    contextWindow: 500000,  // measured at 500k ctx live (thinking-high, reasoning_effort high)
+    isOpenSource: true,
+    minRamGb: 128,          // runs on ONE 128GB Mac via SSD expert-streaming (145 GiB GGUF total, 75GB hot-expert cache resident) — no cluster needed
+    clusterNote: 'Our own build, not a vendor benchmark: MXFP4 "lossless" quant (antirez ds4 engine, SSD expert-streaming), 145 GiB GGUF. Runs on a SINGLE 128GB Mac — no 2-node cluster required. Tuned cache ladder found 75GB hot-expert cache as the sweet spot: steady median 14.9 tok/s, peak 19.0 tok/s, thinking-high (max reasoning), 500k context. Verified identically on both our M5 Max boxes 2026-08-05. A non-streaming resident config on the same hardware hits ~38 tok/s but needs far more RAM headroom; 75GB-cache streaming is the practical daily-driver recipe for the full 500k-context, thinking-on setup.',
+  },
+  { name: 'DeepSeek V4 Flash',      provider: 'DeepSeek',    intelligenceIndex: 40, codingScore: 40, mathScore: 39, outputSpeed: 104, contextWindow: 1000000, isOpenSource: true, minRamGb: 135 },  // v4.1 (was 47). 284B total / 13B active, Q3 ~135 GB. AA vendor estimate, kept for reference — see verified row above for our real measured numbers.
   { name: 'MiniMax-M2.7',           provider: 'MiniMax',     intelligenceIndex: 38, codingScore: 37, mathScore: 38, outputSpeed: 43,  contextWindow: 205000,  isOpenSource: true, minRamGb: 110 },  // v4.1 (was 50). 230B total / 10B active, Q3 ~110 GB
   { name: 'Kimi K2.5',              provider: 'Moonshot AI', intelligenceIndex: 38, codingScore: 37, mathScore: 36, outputSpeed: 46,  contextWindow: 262144,  isOpenSource: true, minRamGb: 360 },  // v4.1 (AA-estimated label). 1T MoE like K2.6
   // ── Mid-tier ──────────────────────────────────────────────────────────────
