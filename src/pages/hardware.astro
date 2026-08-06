@@ -111,6 +111,57 @@ const schema = [
       <p class="config-note font-mono text-[0.65rem] text-ash leading-relaxed"></p>
     </div>
 
+    <!-- MAC STUDIO M4 MAX -->
+    <div class="config-card glow-card p-7 md:p-8 mb-6" data-card="mac-studio-m4-max">
+      <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
+        <div>
+          <p class="font-mono text-[0.65rem] tracking-widest uppercase text-ash mb-1">Desktop workstation · Mac Studio</p>
+          <h2 class="font-display font-semibold text-2xl text-chalk">Mac Studio <span style="color:#4361ee;">M4 Max</span></h2>
+        </div>
+        <div class="text-right">
+          <p class="font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-1">From</p>
+          <p class="config-price font-display font-semibold text-2xl text-chalk">$2,499</p>
+        </div>
+      </div>
+
+      <label class="block font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-2">Configuration</label>
+      <select class="config-select w-full md:w-auto bg-fog border border-wire text-chalk text-sm rounded-lg px-4 py-2.5 mb-6 cursor-pointer focus:outline-none focus:border-glow-purple"
+        data-configs='[
+          {"label":"14-core CPU · 32-core GPU · 16 GB · 512 GB SSD","price":2499,"models":["Qwen3.5 9B Q4_K_M, strongest 9B on current benchmarks","Phi-4-mini 3.8B Q8, fastest, structured tasks","Gemma 4 4B Q8, Google, excellent instruction-following","DeepSeek-R1 7B Q4_K_M, chain-of-thought reasoning"],"note":"Base M4 Max Mac Studio. No fan noise under a desk, no battery to manage, active cooling for sustained inference. RAM tops out at 64 GB on this chip tier (configurator-only above base)."}
+        ]'>
+        <option>14-core CPU · 32-core GPU · 16 GB · 512 GB SSD, $2,499</option>
+      </select>
+
+      <div class="config-models grid grid-cols-1 md:grid-cols-2 gap-2 mb-4"></div>
+      <p class="config-note font-mono text-[0.65rem] text-ash leading-relaxed"></p>
+    </div>
+
+    <!-- MAC STUDIO M3 ULTRA -->
+    <div class="config-card glow-card p-7 md:p-8 mb-6" data-card="mac-studio-m3-ultra">
+      <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
+        <div>
+          <p class="font-mono text-[0.65rem] tracking-widest uppercase text-ash mb-1">Workstation · Mac Studio</p>
+          <h2 class="font-display font-semibold text-2xl text-chalk">Mac Studio <span class="gradient-text-animated">M3 Ultra</span></h2>
+        </div>
+        <div class="text-right">
+          <p class="font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-1">From</p>
+          <p class="config-price font-display font-semibold text-2xl text-chalk">$5,299</p>
+        </div>
+      </div>
+      <p class="text-ash text-xs font-mono mb-6">96 GB / 1 TB base. Apple has pulled the 256 GB and 512 GB memory tiers for supply reasons as of 2026 — 96 GB is the ceiling right now, not a floor.</p>
+
+      <label class="block font-mono text-[0.6rem] uppercase tracking-widest text-ash mb-2">Configuration</label>
+      <select class="config-select w-full md:w-auto bg-fog border border-wire text-chalk text-sm rounded-lg px-4 py-2.5 mb-6 cursor-pointer focus:outline-none focus:border-glow-purple"
+        data-configs='[
+          {"label":"28-core CPU · 60-core GPU · 96 GB · 1 TB SSD","price":5299,"models":["Kimi K2.6 32B Q8, full-precision, top-tier open-weight","Gemma 4 31B Q8, full-precision Google MoE","DeepSeek-R1 32B Q8, full-precision reasoning","Llama 3.3 70B Q4_K_M, 70B at practical speed","Qwen3.5 27B Q8, full-precision current-gen"],"note":"Only 96 GB tier available right now (256/512 GB pulled for supply reasons). Silent desktop, no battery/thermal ceiling. A single 128 GB MacBook Pro M5 Max currently has more headroom for large local models than this — see the Lab config below."}
+        ]'>
+        <option>28-core CPU · 60-core GPU · 96 GB · 1 TB SSD, $5,299</option>
+      </select>
+
+      <div class="config-models grid grid-cols-1 md:grid-cols-2 gap-2 mb-4"></div>
+      <p class="config-note font-mono text-[0.65rem] text-ash leading-relaxed"></p>
+    </div>
+
     <!-- MACBOOK PRO M4 MAX -->
     <div class="config-card glow-card p-7 md:p-8 mb-6" data-card="mbp-m5">
       <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
@@ -206,8 +257,8 @@ const schema = [
         <option>14-inch · 24 GB · 2 TB · 15-core, $2,999</option>
         <option>14-inch · 24 GB · 2 TB · 18-core, $3,199</option>
         <option>16-inch · 24 GB · 1 TB · 18-core, $2,999</option>
-        <option>16-inch · 48 GB · 1 TB · 18-core, $3,599</option>
-        <option>14-inch · 48 GB · 2 TB · nano-texture, $3,949</option>
+        <option>16-inch · 48 GB · 1 TB · 18-core, $3,999</option>
+        <option>14-inch · 48 GB · 2 TB · nano-texture, $4,299</option>
       </select>
 
       <div class="config-models grid grid-cols-1 md:grid-cols-2 gap-2 mb-4"></div>
@@ -234,11 +285,11 @@ const schema = [
           {"label":"14-inch · 36 GB · 2 TB · 32-core GPU","price":4099,"models":["Kimi K2.6 32B Q4_K_M, top-tier open-weight benchmark","Gemma 4 31B Q4_K_M, Google MoE, blazing fast","DeepSeek-R1 32B Q4_K_M, reasoning with chain-of-thought","Qwen3.5 27B Q8, full-precision current-gen","Mistral Small 3 22B Q8, reliable full-precision mid-size"],"note":"Base M5 Max, 14-inch, 32-core GPU. Strong 32B inference; fast for team serving."},
           {"label":"16-inch · 36 GB · 2 TB · 32-core GPU","price":4399,"models":["Kimi K2.6 32B Q4_K_M, top-tier open-weight benchmark","Gemma 4 31B Q4_K_M, Google MoE, blazing fast","DeepSeek-R1 32B Q4_K_M, reasoning with chain-of-thought","Qwen3.5 27B Q8, full-precision current-gen","Mistral Small 3 22B Q8, reliable full-precision mid-size"],"note":"16-inch M5 Max base. Larger display, same 32-core GPU."},
           {"label":"16-inch · 48 GB · 2 TB · 40-core GPU","price":5299,"models":["Kimi K2.6 32B Q8, full-precision, top-tier open-weight","Gemma 4 31B Q8, full-precision Google MoE","DeepSeek-R1 32B Q8, full-precision reasoning","Llama 3.3 70B Q4_K_M, 70B at practical speed (~16 t/s)","Two 27B models simultaneously (hot-loaded)"],"note":"40-core GPU + 48 GB. First M5 Max tier for 70B at practical speed."},
-          {"label":"128 GB · 8 TB · 40-core GPU, Lab config","price":10199,"models":["Entire open-weight model library fits on disk","Kimi K2.6 Q8 + Llama 3.3 70B Q8 (simultaneously)","DeepSeek-R1 70B Q8","Qwen3.5 122B A10B Q4_K_M, 122B MoE","MiMo-V2.5-Pro Q4_K_M, Xiaomi, 42/100 on benchmark (AA v4.1)","GLM-5.2 IQ1_S, #1 open-weight (51/100), via TB5 cluster"],"note":"★ The Ground Floor lab config, 128 GB + 8 TB, fully maxed. 128 GB is configurator-only; ≈$10K each at current post-hike Apple pricing."}
+          {"label":"128 GB · 8 TB · 40-core GPU, Lab config","price":10199,"models":["DeepSeek-V4-Flash-0731 MXFP4 (verified), 14.9 t/s steady / 19.0 peak, single box, no cluster needed","Entire open-weight model library fits on disk","Kimi K2.6 Q8 + Llama 3.3 70B Q8 (simultaneously)","DeepSeek-R1 70B Q8","Qwen3.5 122B A10B Q4_K_M, 122B MoE","MiMo-V2.5-Pro Q4_K_M, Xiaomi, 42/100 on benchmark (AA v4.1)","GLM-5.2 IQ1_S, #1 open-weight (51/100), via TB5 cluster"],"note":"★ The Ground Floor lab config, 128 GB + 8 TB, fully maxed. 128 GB is configurator-only; ≈$10K each at current post-hike Apple pricing. This is also the exact config that runs the verified DeepSeek-V4-Flash-0731 MXFP4 build, see /models."}
         ]'>
         <option>14-inch · 36 GB · 2 TB · 32-core GPU, $4,099</option>
         <option>16-inch · 36 GB · 2 TB · 32-core GPU, $4,399</option>
-        <option>16-inch · 48 GB · 2 TB · 40-core GPU, $4,999</option>
+        <option>16-inch · 48 GB · 2 TB · 40-core GPU, $5,299</option>
         <option>128 GB · 8 TB · 40-core GPU, ~$10,000 ★ Lab config</option>
       </select>
 

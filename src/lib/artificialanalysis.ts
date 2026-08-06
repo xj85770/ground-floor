@@ -475,7 +475,7 @@ export const STATIC_OPEN_SOURCE_MODELS: AAModel[] = [
     intelligenceIndex: 51,  // AA Intelligence Index v4.1 — #1 open-weight (+11 over GLM-5.1)
     codingScore: 50,        // illustrative: SciCode 50, TerminalBench v2.1 78, GPQA Diamond 89
     mathScore: 49,          // illustrative: HLE 40, CritPt 21
-    outputSpeed: 132,       // API t/s (AA). Local 2-node IQ1_S ~15 t/s. Very verbose (~43k tok/task).
+    outputSpeed: 15,        // Local 2-node IQ1_S estimate — this field represents what you'd actually see self-hosting, not the AA cloud-API number (132 t/s, cloud only). Very verbose (~43k tok/task).
     contextWindow: 1000000, // 1M-token context
     isOpenSource: true,
     minRamGb: 150,          // 744B total / 40B active MoE; IQ1_S (~150 GB) fits the 2-node window, IQ2_M ~222 GB
